@@ -112,6 +112,15 @@ describe("index footer fine print", () => {
     for (const l of labels) expect(l.length).toBeLessThanOrEqual(32);
     expect((footer().match(/<p>/g) ?? []).length).toBe(labels.length);
   });
+  it("quick maths: no sample-month eyebrow or September label, meme receipt header, hero art is the receipt drawing", () => {
+    const html = readFileSync(join(out, "index.html"), "utf8");
+    expect(html).not.toContain("Sample month · September");
+    expect(html).not.toContain('class="eyebrow">Sample');
+    expect(html).toContain("quick maths, no cap");
+    expect(html).toContain("this page reads a sample month");
+    expect(html).toMatch(/<svg class="hero-art"[^>]*aria-label="[^"]*receipt/);
+    expect(html).not.toMatch(/<img class="hero-art"/);
+  });
   it("says each fact once: sample month, no storage, not built yet, risk, advice, trademarks", () => {
     const t = text();
     for (const re of [/not built yet/gi, /stores? nothing|nothing is stored/gi, /made-up/gi, /can lose money/gi, /not affiliated with or endorsed by Warren/gi, /trademarks of their owners/gi, /a preview/gi]) {

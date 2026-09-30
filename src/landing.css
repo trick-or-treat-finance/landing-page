@@ -75,9 +75,7 @@ main > section { scroll-margin-top: 12px; }
 .hero-lede { font-size: 21px; line-height: 1.5; color: var(--secondary); max-width: 480px; text-wrap: pretty; }
 .hero-cta { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; margin-top: 4px; }
 .hero-hint { font-size: 14.5px; color: var(--muted); }
-.hero-art { flex: 0 0 min(440px, 38%); width: min(440px, 38%); height: auto; aspect-ratio: 1; display: block; mix-blend-mode: multiply; clip-path: inset(7.6% round 22%); }
-:root[data-theme="dark"] .hero-art { mix-blend-mode: normal; clip-path: inset(7.6% round 22%); }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .hero-art { mix-blend-mode: normal; clip-path: inset(7.6% round 22%); } }
+.hero-art { flex: 0 0 min(440px, 38%); width: min(440px, 38%); height: auto; aspect-ratio: 1; display: block; overflow: visible; }
 .btn-ghost { background: transparent; color: var(--ink) !important; border: 1px solid var(--line-strong); }
 .btn-ghost:hover { background: var(--ink); border-color: var(--ink); color: var(--ground) !important; }
 .btn-soon { color: var(--muted) !important; }
