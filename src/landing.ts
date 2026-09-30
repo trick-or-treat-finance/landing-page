@@ -45,8 +45,12 @@ function setStayText(on: boolean): void {
     const nm = $<HTMLElement>(".nm", li);
     const id = li.dataset.id ?? "";
     if (!nm) continue;
-    if (on) { nm.dataset.was = nm.textContent ?? ""; nm.textContent = stayTreat(id) ?? nm.textContent; }
-    else if (nm.dataset.was) nm.textContent = nm.dataset.was;
+    if (on) {
+      nm.dataset.was ??= nm.textContent ?? "";
+      const [name, tail] = (stayTreat(id) ?? nm.dataset.was).split(" · ");
+      nm.textContent = name;
+      if (tail) { const s = document.createElement("small"); s.className = "nto"; s.textContent = tail; nm.append(s); }
+    } else if (nm.dataset.was) nm.textContent = nm.dataset.was;
   }
 }
 
@@ -66,6 +70,7 @@ function settle(): void {
   for (const li of slots) { li.classList.toggle("gone", treat); li.classList.remove("flying"); }
   for (const t of $$<HTMLElement>(".tile", stage ?? document)) t.classList.toggle("landed", treat);
   stage?.classList.remove("armed");
+  stage?.classList.toggle("collapsed", treat);
   setStayText(treat);
 }
 
@@ -75,6 +80,7 @@ function setView(next: boolean): void {
   const still = reduced.matches;
   for (const a of running) a.cancel();
   running = [];
+  stage.classList.remove("collapsed");
   const plan = planFlip(SAMPLE_MONTH, basket, TREAT_CENTS, still);
   labels();
   stage.dataset.view = treat ? "treat" : "trick";
@@ -136,6 +142,7 @@ function setView(next: boolean): void {
   });
 
   if (treat) {
+    setTimeout(() => { if (treat) stage.classList.add("collapsed"); }, Math.max(landedBy, plan.stamp.startMs) + 60);
     setTimeout(() => { if (treat) setStayText(true); }, plan.stamp.startMs);
     const stamp = $<HTMLElement>(".stamp", stage);
     stamp?.animate(
