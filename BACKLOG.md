@@ -5,3 +5,6 @@
 - [ops] Dev server default port 5173 collides with the app's default sign-in URL port, vite.config.ts (worker-landing-initial, 2026-09-29)
 - [ci] Pages workflow runs build only; tests need a Chromium so are not run in CI, .github/workflows/pages.yml (worker-landing-golive, 2026-09-29)
 - [design] Hero JPEG background (#faf6ee-ish) shows a faint box edge against the page background at 1280; match the page colour or mask the edge, public/hero.jpg + src/style.css:58 (worker-landing-v1-fix, 2026-09-29)
+- [tooling] No coverage provider or fast-check installed (no network); add @vitest/coverage-v8 and fast-check as devDependencies and a coverage threshold, package.json:devDependencies (worker-landing-engine, 2026-09-29)
+- [design] Motion spec says lines "fan out on a 300 ms stagger"; engine reads it as a 300 ms window across all ownable lines (12 lines) not 300 ms per line, confirm, src/engine/flip.ts:FLIP.fanOutMs (worker-landing-engine, 2026-09-29)
+- [design] direction.html still shows the 5-category placeholder split and generic monogram tiles; replace with SAMPLE_MONTH and the 12 company tiles, direction.html:164-184 (worker-landing-engine, 2026-09-29)
