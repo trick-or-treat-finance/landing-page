@@ -153,4 +153,6 @@ img { max-width: 100%; }
 .site-footer { max-width: 1280px; margin: 56px auto 0; padding: 40px var(--gutter) 56px; border-top: 1px solid var(--line); display: flex; flex-direction: column; gap: 10px; }
 .site-footer p { margin: 0; font-size: 13px; line-height: 1.55; color: var(--muted); max-width: 880px; }
 .site-footer strong { color: var(--secondary); }
+.fp { display: flex; flex-direction: column; gap: 2px; margin-top: 6px; }
+.fp-h { margin: 0; font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--secondary); }
 .fine-h { margin: 0 0 4px; font-size: 15px; font-weight: 700; letter-spacing: -0.01em; color: var(--secondary); }

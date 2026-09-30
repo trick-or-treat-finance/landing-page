@@ -96,6 +96,30 @@ describe("links", () => {
   }
 });
 
+describe("index footer fine print", () => {
+  const html = () => readFileSync(join(out, "index.html"), "utf8");
+  const footer = () => html().split("<footer")[1]!.split("</footer>")[0]!;
+  const text = () => footer().replace(/<[^>]+>/g, " ").replace(/\s+/g, " ");
+
+  it("carries the removed 'Preview.' line word for word", () => {
+    expect(text()).toContain("Preview. The investing half is not built yet.");
+    expect(html().split("<footer")[0]).not.toContain("Preview. The investing half is not built yet.");
+  });
+  it("groups the fine print under 3-4 short labels", () => {
+    const labels = [...footer().matchAll(/<h3[^>]*class="fp-h"[^>]*>([^<]+)<\/h3>/g)].map((m) => m[1]!);
+    expect(labels.length).toBeGreaterThanOrEqual(3);
+    expect(labels.length).toBeLessThanOrEqual(4);
+    for (const l of labels) expect(l.length).toBeLessThanOrEqual(32);
+    expect((footer().match(/<p>/g) ?? []).length).toBe(labels.length);
+  });
+  it("says 'Sample month.', 'Not real data.' and 'Not investment advice.' once each", () => {
+    const t = text();
+    expect(t.match(/Sample month\./g)?.length).toBe(1);
+    expect(t.match(/Not real data\./g)?.length).toBe(1);
+    expect(t.match(/Not investment advice\./gi)?.length).toBe(1);
+  });
+});
+
 describe("responsive", () => {
   for (const p of PAGES) for (const w of WIDTHS) {
     it(`${p} has no horizontal overflow at ${w}px`, async () => {
