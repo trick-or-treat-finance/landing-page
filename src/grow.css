@@ -43,7 +43,6 @@
 .g-dot-val { fill: var(--g-line); stroke: var(--panel); stroke-width: 2; filter: var(--g-glow); }
 .g-dot-put { fill: var(--g-put); stroke: var(--panel); stroke-width: 2; }
 .g-line { margin-top: 14px; font: 700 clamp(19px, 2.2vw, 24px)/1.35 var(--hand); color: var(--ink); text-wrap: pretty; }
-.grow-dis { margin-top: 18px; font: 500 14px/1.5 var(--mono); color: var(--secondary); max-width: 90ch; }
 
 /* the first time it scrolls into view the lines draw themselves; never under reduced motion */
 @media (prefers-reduced-motion: no-preference) {

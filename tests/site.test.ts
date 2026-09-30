@@ -85,9 +85,13 @@ describe("links", () => {
     it(`${p}: no false claims, disclaimers present`, () => {
       const text = readFileSync(join(out, p), "utf8");
       expect(text).not.toMatch(/\bcannot\b|can't do|\bFree\b|Invest smarter|put one back|exactly the proportions/i);
-      expect(text).toContain("Not investment advice");
-      expect(text).toMatch(/Sample (data|month)/);
-      expect(text).toContain("not built yet");
+      const footer = text.split("<footer")[1]!.split("</footer>")[0]!;
+      expect(footer).toContain("the fine print");
+      expect(footer).toContain("Not investment advice");
+      expect(footer).toMatch(/Sample (data|month)/);
+      expect(footer).toContain("not built yet");
+      const body = text.split("<footer")[0]!.split("<main")[1]!;
+      expect(body).not.toMatch(/not affiliated|Trademarks? of their owners|Not investment advice\./i);
     });
   }
 });

@@ -48,7 +48,9 @@ describe("grow section in the browser", () => {
     const text = await page.locator("#grow").innerText();
     expect(text).toContain("$17,409.45");
     expect(text).toContain("$12,000.00");
-    expect(text).toContain("Illustration only. Example rate, not a prediction or a return for any company shown.");
+    expect(text).toContain("example rate, you pick it");
+    expect(text).not.toContain("Illustration only.");
+    expect(await page.innerText("footer.site-footer")).toContain("Illustration only. Example rate, not a prediction or a return for any company shown.");
     expect(await page.locator("#g-years").isDisabled()).toBe(true);
     await ctx.close();
   });

@@ -51,7 +51,6 @@ const WORDS = [
   "Warren Buffett", "chairman of Berkshire Hathaway",
   "You don't have to be an expert on every company, or even many. You only have to be able to evaluate companies within your circle of competence.",
   "Berkshire Hathaway shareholder letter, 1996", "translation: start with what you already understand, and skip the rest.",
-  "Quotes for inspiration. Not affiliated with or endorsed by Warren Buffett or Peter Lynch. Investing is the idea behind Trick or Treat, not something the app does today. Not investment advice.",
 ];
 const flat = (t: string) => t.replace(/\s+/g, " ");
 
@@ -83,7 +82,7 @@ describe("typewriter quotes", () => {
     for (const w of WORDS) expect(html, w).toContain(w.replace(/\u201c|\u201d/g, ""));
     const { ctx, page } = await open({ js: false });
     const t = flat(await page.locator(".duo-quotes").evaluate((e) => e.textContent ?? ""));
-    for (const w of WORDS.slice(0, -1)) expect(t, w).toContain(w);
+    for (const w of WORDS) expect(t, w).toContain(w);
     expect(await page.locator(".tw-layer").count()).toBe(0);
     expect(await page.locator(".duo-q p").evaluateAll((ps) => ps.every((p) => getComputedStyle(p).opacity === "1"))).toBe(true);
     await ctx.close();
@@ -248,7 +247,7 @@ describe("typewriter quotes", () => {
         };
         const bg = getComputedStyle(document.body).backgroundColor;
         const out: [string, number][] = [];
-        for (const sel of [".duo-who", ".duo-who > span", ".duo-idea", ".duo-line", ".duo-line-lg", ".duo-src", ".duo-tie", ".duo-note", ".tw-sound", ".tw-sound b"]) {
+        for (const sel of [".duo-who", ".duo-who > span", ".duo-idea", ".duo-line", ".duo-line-lg", ".duo-src", ".duo-tie", ".tw-sound", ".tw-sound b"]) {
           const el = document.querySelector(sel)!;
           const [a, b] = [lum(getComputedStyle(el).color), lum(bg)].sort((x, y) => y - x);
           out.push([sel, (a + 0.05) / (b + 0.05)]);
