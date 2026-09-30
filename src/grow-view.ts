@@ -123,6 +123,5 @@ export function growSection(i: GrowInput = GROW_DEFAULT): string {
     </div>
     <p class="sr" id="g-live" role="status"></p>
     <noscript><p class="nojs">JavaScript is off, so the controls sit still. The example above is ${growSummary(i, grow(i))}</p></noscript>
-    <p class="grow-dis">${GROW_DISCLAIMER} The investing half is not built yet.</p>
   </section>`;
 }

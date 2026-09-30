@@ -85,11 +85,45 @@ describe("links", () => {
     it(`${p}: no false claims, disclaimers present`, () => {
       const text = readFileSync(join(out, p), "utf8");
       expect(text).not.toMatch(/\bcannot\b|can't do|\bFree\b|Invest smarter|put one back|exactly the proportions/i);
-      expect(text).toContain("Not investment advice");
-      expect(text).toMatch(/Sample (data|month)/);
-      expect(text).toContain("not built yet");
+      const footer = text.split("<footer")[1]!.split("</footer>")[0]!;
+      expect(footer).toContain("the fine print");
+      expect(footer).toContain("Not investment advice");
+      expect(footer).toMatch(/Sample (data|month)/);
+      expect(footer).toContain("not built yet");
+      const body = text.split("<footer")[0]!.split("<main")[1]!;
+      expect(body).not.toMatch(/not affiliated|Trademarks? of their owners|Not investment advice\./i);
     });
   }
+});
+
+describe("index footer fine print", () => {
+  const html = () => readFileSync(join(out, "index.html"), "utf8");
+  const footer = () => html().split("<footer")[1]!.split("</footer>")[0]!;
+  const text = () => footer().replace(/<[^>]+>/g, " ").replace(/\s+/g, " ");
+
+  it("carries the removed 'Preview.' line word for word", () => {
+    expect(text()).toContain("Preview. The investing half is not built yet.");
+    expect(html().split("<footer")[0]).not.toContain("Preview. The investing half is not built yet.");
+  });
+  it("groups the fine print under 3-4 short labels", () => {
+    const labels = [...footer().matchAll(/<h3[^>]*class="fp-h"[^>]*>([^<]+)<\/h3>/g)].map((m) => m[1]!);
+    expect(labels.length).toBeGreaterThanOrEqual(3);
+    expect(labels.length).toBeLessThanOrEqual(4);
+    for (const l of labels) expect(l.length).toBeLessThanOrEqual(32);
+    expect((footer().match(/<p>/g) ?? []).length).toBe(labels.length);
+  });
+  it("says each fact once: sample month, no storage, not built yet, risk, advice, trademarks", () => {
+    const t = text();
+    for (const re of [/not built yet/gi, /stores? nothing|nothing is stored/gi, /made-up/gi, /can lose money/gi, /not affiliated with or endorsed by Warren/gi, /trademarks of their owners/gi, /a preview/gi]) {
+      expect(t.match(re)?.length, String(re)).toBe(1);
+    }
+    expect(t).toContain("Nothing leaves this browser and nothing is stored");
+    expect(t).toContain("a made-up month that runs in this tab");
+    expect(t).toContain("Connecting a bank shares transactions with Trick or Treat through Plaid. Disconnect any time; your data for that bank is deleted after Plaid confirms.");
+    expect(t.match(/Sample month\./g)?.length).toBe(1);
+    expect(t.match(/Not real data\./g)?.length).toBe(1);
+    expect(t.match(/Not investment advice\./gi)?.length).toBe(1);
+  });
 });
 
 describe("responsive", () => {

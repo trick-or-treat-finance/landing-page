@@ -1,3 +1,5 @@
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { GROW_DEFAULT, grow } from "../src/engine";
 import { axisMoney, GROW_DISCLAIMER, growChart, growLine, growOutput, growSection } from "../src/grow-view";
@@ -10,12 +12,15 @@ describe("grow view", () => {
     expect(html).toContain('id="g-years"');
     expect(html).toContain("example rate, you pick it");
   });
-  it("carries the required disclaimer and keeps the investing half unbuilt", () => {
-    expect(html).toContain(GROW_DISCLAIMER);
+  it("keeps the disclaimer out of the section: it lives, verbatim, in the footer of index.html", () => {
+    expect(html).not.toContain(GROW_DISCLAIMER);
+    expect(html).not.toContain("grow-dis");
+    const footer = readFileSync(join(__dirname, "..", "index.html"), "utf8").split("<footer")[1]!.split("</footer>")[0]!;
+    expect(footer).toContain(GROW_DISCLAIMER);
+    expect(footer.match(/not built yet/g)?.length).toBe(1);
     expect(GROW_DISCLAIMER).toBe(
       "Illustration only. Example rate, not a prediction or a return for any company shown. Investing can lose money. Not investment advice.",
     );
-    expect(html).toContain("The investing half is not built yet.");
   });
   it("never says will, names a company, or quotes a ticker", () => {
     const text = html.replace(/<[^>]+>/g, " ");

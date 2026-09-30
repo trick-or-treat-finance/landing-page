@@ -55,6 +55,34 @@ describe("requests", () => {
   });
 });
 
+describe("margin note n1", () => {
+  it("points at the Apple line in Trick view and is gone in Treat view", async () => {
+    const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+    await page.goto(base, { waitUntil: "networkidle" });
+    expect(await page.locator(".margin .n1").isVisible()).toBe(true);
+    await page.click("#sw");
+    await page.waitForTimeout(1500);
+    expect(await page.locator(".margin .n1").isVisible()).toBe(false);
+    expect(await page.locator(".margin .n2").isVisible()).toBe(true);
+    expect(await page.locator(".margin .n5").isVisible()).toBe(false);
+    await page.click("#sw");
+    await page.waitForTimeout(1500);
+    expect(await page.locator(".margin .n1").isVisible()).toBe(true);
+    expect(await page.locator(".margin .n5").isVisible()).toBe(true);
+    await page.close();
+  });
+
+  it("keeps the iPhone note n5 with the Apple line: shown in Trick view, hidden in Treat view, on a phone too", async () => {
+    const page = await browser.newPage({ viewport: { width: 375, height: 800 } });
+    await page.goto(base, { waitUntil: "networkidle" });
+    expect(await page.locator(".margin .n5").isVisible()).toBe(true);
+    await page.click("#sw");
+    await page.waitForTimeout(1500);
+    expect(await page.locator(".margin .n5").isVisible()).toBe(false);
+    await page.close();
+  });
+});
+
 describe("no JS", () => {
   it("still shows the receipt, every tile and the slip reasons", async () => {
     const ctx = await browser.newContext({ javaScriptEnabled: false });
@@ -156,7 +184,7 @@ describe("overlap", () => {
         };
         const q = (s: string) => document.querySelector(s);
         return {
-          stamp: box(q(".stamp")), total: box(q("#total")), note: box(q(".logos-note")),
+          stamp: box(q(".stamp")), total: box(q("#total")), note: box(q(".site-footer")),
           heading: box(q(".t-h")), notes: box(q(".treat-notes")), ghost: box(q(".ghost-spot")),
         };
       });
@@ -200,13 +228,16 @@ describe("buffett + lynch section", () => {
     expect(m.loading).toBe("eager");
     expect(m.src).toMatch(/\.avif$/);
   });
-  it("carries the attributions, the not-affiliated line and no unverified quote", async () => {
+  it("carries the attributions and no unverified quote; the not-affiliated line lives in the footer", async () => {
     const ctx = await browser.newContext({ javaScriptEnabled: false });
     const page = await ctx.newPage();
     await page.goto(base);
     const text = await page.innerText(".duo");
+    const fine = await page.innerText("footer.site-footer");
     await ctx.close();
-    expect(text).toContain("Quotes for inspiration. Not affiliated with or endorsed by Warren Buffett or Peter Lynch.");
+    expect(text).not.toMatch(/affiliated|investment advice/i);
+    expect(fine).toContain("the fine print");
+    expect(fine).toContain("Quotes for inspiration. Not affiliated with or endorsed by Warren Buffett or Peter Lynch.");
     expect(text).toContain("Berkshire Hathaway shareholder letter, 1996");
     expect(text).toContain("You only have to be able to evaluate companies within your circle of competence.");
     expect(text).toContain("One Up on Wall Street");
@@ -226,7 +257,7 @@ describe("buffett + lynch section", () => {
           return "rgb(255, 255, 255)";
         };
         const de = document.documentElement;
-        const text = [...document.querySelectorAll(".duo-q p, .duo-lede, .duo-note, .duo-title")].map((e) => ({
+        const text = [...document.querySelectorAll(".duo-q p, .duo-lede, .duo-title")].map((e) => ({
           fg: getComputedStyle(e).color, bg: bg(e), t: e.className,
         }));
         return { l: img.left, r: img.right, w: img.width, h: img.height, vw: de.clientWidth, text };
