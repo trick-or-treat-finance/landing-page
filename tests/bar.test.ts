@@ -208,24 +208,24 @@ const ratio = (a: number[], b: number[]): number => {
 const rgbOf = (css: string): number[] => (css.match(/[\d.]+/g) ?? []).slice(0, 3).map(Number);
 
 describe("buffett + lynch section", () => {
-  it("sits directly under the header and above the hero, with alt naming both men and a set size", async () => {
+  it("sits below the hero and the grow card as a credibility beat, with alt naming both men and a set size", async () => {
     const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
     await page.goto(base, { waitUntil: "networkidle" });
     const m = await page.evaluate(() => {
       const duo = document.querySelector(".duo")!.getBoundingClientRect();
       const hero = document.querySelector(".hero")!.getBoundingClientRect();
-      const head = document.querySelector(".site-header")!.getBoundingClientRect();
+      const grow = document.querySelector("#grow, .grow")!.getBoundingClientRect();
       const img = document.querySelector<HTMLImageElement>(".duo-img")!;
-      return { duo: duo.top, hero: hero.top, headBottom: head.bottom, alt: img.alt, w: img.getAttribute("width"), h: img.getAttribute("height"), loading: img.loading, src: img.currentSrc };
+      return { duo: duo.top, hero: hero.top, growBottom: grow.bottom, alt: img.alt, w: img.getAttribute("width"), h: img.getAttribute("height"), loading: img.loading, src: img.currentSrc };
     });
     await page.close();
-    expect(m.duo).toBeGreaterThanOrEqual(m.headBottom - 1);
-    expect(m.duo).toBeLessThan(m.hero);
+    expect(m.duo).toBeGreaterThanOrEqual(m.growBottom - 1);
+    expect(m.duo).toBeGreaterThan(m.hero);
     expect(m.alt).toMatch(/Peter Lynch/);
     expect(m.alt).toMatch(/Warren Buffett/);
     expect(m.w).toBe("1697");
     expect(m.h).toBe("927");
-    expect(m.loading).toBe("eager");
+    expect(m.loading).toBe("lazy");
     expect(m.src).toMatch(/\.avif$/);
   });
   it("carries the attributions and no unverified quote; the not-affiliated line lives in the footer", async () => {

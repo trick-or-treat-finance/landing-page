@@ -25,3 +25,4 @@
 - [design] Margin notes are hidden at 1100px and below (src/landing.css:302), so on phones the new iPhone joke (.n5) never shows; consider a short inline caption under the Apple line, index.html:99 (worker-landing-realistic, 2026-09-30)
 - [design] direction.html still shows the old sample lines and Tesla tile; regenerate from SAMPLE_MONTH, direction.html (worker-landing-realistic, 2026-09-30)
 - [a11y] disabled radio inputs in grow card are 18x18 (label is the tap area); verify label hit area is >=44px, src/grow-view.ts:106 (worker-landing-responsive-2, 2026-09-30)
+- [copy] "even the OGs agree" beat still leads with Lynch's idea at 36px; consider demoting .duo-idea now it is a mid-page beat, index.html:~150 (worker-landing-genz-story, 2026-09-30)
