@@ -105,27 +105,33 @@ export function typewriter(targets: HTMLElement[], hooks: Hooks = {}, rand: Rand
 
   const sleep = (ms: number): Promise<void> => new Promise((r) => { timer = window.setTimeout(r, ms); });
 
+  // Whatever happens (a throwing hook, an unexpected error), the real text ends up shown.
   const run = async (): Promise<void> => {
-    for (const { blocks } of layers) {
-      for (const block of blocks) {
-        const beats = rhythm(block.map((c) => c.textContent).join(""), rand);
-        for (let i = 0; i < block.length; i++) {
-          if (done) return;
-          if (paused) await new Promise<void>((r) => (resume = r));
-          if (done) return;
-          await sleep(beats[i].wait);
-          if (done) return;
-          block[i].classList.add("on");
-          block[i].after(caret);
-          hooks.key?.(beats[i].key);
+    try {
+      for (const { blocks } of layers) {
+        for (const block of blocks) {
+          const beats = rhythm(block.map((c) => c.textContent).join(""), rand);
+          for (let i = 0; i < block.length; i++) {
+            if (done) return;
+            if (paused) await new Promise<void>((r) => (resume = r));
+            if (done) return;
+            await sleep(beats[i].wait);
+            if (done) return;
+            block[i].classList.add("on");
+            block[i].after(caret);
+            hooks.key?.(beats[i].key);
+          }
+          hooks.line?.();
+          await sleep(BLOCK_PAUSE);
         }
-        hooks.line?.();
-        await sleep(BLOCK_PAUSE);
+        hooks.target?.();
+        await sleep(BETWEEN_TARGETS - BLOCK_PAUSE);
       }
-      hooks.target?.();
-      await sleep(BETWEEN_TARGETS - BLOCK_PAUSE);
+    } catch {
+      // a failing hook only costs the rest of the animation
+    } finally {
+      finish();
     }
-    finish();
   };
 
   // The caret rests at the start of the first block before typing begins.
