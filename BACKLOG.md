@@ -16,3 +16,4 @@
 - [design] Receipt has a ~230px empty run of dashed slots in Treat view; the stamp now sits in it at top:150px, so it depends on the first 9 lines flying away, src/landing.css:129 (worker-landing-fix2, 2026-09-29)
 - [design] about.html has no dark mode and keeps rule-heavy sections (.line/.limits/.closer borders) and a dark panel; give it the same white/quiet treatment, src/style.css:60-110 (worker-landing-clean, 2026-09-29)
 - [assets] og.jpg is ~420 KB (sips ignores JPEG quality); recompress with a real encoder, public/og.jpg (worker-landing-clean, 2026-09-29)
+- [tooling] gstack /browse cannot run here: no bun on PATH and no Aside; shots taken with playwright-core + Chromium instead, scripts/screenshots.mjs could cover the v3 set, tests/ (worker-landing-v3, 2026-09-29)

@@ -29,19 +29,30 @@ img { max-width: 100%; }
 .eyebrow { font-size: 13px; font-weight: 700; letter-spacing: 0.14em; color: var(--muted); }
 
 /* header */
-.site-header { background: var(--ground); }
-.site-header-inner { max-width: 1280px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 20px var(--gutter); }
-.brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--ink); }
+.site-header { background: var(--ground); position: sticky; top: 0; z-index: 10; }
+.site-header-inner { max-width: 1280px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px var(--gutter); }
+.brand { display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--ink); flex-shrink: 0; }
 .brand:hover { color: var(--ink); }
-.home .wordmark { font-size: 22px; }
-.about .wordmark { font-size: 25px; }
-.about .brand { gap: 10px; }
-.site-nav { display: flex; align-items: center; gap: 30px; }
-.about .site-nav { gap: 28px; }
-.nav-link { font-size: 15px; color: var(--secondary); text-decoration: none; font-weight: 500; }
-.nav-link.is-current { color: var(--ink); font-weight: 600; border-bottom: 2px solid var(--primary); padding-bottom: 2px; }
-.nav-signin { font-size: 15px; color: var(--ink); text-decoration: none; font-weight: 600; }
-.nav-signin-outlined { border: 1px solid var(--line-strong); border-radius: 3px; padding: 9px 18px; }
+.brand .mark { width: 44px; height: 44px; border-radius: 12px; transform: rotate(-4deg); transition: transform 180ms ease-out; box-shadow: 0 3px 0 rgba(10, 15, 13, 0.12); }
+.brand:hover .mark { transform: rotate(3deg) scale(1.05); }
+.home .wordmark, .about .wordmark { font-size: 26px; line-height: 1; white-space: nowrap; }
+.site-nav { display: flex; align-items: center; gap: 10px; }
+.nav-link { font-size: 15px; font-weight: 700; color: var(--ink); text-decoration: none; padding: 8px 14px; border: 1.5px solid var(--line-strong); border-radius: 999px; background: var(--ground); box-shadow: 0 2px 0 var(--line-strong); transform: rotate(var(--tilt, 0deg)); transition: transform 160ms ease-out, background 160ms, box-shadow 160ms; }
+.nav-link:nth-of-type(odd) { --tilt: -1.5deg; }
+.nav-link:nth-of-type(even) { --tilt: 1.2deg; }
+.nav-link:hover { background: var(--pill-hover, #eaf6ee); box-shadow: 0 2px 0 var(--primary); border-color: var(--primary); animation: wiggle 320ms ease-in-out 1; }
+.nav-link.is-current { background: var(--pill-hover, #eaf6ee); border-color: var(--primary); box-shadow: 0 2px 0 var(--primary); }
+.nav-signin { font-size: 15px; font-weight: 800; color: #fff; background: var(--primary); text-decoration: none; padding: 10px 18px; border-radius: 999px; box-shadow: 0 3px 0 #0e4a2b; white-space: nowrap; transform: rotate(1.5deg); cursor: default; }
+.nav-signin-outlined { }
+@keyframes wiggle { 0%, 100% { transform: rotate(var(--tilt, 0deg)); } 30% { transform: rotate(calc(var(--tilt, 0deg) - 3deg)); } 65% { transform: rotate(calc(var(--tilt, 0deg) + 3deg)); } }
+@media (prefers-reduced-motion: reduce) { .nav-link:hover { animation: none; } .brand .mark { transition: none; } }
+@media (max-width: 860px) {
+  .site-header-inner { padding-inline: 20px; }
+  .nav-link { display: none; }
+  .site-nav { gap: 10px; }
+}
+@media (max-width: 860px) and (min-width: 561px) { .nav-link { display: inline-block; padding: 7px 11px; font-size: 14px; } }
+@media (max-width: 420px) { .site-header-inner { padding-inline: 14px; gap: 6px; } .brand .mark { width: 34px; height: 34px; border-radius: 10px; } .home .wordmark, .about .wordmark { font-size: 19px; } .brand { gap: 8px; } .site-nav { gap: 4px; } .nav-signin { padding: 8px 12px; font-size: 13.5px; } .theme { min-width: 52px; } .theme-track { width: 52px !important; } .theme[aria-checked="true"] .theme-knob { transform: translateX(20px) !important; } }
 
 /* buttons */
 .btn { display: inline-flex; align-items: center; gap: 10px; background: var(--primary); color: #fff; text-decoration: none; font-size: 16.5px; font-weight: 650; padding: 14px 30px; border-radius: 999px; min-height: 48px; }
@@ -128,11 +139,7 @@ img { max-width: 100%; }
 /* phone */
 @media (max-width: 560px) {
   :root { --gutter: 20px; }
-  .site-header-inner { flex-wrap: wrap; row-gap: 12px; }
-  .site-nav, .about .site-nav { gap: 16px; flex-wrap: wrap; }
-  .nav-link, .nav-signin { font-size: 14px; }
-  .nav-signin-outlined { padding: 7px 12px; }
-  .home .wordmark, .about .wordmark { font-size: 22px; }
+  .site-nav, .about .site-nav { gap: 10px; }
   .panel { padding: 24px 20px; }
   .h2-small { font-size: 26px; }
   .h2-big { font-size: 26px; }
