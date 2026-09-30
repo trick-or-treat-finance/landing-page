@@ -4,42 +4,49 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>trick or treat — home</title>
-<meta name="description" content="Invest in what you spend. First as what it cost you, then as what that same spending would buy you." />
+<meta name="description" content="Your month of spending, added up honestly. An investing preview is coming later." />
 <link rel="icon" type="image/png" href="/favicon.png" />
+<meta property="og:type" content="website" />
+<meta property="og:title" content="Trick or Treat" />
+<meta property="og:description" content="Your month of spending, added up honestly. An investing preview is coming later." />
+<meta property="og:image" content="https://trick-or-treat-finance.github.io/landing-page/og.jpg" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta name="twitter:card" content="summary_large_image" />
 <script type="module" src="/src/main.ts"></script>
 </head>
 <body class="home">
 <header class="site-header">
   <div class="site-header-inner">
-    <a class="brand" href="/">
+    <a class="brand" href="./">
       <img class="ghost" src="/ghost.png" width="23" height="28" alt="" />
       <span class="wordmark">trick <span class="or">or</span> treat</span>
     </a>
     <nav class="site-nav" aria-label="Main">
-      <a class="nav-link" href="/about.html#how">How it works</a>
-      <a class="nav-link" href="/about.html#limits">What it can't do</a>
-      <a class="nav-signin" href="%APP_URL%" data-app-link>Sign in</a>
+      <a class="nav-link" href="about.html#how">How it works</a>
+      <a class="nav-link" href="about.html#limits">What it doesn't do</a>
+      <span class="nav-signin" aria-disabled="true">Coming soon</span>
     </nav>
   </div>
 </header>
 <main>
   <section class="hero">
     <div class="hero-copy">
-      <h1 class="hero-title">Invest in what you spend</h1>
-      <p class="hero-lede">First as what it cost you. Then as what that same spending would buy you. Same purchases, same weights, two very different feelings.</p>
+      <h1 class="hero-title">Read what you spend</h1>
+      <p class="hero-lede">Today: your month of spending, added up honestly. Later: a preview of what that same spending could map to. The investing half is not built yet.</p>
       <div class="hero-cta">
-        <a class="btn" href="%APP_URL%" data-app-link>See your month<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></a>
-        <span class="hero-free">Free</span>
+        <span class="btn btn-soon" aria-disabled="true">Coming soon</span>
       </div>
     </div>
-    <img class="hero-art" src="/hero.jpg" width="760" height="560" alt="The trick or treat ghost, carrying a bank in its backpack, between a row of spending cards and a row of company stock tiles" />
+    <img class="hero-art" src="/hero.jpg" width="760" height="545" alt="The trick or treat ghost, carrying a bank in its backpack, next to a stack of spending cards" />
   </section>
 
   <section class="reading">
     <div class="eyebrow">THE SAME SEVEN BARS, READ TWICE</div>
+    <p class="sample-note">Sample month. Not real data. The right-hand reading is a preview: it is not built yet.</p>
     <div class="reading-cols">
       <div class="reading-col reading-col-cost">
-        <div class="reading-head"><span class="reading-name">What September cost</span><span class="reading-total">$4,812.63</span></div>
+        <div class="reading-head"><span class="reading-name">What a sample September cost</span><span class="reading-total">$4,812.63</span></div>
         <div class="bars">
           <div class="bar"><span class="bar-label">Amazon</span><span class="bar-track bar-track-cost"><span class="bar-fill bar-fill-cost" style="--w: 100%" aria-hidden="true"></span></span><span class="bar-value">$710.73</span></div>
           <div class="bar"><span class="bar-label">Apple</span><span class="bar-track bar-track-cost"><span class="bar-fill bar-fill-cost" style="--w: 42.1%" aria-hidden="true"></span></span><span class="bar-value">$299.00</span></div>
@@ -52,7 +59,7 @@
       </div>
       <div class="reading-rule" aria-hidden="true"></div>
       <div class="reading-col reading-col-buy">
-        <div class="reading-head"><span class="reading-name">What $100 a month buys</span><span class="reading-total reading-total-buy">$100.00</span></div>
+        <div class="reading-head"><span class="reading-name">Preview: $100 in proportion</span><span class="reading-total reading-total-buy">$100.00</span></div>
         <div class="bars">
           <div class="bar"><span class="bar-label bar-ticker">AMZN</span><span class="bar-track"><span class="bar-fill bar-fill-buy" style="--w: 100%" aria-hidden="true"></span></span><span class="bar-value bar-value-buy">$38.71</span></div>
           <div class="bar"><span class="bar-label bar-ticker">AAPL</span><span class="bar-track"><span class="bar-fill bar-fill-buy" style="--w: 42.1%" aria-hidden="true"></span></span><span class="bar-value bar-value-buy">$16.29</span></div>
@@ -67,10 +74,16 @@
   </section>
 
   <section class="pillars">
-    <div class="pillar"><h2 class="pillar-title">Connect banks.</h2><p>Several banks and all their cards, pooled into one picture. The connection asks for transaction history and nothing else — it cannot move a cent, in either half.</p></div>
-    <div class="pillar"><h2 class="pillar-title">Track spending.</h2><p>Your own purchases added up, with the money you moved between your own accounts taken back out. If the number surprises you, that is the number doing it.</p></div>
-    <div class="pillar"><h2 class="pillar-title">Invest smarter.</h2><p>Sized from evidence rather than a hunch: the same weights you just checked, shown in full before anything is bought. Not a claim about returns.</p></div>
+    <div class="pillar"><h2 class="pillar-title">Connect banks.</h2><p>Several banks and all their cards, pooled into one picture. Trick or Treat asks Plaid for transactions only, and has no code that moves money.</p></div>
+    <div class="pillar"><h2 class="pillar-title">Track spending.</h2><p>Your own purchases added up, with the money you moved between your own accounts taken back out. If the number surprises you, that is the number doing it. It can be wrong: pending charges move, and matching your own transfers is our inference.</p></div>
+    <div class="pillar"><h2 class="pillar-title">Investing comes later.</h2><p>The investing half is not built yet; the bars above are a preview using the same sample weights. Not investment advice, and not a claim about returns.</p></div>
   </section>
 </main>
+<footer class="site-footer">
+  <p><strong>Sample data.</strong> Every receipt, total and figure on this page is a sample month, not real data.</p>
+  <p><strong>The investing half is not available yet.</strong> The spending half is being built. The investing half is not built yet; what you see of it is a preview, and there is no way to buy anything.</p>
+  <p><strong>Not investment advice.</strong> Trick or Treat shows an illustration of how spending could map to companies. It is not investment advice, a recommendation, or an offer to buy or sell any security. Investing carries risk, including loss of principal. Nothing here is a claim about returns.</p>
+  <p>Company names are trademarks of their owners. Trick or Treat is not affiliated with or endorsed by any company shown.</p>
+</footer>
 </body>
 </html>

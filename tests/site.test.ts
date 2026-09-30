@@ -6,7 +6,7 @@ import { extname, join, normalize } from "node:path";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { chromium, type Browser } from "playwright-core";
 
-const APP_URL = "https://app.example.test/signin";
+const BASE = "/landing-page/";
 const PAGES = ["index.html", "about.html"];
 const WIDTHS = [375, 768, 1280, 1920];
 const out = mkdtempSync(join(tmpdir(), "tot-landing-"));
@@ -19,7 +19,9 @@ const TYPES: Record<string, string> = {
 function serve(root: string): Promise<{ server: Server; base: string }> {
   const server = createServer((req, res) => {
     const path = normalize(decodeURIComponent((req.url ?? "/").split(/[?#]/)[0]));
-    const file = join(root, path.endsWith("/") ? path + "index.html" : path);
+    const rel = path.startsWith(BASE) ? path.slice(BASE.length - 1) : null;
+    if (rel === null) { res.writeHead(404).end(); return; }
+    const file = join(root, rel.endsWith("/") ? rel + "index.html" : rel);
     if (!file.startsWith(root) || !existsSync(file)) { res.writeHead(404).end(); return; }
     res.writeHead(200, { "content-type": TYPES[extname(file)] ?? "application/octet-stream" }).end(readFileSync(file));
   });
@@ -33,7 +35,7 @@ let server: Server, base: string, browser: Browser;
 
 beforeAll(async () => {
   execFileSync("npx", ["vite", "build", "--outDir", out, "--emptyOutDir"], {
-    env: { ...process.env, VITE_APP_URL: APP_URL }, stdio: "pipe",
+    stdio: "pipe",
   });
   ({ server, base } = await serve(out));
   browser = await chromium.launch({ executablePath: process.env.CHROMIUM_PATH });
@@ -56,35 +58,45 @@ describe("build", () => {
 
 describe("links", () => {
   for (const p of PAGES) {
-    it(`${p}: internal links and anchors resolve, app links use the config value`, () => {
+    it(`${p}: internal links, anchors and assets resolve under ${BASE}; no app or external links`, () => {
       const html = readFileSync(join(out, p), "utf8");
       const hrefs = [...html.matchAll(/(?:href|src)="([^"]+)"/g)].map((m) => m[1]);
-      expect(html).not.toContain("%APP_URL%");
+      expect(html).not.toContain("localhost");
       for (const h of hrefs) {
-        if (h.startsWith("http")) { expect(h, h).toBe(APP_URL); continue; }
+        expect(h.startsWith("http"), h).toBe(false);
         const [path, hash] = h.split("#");
-        const file = join(out, path === "" ? p : path === "/" ? "index.html" : path);
+        const rel = path.startsWith(BASE) ? path.slice(BASE.length) : path;
+        const file = join(out, rel === "" || rel === "./" ? (path === "" ? p : "index.html") : rel);
         expect(existsSync(file), h).toBe(true);
         if (hash) expect(readFileSync(file, "utf8"), h).toContain(`id="${hash}"`);
       }
-      const appLinks = [...html.matchAll(/<a[^>]*data-app-link[^>]*>/g)];
-      expect(appLinks.length).toBeGreaterThan(0);
-      for (const a of appLinks) expect(a[0]).toContain(`href="${APP_URL}"`);
+    });
+    it(`${p}: sign-in is 'Coming soon', not a link`, () => {
+      const html = readFileSync(join(out, p), "utf8");
+      expect(html).toMatch(/<span class="nav-signin[^"]*"[^>]*>Coming soon<\/span>/);
+      expect(html).not.toMatch(/<a[^>]*>\s*(Sign in|See your month)/);
+    });
+    it(`${p}: favicon and og:image are set`, () => {
+      const html = readFileSync(join(out, p), "utf8");
+      expect(html).toContain(`href="${BASE}favicon.png"`);
+      expect(html).toContain('property="og:image" content="https://trick-or-treat-finance.github.io/landing-page/og.jpg"');
+      expect(existsSync(join(out, "og.jpg"))).toBe(true);
+    });
+    it(`${p}: no false claims, disclaimers present`, () => {
+      const text = readFileSync(join(out, p), "utf8");
+      expect(text).not.toMatch(/\bcannot\b|can't do|\bFree\b|Invest smarter|put one back|exactly the proportions/i);
+      expect(text).toContain("Not investment advice");
+      expect(text).toContain("Sample data");
+      expect(text).toContain("not built yet");
     });
   }
-  it("defaults to the local app URL when unset", () => {
-    const o2 = mkdtempSync(join(tmpdir(), "tot-landing-def-"));
-    const env = { ...process.env }; delete env.VITE_APP_URL;
-    execFileSync("npx", ["vite", "build", "--outDir", o2, "--emptyOutDir"], { env, stdio: "pipe" });
-    expect(readFileSync(join(o2, "index.html"), "utf8")).toContain('href="http://localhost:5173/signin"');
-  }, 60_000);
 });
 
 describe("responsive", () => {
   for (const p of PAGES) for (const w of WIDTHS) {
     it(`${p} has no horizontal overflow at ${w}px`, async () => {
       const page = await browser.newPage({ viewport: { width: w, height: 900 } });
-      await page.goto(`${base}/${p}`, { waitUntil: "networkidle" });
+      await page.goto(`${base}${BASE}${p}`, { waitUntil: "networkidle" });
       const m = await page.evaluate(() => {
         const de = document.documentElement;
         const offenders = [...document.querySelectorAll("body *")]

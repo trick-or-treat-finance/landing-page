@@ -1,20 +1,10 @@
 import { resolve } from "node:path";
-import { defineConfig, type Plugin } from "vite";
+import { defineConfig } from "vite";
 
-// The one config value: where "Sign in" and "See your month" go.
-// Set VITE_APP_URL at build time; the default targets the local app.
-export const DEFAULT_APP_URL = "http://localhost:5173/signin";
-
-function appUrl(): Plugin {
-  const url = process.env.VITE_APP_URL || DEFAULT_APP_URL;
-  return {
-    name: "app-url",
-    transformIndexHtml: (html) => html.replaceAll("%APP_URL%", url),
-  };
-}
-
+// Served from https://trick-or-treat-finance.github.io/landing-page/ (GitHub Pages).
+// Page links are relative; this base prefixes assets and public files.
 export default defineConfig({
-  plugins: [appUrl()],
+  base: "/landing-page/",
   build: {
     rollupOptions: {
       input: {

@@ -11,7 +11,7 @@ const outDir = resolve(process.argv[2] ?? "shots");
 mkdirSync(outDir, { recursive: true });
 const T = { ".html": "text/html", ".css": "text/css", ".js": "text/javascript", ".png": "image/png", ".jpg": "image/jpeg", ".woff2": "font/woff2", ".woff": "font/woff" };
 const server = createServer((req, res) => {
-  const f = join(dist, req.url.split(/[?#]/)[0].replace(/\/$/, "/index.html"));
+  const f = join(dist, req.url.split(/[?#]/)[0].replace("/landing-page", "").replace(/\/$/, "/index.html"));
   if (!f.startsWith(dist) || !existsSync(f)) return res.writeHead(404).end();
   res.writeHead(200, { "content-type": T[extname(f)] ?? "application/octet-stream" }).end(readFileSync(f));
 });
@@ -21,7 +21,7 @@ const browser = await chromium.launch({ executablePath: process.env.CHROMIUM_PAT
 for (const [name, path] of [["home", "index.html"], ["about", "about.html"]])
   for (const w of [375, 768, 1280, 1920]) {
     const page = await browser.newPage({ viewport: { width: w, height: 900 } });
-    await page.goto(`${base}/${path}`, { waitUntil: "networkidle" });
+    await page.goto(`${base}/landing-page/${path}`, { waitUntil: "networkidle" });
     await page.screenshot({ path: join(outDir, `${name}-${w}.png`), fullPage: true });
     await page.close();
   }

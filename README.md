@@ -1,6 +1,6 @@
 # trick or treat — landing page
 
-Static marketing site (Vite + TypeScript, no UI framework): `index.html` (landing) and `about.html` (how it works / what it can't do). Built to the owner's boards `Home.dc.html` and `About.dc.html`. Fonts (Geist, Nunito 800) are bundled locally; no trackers, analytics or third-party requests.
+Static marketing site (Vite + TypeScript, no UI framework): `index.html` (landing) and `about.html` (how it works / what it doesn't do). Built to the owner's boards `Home.dc.html` and `About.dc.html`. Fonts (Geist, Nunito 800) are bundled locally; no trackers, analytics or third-party requests.
 
 ## Run
 
@@ -14,13 +14,17 @@ npm run shots      # after build: full-page screenshots into ./shots
 
 ## Config
 
-One value: `VITE_APP_URL`, the target of every "Sign in" / "See your month" link (default `http://localhost:5173/signin`). Set at build time, see `.env.example`.
+No config. The Vite `base` is `/landing-page/` (GitHub Pages project URL), so use `http://localhost:5173/landing-page/` in dev. "Sign in" and "See your month" read "Coming soon" until the app is public; there is no link to the app.
+
+## Deploy
+
+`.github/workflows/pages.yml` builds and deploys to GitHub Pages on push to `main`. Actions are pinned to full commit SHAs.
 
 ## Docker
 
 ```sh
-docker build --build-arg VITE_APP_URL=https://app.example.com/signin -t tot-landing .
-docker run --rm -p 8080:80 tot-landing
+docker build -t tot-landing .
+docker run --rm -p 8080:80 tot-landing   # http://localhost:8080/landing-page/
 ```
 
 ## Tests

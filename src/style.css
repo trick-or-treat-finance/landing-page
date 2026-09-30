@@ -196,3 +196,12 @@ img { max-width: 100%; }
   .h2-big { font-size: 26px; }
   .btn { width: 100%; justify-content: center; }
 }
+
+/* coming-soon placeholders, sample note, footer */
+.nav-signin, .btn-soon { cursor: default; }
+.btn-soon { background: transparent; color: var(--muted); border: 1px dashed var(--line-strong); }
+.nav-signin { color: var(--muted); }
+.sample-note { margin: 0; font-size: 14px; color: var(--muted); text-align: center; }
+.site-footer { max-width: 1280px; margin: 56px auto 0; padding: 28px var(--gutter) 40px; border-top: 1px solid var(--line); display: flex; flex-direction: column; gap: 10px; }
+.site-footer p { margin: 0; font-size: 13px; line-height: 1.55; color: var(--muted); max-width: 880px; }
+.site-footer strong { color: var(--secondary); }
