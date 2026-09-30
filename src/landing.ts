@@ -324,12 +324,15 @@ if (new Date().getMonth() === 9 || /[?&]october\b/.test(location.search)) {
   if (quotes.length && !reduced.matches && "IntersectionObserver" in window) {
     const audio = typeAudio();
     const state = $<HTMLElement>("#tw-state");
+    const paintSound = (): void => {
+      soundBtn?.setAttribute("aria-pressed", String(audio.on));
+      if (state) state.textContent = audio.on ? "on" : "off";
+    };
     if (soundBtn) {
       soundBtn.hidden = false;
       soundBtn.addEventListener("click", () => {
         if (audio.on) audio.disable(); else audio.enable();
-        soundBtn.setAttribute("aria-pressed", String(audio.on));
-        if (state) state.textContent = audio.on ? "on" : "off";
+        paintSound();
       });
     }
     let tw: ReturnType<typeof typewriter> | null = null;
@@ -337,9 +340,16 @@ if (new Date().getMonth() === 9 || /[?&]october\b/.test(location.search)) {
     const host = $<HTMLElement>(".duo-quotes");
     const io = new IntersectionObserver((entries) => {
       visible = entries.some((e) => e.isIntersecting);
-      if (visible && !tw) {
+      if (visible && !tw && !reduced.matches) {
         tw = typewriter(quotes, { key: (k) => audio.key(k), target: () => audio.bell() });
-        void tw.finished.then(() => io.disconnect());
+        // while it types the quotes region can take focus, so the keyboard can skip too
+        host?.setAttribute("tabindex", "0");
+        host?.setAttribute("role", "group");
+        host?.setAttribute("aria-label", "Quotes, typing. Press Enter, Space or Escape to show them at once.");
+        void tw.finished.then(() => {
+          io.disconnect();
+          for (const a of ["tabindex", "role", "aria-label"]) host?.removeAttribute(a);
+        });
       }
       tw?.pause(!visible || document.hidden);
     }, { rootMargin: "0px 0px -20% 0px" });
@@ -347,6 +357,19 @@ if (new Date().getMonth() === 9 || /[?&]october\b/.test(location.search)) {
     document.addEventListener("visibilitychange", () => tw?.pause(!visible || document.hidden));
     // a tap or click anywhere on the quotes jumps to the end
     host?.addEventListener("pointerdown", (e) => { if (!(e.target as Element).closest("button")) tw?.skip(); });
-    reduced.addEventListener("change", () => { if (reduced.matches) { tw?.skip(); audio.disable(); } });
+    // so do Enter and Space on the focused region, and Escape from anywhere while it types
+    host?.addEventListener("keydown", (e) => {
+      if (e.target !== host || !tw || tw.done) return;
+      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); tw.skip(); }
+    });
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape" && tw && !tw.done) tw.skip(); });
+    // live switch to reduced motion: show the text, stop the sound, and put the toggle back to off and away
+    reduced.addEventListener("change", () => {
+      if (!reduced.matches) return;
+      tw?.skip();
+      audio.disable();
+      paintSound();
+      if (soundBtn) soundBtn.hidden = true;
+    });
   }
 }
