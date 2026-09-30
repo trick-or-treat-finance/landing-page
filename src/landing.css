@@ -212,7 +212,7 @@ button.btn-soon { cursor: default; }
 .row { display: grid; grid-template-columns: 110px minmax(0, 1fr) 84px; gap: 12px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--line); font-size: 14.5px; }
 .row[hidden] { display: none; }
 .row output { font: 500 14px var(--mono); text-align: right; font-variant-numeric: tabular-nums; }
-input[type="range"] { -webkit-appearance: none; appearance: none; width: 100%; height: 28px; background: transparent; margin: 0; cursor: pointer; --p: 50%; }
+input[type="range"] { -webkit-appearance: none; appearance: none; width: 100%; height: 44px; background: transparent; margin: 0; cursor: pointer; --p: 50%; }
 input[type="range"]::-webkit-slider-runnable-track { height: 6px; border-radius: 3px; background: linear-gradient(to right, var(--primary) var(--p), var(--line) var(--p)); }
 input[type="range"]::-moz-range-track { height: 6px; border-radius: 3px; background: var(--line); }
 input[type="range"]::-moz-range-progress { height: 6px; border-radius: 3px; background: var(--primary); }
@@ -446,4 +446,27 @@ input[type="range"]:disabled { cursor: default; opacity: 0.7; }
 }
 
 /* Tap targets: header pills and the sound toggle are at least 44px tall. */
-.home .nav-link, .home .nav-signin { display: inline-flex; align-items: center; min-height: 44px; }
+.home .nav-signin { display: inline-flex; align-items: center; min-height: 44px; }
+@media (min-width: 561px) { .home .nav-link { display: inline-flex; align-items: center; min-height: 44px; } }
+.brand { min-height: 44px; }
+.sw { height: 44px; border-radius: 22px; }
+.sw .knob { top: 7px; }
+.sw:focus-visible { border-radius: 22px; }
+.chip { min-height: 44px; }
+
+/* Header on phones: brand, switch and the pill must share one row down to 320px. */
+@media (max-width: 480px) {
+  .home .wordmark { font-size: 21px; }
+  .home .brand .mark { width: 36px; height: 36px; }
+  .home .nav-signin { padding: 8px 12px; font-size: 13.5px; }
+}
+@media (max-width: 360px) {
+  .home .site-header-inner { padding-inline: 10px; gap: 4px; }
+  .home .brand { gap: 6px; }
+  .home .wordmark { font-size: 17px; }
+  .home .brand .mark { width: 30px; height: 30px; border-radius: 8px; }
+  .home .nav-signin { padding: 8px 9px; font-size: 12.5px; }
+  .home .theme { min-width: 46px; }
+  .home .theme-track { width: 46px !important; }
+  .home .theme[aria-checked="true"] .theme-knob { transform: translateX(14px) !important; }
+}
