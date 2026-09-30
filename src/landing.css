@@ -99,6 +99,8 @@ button.btn-soon { cursor: default; }
 .margin .n1 { left: 22px; top: 118px; }
 .margin .n2 { left: 18px; top: 520px; }
 .margin .n5 { left: 20px; top: 250px; }
+/* n1 points at the Apple line, which leaves the receipt in Treat view: hide it there */
+[data-view="treat"] .margin .n1 { display: none; }
 
 /* margin notes: drawn with a green marker */
 .note { font-family: var(--hand); font-weight: 700; font-size: 17px; line-height: 1.15; color: var(--marker); margin: 0; max-width: 150px; transform: rotate(var(--r, -3deg)); position: absolute; }

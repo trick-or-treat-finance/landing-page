@@ -55,6 +55,22 @@ describe("requests", () => {
   });
 });
 
+describe("margin note n1", () => {
+  it("points at the Apple line in Trick view and is gone in Treat view", async () => {
+    const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+    await page.goto(base, { waitUntil: "networkidle" });
+    expect(await page.locator(".margin .n1").isVisible()).toBe(true);
+    await page.click("#sw");
+    await page.waitForTimeout(1500);
+    expect(await page.locator(".margin .n1").isVisible()).toBe(false);
+    expect(await page.locator(".margin .n2").isVisible()).toBe(true);
+    await page.click("#sw");
+    await page.waitForTimeout(1500);
+    expect(await page.locator(".margin .n1").isVisible()).toBe(true);
+    await page.close();
+  });
+});
+
 describe("no JS", () => {
   it("still shows the receipt, every tile and the slip reasons", async () => {
     const ctx = await browser.newContext({ javaScriptEnabled: false });
