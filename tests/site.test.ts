@@ -86,7 +86,7 @@ describe("links", () => {
       const text = readFileSync(join(out, p), "utf8");
       expect(text).not.toMatch(/\bcannot\b|can't do|\bFree\b|Invest smarter|put one back|exactly the proportions/i);
       expect(text).toContain("Not investment advice");
-      expect(text).toContain("Sample data");
+      expect(text).toMatch(/Sample (data|month)/);
       expect(text).toContain("not built yet");
     });
   }
