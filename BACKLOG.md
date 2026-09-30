@@ -22,3 +22,5 @@
 - [a11y] Contrast >= 4.5:1 is measured in-browser only for #grow; run the same check over the whole page in both themes, tests/grow.test.ts (worker-landing-grow, 2026-09-29)
 - [tooling] The static-server helper is copied in tests/site.test.ts and tests/typewriter.test.ts (and scripts/*shots*.mjs); extract to one tests/serve.ts, tests/typewriter.test.ts:1 (worker-landing-typewriter, 2026-09-30)
 - [design] .duo-lede above the quotes still says "two people ... say" while the quotes now type one after the other in a single column; check the sentence still reads right, index.html:51 (worker-landing-typewriter, 2026-09-30)
+- [design] Margin notes are hidden at 1100px and below (src/landing.css:302), so on phones the new iPhone joke (.n5) never shows; consider a short inline caption under the Apple line, index.html:99 (worker-landing-realistic, 2026-09-30)
+- [design] direction.html still shows the old sample lines and Tesla tile; regenerate from SAMPLE_MONTH, direction.html (worker-landing-realistic, 2026-09-30)

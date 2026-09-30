@@ -19,7 +19,7 @@ export const PURCHASE_KINDS: readonly PurchaseKind[] = [
   { kind: "music", label: "Music streaming", ticker: "SPOT" },
   { kind: "software", label: "Software", ticker: "MSFT" },
   { kind: "cloud", label: "Cloud & apps", ticker: "GOOGL" },
-  { kind: "charging", label: "EV charging", ticker: "TSLA" },
+  { kind: "delivery", label: "Food delivery", ticker: "DASH" },
   { kind: "hardware", label: "Computer hardware", ticker: "NVDA" },
   { kind: "rent", label: "Rent" },
   { kind: "utilities", label: "Utilities & insurance" },

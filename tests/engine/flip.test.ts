@@ -25,7 +25,7 @@ describe("planFlip", () => {
   });
   it("presses the stamp after the last landing and counts 600 ms", () => {
     expect(plan.stamp).toEqual({ startMs: 560 + 480, durationMs: 180, scaleFrom: 1.3 });
-    expect(plan.count).toEqual({ fromCents: 481263, toCents: 10000, startMs: 260, durationMs: 600 });
+    expect(plan.count).toEqual({ fromCents: 444988, toCents: 10000, startMs: 260, durationMs: 600 });
     expect(plan.totalMs).toBe(1040 + 180);
     expect(plan.crossFadeMs).toBe(0);
   });

@@ -98,10 +98,12 @@ button.btn-soon { cursor: default; }
 .margin { position: absolute; left: 0; top: 0; width: 180px; height: 100%; pointer-events: none; }
 .margin .n1 { left: 22px; top: 118px; }
 .margin .n2 { left: 18px; top: 520px; }
+.margin .n5 { left: 20px; top: 250px; }
 
 /* margin notes: drawn with a green marker */
 .note { font-family: var(--hand); font-weight: 700; font-size: 17px; line-height: 1.15; color: var(--marker); margin: 0; max-width: 150px; transform: rotate(var(--r, -3deg)); position: absolute; }
 .note svg { display: block; margin-top: 2px; overflow: visible; }
+.n5 svg { margin: 0 0 4px; }
 .note path { stroke-dasharray: 1; stroke-dashoffset: 0; }
 .notes-pre .note path { stroke-dashoffset: 1; }
 .notes-in .note path { transition: stroke-dashoffset 500ms ease-out; stroke-dashoffset: 0; }
@@ -298,8 +300,11 @@ input[type="range"]:disabled { cursor: default; opacity: 0.7; }
 
 /* tablet */
 @media (max-width: 1100px) {
-  .desk { padding-left: 0; }
-  .margin { display: none; }
+  .desk { padding-left: 0; grid-template-areas: "receipt right" "rnote right"; grid-template-rows: auto 1fr; }
+  /* the phone joke stays: only n5, right under the receipt */
+  .margin { position: static; width: auto; height: auto; grid-area: rnote; pointer-events: auto; }
+  .margin .n1, .margin .n2 { display: none; }
+  .margin .n5 { position: relative; left: auto; top: auto; margin: 4px 0 0 12px; max-width: 220px; font-size: 19px; }
   .n4 { display: none; }
 }
 @media (max-width: 960px) {
@@ -313,7 +318,7 @@ input[type="range"]:disabled { cursor: default; opacity: 0.7; }
   .sand { grid-template-columns: 1fr; }
 }
 @media (max-width: 820px) {
-  .desk { grid-template-columns: minmax(0, 1fr); grid-template-areas: "sw" "receipt" "stack" "note"; }
+  .desk { grid-template-columns: minmax(0, 1fr); grid-template-areas: "sw" "receipt" "rnote" "stack" "note"; grid-template-rows: none; }
   .right { display: contents; }
   .switch-wrap { grid-area: sw; }
   .right-stack { grid-area: stack; }

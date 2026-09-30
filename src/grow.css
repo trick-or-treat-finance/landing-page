@@ -38,7 +38,7 @@
 .g-grid { stroke: var(--line-strong); stroke-width: 1; }
 .g-tick { font: 500 13px var(--mono); fill: var(--secondary); }
 .g-area { fill: var(--g-line); opacity: 0.12; }
-.g-put { fill: none; stroke: var(--g-put); stroke-width: 2.5; stroke-dasharray: 6 6; stroke-linejoin: round; }
+.g-put { fill: none; stroke: var(--g-put); stroke-width: 2.5; stroke-dasharray: 0.011 0.011; stroke-linejoin: round; } /* pathLength=1, so the dashes are fractions of the line, not px (6 6 read as solid) */
 .g-val { fill: none; stroke: var(--g-line); stroke-width: 4; stroke-linejoin: round; stroke-linecap: round; filter: var(--g-glow); }
 .g-dot-val { fill: var(--g-line); stroke: var(--panel); stroke-width: 2; filter: var(--g-glow); }
 .g-dot-put { fill: var(--g-put); stroke: var(--panel); stroke-width: 2; }
