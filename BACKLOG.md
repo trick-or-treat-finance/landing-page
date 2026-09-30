@@ -19,3 +19,4 @@
 - [tooling] gstack /browse cannot run here: no bun on PATH and no Aside; shots taken with playwright-core + Chromium instead, scripts/screenshots.mjs could cover the v3 set, tests/ (worker-landing-v3, 2026-09-29)
 - [design] Wordmark "or" is green on cream at 3.24:1 in the header and 2.83:1 on the receipt (#2f9e63); logotype so exempt from WCAG 1.4.3, but darken if a text pass is wanted, src/landing.css:123 (worker-landing-v4-finish, 2026-09-29)
 - [tooling] scripts/screenshots.mjs serves no .avif/.webp/.svg types and has no dark run; add both if it becomes the one shots script, scripts/screenshots.mjs:10 (worker-landing-v4-finish, 2026-09-29)
+- [a11y] Contrast >= 4.5:1 is measured in-browser only for #grow; run the same check over the whole page in both themes, tests/grow.test.ts (worker-landing-grow, 2026-09-29)
