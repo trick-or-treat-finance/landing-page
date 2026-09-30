@@ -17,3 +17,5 @@
 - [design] about.html has no dark mode and keeps rule-heavy sections (.line/.limits/.closer borders) and a dark panel; give it the same white/quiet treatment, src/style.css:60-110 (worker-landing-clean, 2026-09-29)
 - [assets] og.jpg is ~420 KB (sips ignores JPEG quality); recompress with a real encoder, public/og.jpg (worker-landing-clean, 2026-09-29)
 - [tooling] gstack /browse cannot run here: no bun on PATH and no Aside; shots taken with playwright-core + Chromium instead, scripts/screenshots.mjs could cover the v3 set, tests/ (worker-landing-v3, 2026-09-29)
+- [design] Wordmark "or" is green on cream at 3.24:1 in the header and 2.83:1 on the receipt (#2f9e63); logotype so exempt from WCAG 1.4.3, but darken if a text pass is wanted, src/landing.css:123 (worker-landing-v4-finish, 2026-09-29)
+- [tooling] scripts/screenshots.mjs serves no .avif/.webp/.svg types and has no dark run; add both if it becomes the one shots script, scripts/screenshots.mjs:10 (worker-landing-v4-finish, 2026-09-29)
