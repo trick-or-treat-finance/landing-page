@@ -24,3 +24,4 @@
 - [design] .duo-lede above the quotes still says "two people ... say" while the quotes now type one after the other in a single column; check the sentence still reads right, index.html:51 (worker-landing-typewriter, 2026-09-30)
 - [design] Margin notes are hidden at 1100px and below (src/landing.css:302), so on phones the new iPhone joke (.n5) never shows; consider a short inline caption under the Apple line, index.html:99 (worker-landing-realistic, 2026-09-30)
 - [design] direction.html still shows the old sample lines and Tesla tile; regenerate from SAMPLE_MONTH, direction.html (worker-landing-realistic, 2026-09-30)
+- [copy] Footer "the fine print" repeats "Sample month. Not real data." and "investing half is not built yet" across several lines (kept word for word per owner); dedupe once the owner OKs rewording, index.html:210-225 (worker-landing-listen, 2026-09-30)
