@@ -23,6 +23,7 @@ const basket = treatBasket(SAMPLE_MONTH, TREAT_BUDGET);
 const TREAT_CENTS = TREAT_BUDGET * 100;
 const TRICK_CENTS = SAMPLE_MONTH.reduce((s, l) => s + l.amountCents, 0);
 let treat = false;
+let collapseTimer: ReturnType<typeof setTimeout> | undefined;
 let running: Animation[] = [];
 let raf = 0;
 
@@ -77,6 +78,7 @@ function settle(): void {
 function setView(next: boolean): void {
   if (!stage || next === treat) return;
   treat = next;
+  clearTimeout(collapseTimer);
   const still = reduced.matches;
   for (const a of running) a.cancel();
   running = [];
@@ -142,7 +144,7 @@ function setView(next: boolean): void {
   });
 
   if (treat) {
-    setTimeout(() => { if (treat) stage.classList.add("collapsed"); }, Math.max(landedBy, plan.stamp.startMs) + 60);
+    collapseTimer = setTimeout(() => { if (treat) stage.classList.add("collapsed"); }, Math.max(landedBy, plan.stamp.startMs) + 60);
     setTimeout(() => { if (treat) setStayText(true); }, plan.stamp.startMs);
     const stamp = $<HTMLElement>(".stamp", stage);
     stamp?.animate(

@@ -23,7 +23,6 @@
   .stage { grid-template-areas: "receipt" "right" !important; grid-template-columns: minmax(0, 1fr) !important; padding-left: 24px !important; }
   .margin { display: none !important; }
 </style></noscript>
-<link rel="preload" as="image" type="image/avif" imagesrcset="/duo/duo-375.avif 375w, /duo/duo-640.avif 640w, /duo/duo-960.avif 960w, /duo/duo-1280.avif 1280w, /duo/duo-1697.avif 1697w" imagesizes="(max-width: 800px) calc(100vw - 40px), 760px" fetchpriority="high" />
 <script type="module" src="/src/main.ts"></script>
 </head>
 <body class="home">
@@ -43,44 +42,11 @@
   </div>
 </header>
 <main>
-  <section class="duo" aria-labelledby="duo-h">
-    <div class="duo-in">
-      <div class="duo-head">
-        <div class="eyebrow">credibility check</div>
-        <h2 id="duo-h" class="duo-title">don't listen to us. listen to them.</h2>
-        <p class="duo-lede">we're new. they've spent whole careers investing, and their track records are public. here's what they said, typed out below.</p>
-      </div>
-      <figure class="duo-fig">
-        <picture>
-          <source type="image/avif" srcset="/duo/duo-375.avif 375w, /duo/duo-640.avif 640w, /duo/duo-960.avif 960w, /duo/duo-1280.avif 1280w, /duo/duo-1697.avif 1697w" sizes="(max-width: 800px) calc(100vw - 40px), 760px" />
-          <source type="image/webp" srcset="/duo/duo-375.webp 375w, /duo/duo-640.webp 640w, /duo/duo-960.webp 960w, /duo/duo-1280.webp 1280w, /duo/duo-1697.webp 1697w" sizes="(max-width: 800px) calc(100vw - 40px), 760px" />
-          <img class="duo-img" src="/duo/duo-960.png" srcset="/duo/duo-375.png 375w, /duo/duo-640.png 640w, /duo/duo-960.png 960w, /duo/duo-1280.png 1280w, /duo/duo-1697.png 1697w" sizes="(max-width: 800px) calc(100vw - 40px), 760px" width="1697" height="927" fetchpriority="high" loading="eager" decoding="async" alt="Ink drawing of investors Peter Lynch on the left, gesturing as he talks, and Warren Buffett on the right, smiling with his chin on his hand." />
-        </picture>
-      </figure>
-      <div class="duo-quotes">
-        <div class="tw-bar"><button class="tw-sound" id="tw-sound" type="button" aria-pressed="false" hidden><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 9.5h3.5L12 5.8v12.4L7.5 14.5H4Z" fill="currentColor"/><path class="tw-waves" d="M15.5 9a4 4 0 0 1 0 6M18 6.6a7.5 7.5 0 0 1 0 10.8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path class="tw-off" d="M16 9.5l5 5M21 9.5l-5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><span>Typewriter sound: <b id="tw-state">off</b></span></button></div>
-        <blockquote class="duo-q duo-lynch">
-          <p class="duo-who"><span>Peter Lynch</span> ran Fidelity's Magellan Fund</p>
-          <p class="duo-idea">invest in what you know.</p>
-          <p class="duo-tie">his big idea, from <cite>One Up on Wall Street</cite> (1989). look at your receipt: every company on it is one you already know.</p>
-          <p class="duo-line">&ldquo;How to Use What You Already Know to Make Money in the Market&rdquo;</p>
-          <p class="duo-src">the book's subtitle · <cite>One Up on Wall Street</cite>, 1989</p>
-        </blockquote>
-        <blockquote class="duo-q duo-buffett">
-          <p class="duo-who"><span>Warren Buffett</span> chairman of Berkshire Hathaway</p>
-          <p class="duo-line duo-line-lg">&ldquo;You don't have to be an expert on every company, or even many. You only have to be able to evaluate companies within your circle of competence.&rdquo;</p>
-          <p class="duo-src">Berkshire Hathaway shareholder letter, 1996</p>
-          <p class="duo-tie">translation: start with what you already understand, and skip the rest.</p>
-        </blockquote>
-      </div>
-    </div>
-  </section>
-
   <section class="hero" aria-labelledby="h1">
     <div class="hero-copy">
       <div class="eyebrow">Sample month · September</div>
-      <h1 id="h1" class="hero-title">you spent it. now see who got paid.</h1>
-      <p class="hero-lede">a sample month, read two ways. first the total (brace). then the same receipt, sorted by the companies behind it. flip the switch.</p>
+      <h1 id="h1" class="hero-title">your receipts already say who you back.</h1>
+      <p class="hero-lede">apple, costco, starbucks: you pay them every month, so your spending tells your story. this page reads a sample month, then sorts the same receipt by the companies behind it. flip the switch.</p>
       <div class="hero-cta">
         <a class="btn" id="see-treat" href="#stage">show me who got paid</a>
         <a class="btn btn-ghost" href="#sandbox">build your own month</a>
@@ -137,6 +103,39 @@
   </section>
 
   <!--@grow-->
+
+  <section class="duo" aria-labelledby="duo-h">
+    <div class="duo-in">
+      <div class="duo-head">
+        <div class="eyebrow">even the OGs agree</div>
+        <h2 id="duo-h" class="duo-title">the old heads said it first.</h2>
+        <p class="duo-lede">we're new here. peter lynch and warren buffett have been at this for decades, and their track records are public. here's what they wrote, typed out below.</p>
+      </div>
+      <figure class="duo-fig">
+        <picture>
+          <source type="image/avif" srcset="/duo/duo-375.avif 375w, /duo/duo-640.avif 640w, /duo/duo-960.avif 960w, /duo/duo-1280.avif 1280w, /duo/duo-1697.avif 1697w" sizes="(max-width: 800px) calc(100vw - 40px), 760px" />
+          <source type="image/webp" srcset="/duo/duo-375.webp 375w, /duo/duo-640.webp 640w, /duo/duo-960.webp 960w, /duo/duo-1280.webp 1280w, /duo/duo-1697.webp 1697w" sizes="(max-width: 800px) calc(100vw - 40px), 760px" />
+          <img class="duo-img" src="/duo/duo-960.png" srcset="/duo/duo-375.png 375w, /duo/duo-640.png 640w, /duo/duo-960.png 960w, /duo/duo-1280.png 1280w, /duo/duo-1697.png 1697w" sizes="(max-width: 800px) calc(100vw - 40px), 760px" width="1697" height="927" loading="lazy" decoding="async" alt="Ink drawing of investors Peter Lynch on the left, gesturing as he talks, and Warren Buffett on the right, smiling with his chin on his hand." />
+        </picture>
+      </figure>
+      <div class="duo-quotes">
+        <div class="tw-bar"><button class="tw-sound" id="tw-sound" type="button" aria-pressed="false" hidden><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 9.5h3.5L12 5.8v12.4L7.5 14.5H4Z" fill="currentColor"/><path class="tw-waves" d="M15.5 9a4 4 0 0 1 0 6M18 6.6a7.5 7.5 0 0 1 0 10.8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path class="tw-off" d="M16 9.5l5 5M21 9.5l-5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><span>Typewriter sound: <b id="tw-state">off</b></span></button></div>
+        <blockquote class="duo-q duo-lynch">
+          <p class="duo-who"><span>Peter Lynch</span> ran Fidelity's Magellan Fund</p>
+          <p class="duo-idea">invest in what you know.</p>
+          <p class="duo-tie">his big idea, from <cite>One Up on Wall Street</cite> (1989). look at your receipt: every company on it is one you already know.</p>
+          <p class="duo-line">&ldquo;How to Use What You Already Know to Make Money in the Market&rdquo;</p>
+          <p class="duo-src">the book's subtitle · <cite>One Up on Wall Street</cite>, 1989</p>
+        </blockquote>
+        <blockquote class="duo-q duo-buffett">
+          <p class="duo-who"><span>Warren Buffett</span> chairman of Berkshire Hathaway</p>
+          <p class="duo-line duo-line-lg">&ldquo;You don't have to be an expert on every company, or even many. You only have to be able to evaluate companies within your circle of competence.&rdquo;</p>
+          <p class="duo-src">Berkshire Hathaway shareholder letter, 1996</p>
+          <p class="duo-tie">translation: start with what you already understand, and skip the rest.</p>
+        </blockquote>
+      </div>
+    </div>
+  </section>
 
   <section class="how" id="how" aria-labelledby="how-h">
     <div class="how-head">
