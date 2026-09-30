@@ -3,6 +3,7 @@ import { defineConfig, type Plugin } from "vite";
 import {
   defaultSandbox, receiptLines, sandboxChips, sandboxRows, sandboxTally, sandboxTotal, tiles,
 } from "./src/render";
+import { growSection } from "./src/grow-view";
 
 // The home page ships complete: the receipt, the tiles and the sandbox defaults are written
 // into the HTML at build time from the same engine the browser uses, so it reads with JS off.
@@ -14,6 +15,7 @@ function staticParts(): Plugin {
       handler(html) {
         const st = defaultSandbox();
         return html
+          .replace("<!--@grow-->", growSection())
           .replace("<!--@lines-->", receiptLines())
           .replace("<!--@tiles-->", tiles("/"))
           .replace("<!--@chips-->", sandboxChips())

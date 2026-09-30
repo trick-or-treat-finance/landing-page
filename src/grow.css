@@ -1,0 +1,67 @@
+/* Watch the treat grow. Light: green line on white. After dark: the line glows warm like the Treat lights. */
+.grow { max-width: 1280px; margin: 0 auto; padding: 112px var(--gutter) 40px; --g-line: var(--primary); --g-put: var(--secondary); --g-glow: none; }
+:root[data-theme="dark"] .grow { --g-line: var(--marker); --g-put: var(--muted); --g-glow: drop-shadow(0 0 5px rgb(var(--glow) / 0.75)) drop-shadow(0 0 14px rgb(var(--glow) / 0.4)); }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .grow { --g-line: var(--marker); --g-put: var(--muted); --g-glow: drop-shadow(0 0 5px rgb(var(--glow) / 0.75)) drop-shadow(0 0 14px rgb(var(--glow) / 0.4)); }
+}
+.grow-card { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.4fr); gap: 40px; align-items: start; background: var(--panel); border: 1px solid var(--line-strong); border-radius: 20px; padding: 28px; }
+.grow-ctl, .grow-out { min-width: 0; }
+.grow-ctl { display: flex; flex-direction: column; gap: 22px; }
+.g-mode { border: 0; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.g-mode legend { font: 600 12px var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--secondary); padding: 0 0 8px; }
+.g-opt { display: flex; align-items: center; gap: 12px; min-height: 48px; padding: 0 16px; border: 1px solid var(--line-strong); border-radius: 999px; cursor: pointer; font-weight: 600; font-size: 16px; color: var(--ink); background: var(--ground); }
+.g-opt:has(input:checked) { background: var(--ink); color: var(--ground); border-color: var(--ink); }
+.g-opt:has(input:focus-visible) { outline: 2px solid var(--green-ink); outline-offset: 3px; }
+.g-opt input { accent-color: var(--green); width: 18px; height: 18px; margin: 0; flex: none; }
+.g-opt:has(input:checked) input { accent-color: var(--ground); }
+.g-field { display: flex; flex-direction: column; gap: 4px; }
+.g-field label { display: flex; justify-content: space-between; align-items: baseline; font-weight: 600; font-size: 16px; color: var(--ink); }
+.g-field output { font: 600 18px var(--mono); font-variant-numeric: tabular-nums; color: var(--ink); }
+.g-field input[type="range"]:focus-visible { outline: 2px solid var(--green-ink); outline-offset: 4px; border-radius: 4px; }
+.g-ends { display: flex; justify-content: space-between; font: 500 12px var(--mono); color: var(--secondary); }
+.g-hint { font: 700 17px var(--hand); color: var(--marker); margin-top: 4px; }
+.g-how { font-size: 13.5px; line-height: 1.5; color: var(--secondary); }
+
+.g-nums { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px 24px; margin-bottom: 8px; }
+.g-n { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.g-k { font: 600 12px var(--mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--secondary); display: flex; align-items: center; gap: 8px; }
+.g-n-in .g-k::before, .g-n-val .g-k::before { content: ""; width: 18px; height: 0; flex: none; border-top: 3px solid var(--g-put); }
+.g-n-in .g-k::before { border-top-style: dashed; }
+.g-n-val .g-k::before { border-top-color: var(--g-line); border-radius: 2px; }
+.g-n b { font: 700 clamp(26px, 3.6vw, 44px)/1.05 var(--sans); letter-spacing: -0.03em; font-variant-numeric: tabular-nums; color: var(--ink); overflow-wrap: anywhere; }
+.g-n-val b { font-size: clamp(32px, 4.6vw, 60px); color: var(--g-line); }
+:root[data-theme="dark"] .g-n-val b { text-shadow: 0 0 22px rgb(var(--glow) / 0.45); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .g-n-val b { text-shadow: 0 0 22px rgb(var(--glow) / 0.45); } }
+.g-chart { margin-top: 8px; }
+.g-svg { display: block; width: 100%; height: auto; overflow: visible; }
+.g-grid { stroke: var(--line-strong); stroke-width: 1; }
+.g-tick { font: 500 13px var(--mono); fill: var(--secondary); }
+.g-area { fill: var(--g-line); opacity: 0.12; }
+.g-put { fill: none; stroke: var(--g-put); stroke-width: 2.5; stroke-dasharray: 6 6; stroke-linejoin: round; }
+.g-val { fill: none; stroke: var(--g-line); stroke-width: 4; stroke-linejoin: round; stroke-linecap: round; filter: var(--g-glow); }
+.g-dot-val { fill: var(--g-line); stroke: var(--panel); stroke-width: 2; filter: var(--g-glow); }
+.g-dot-put { fill: var(--g-put); stroke: var(--panel); stroke-width: 2; }
+.g-line { margin-top: 14px; font: 700 clamp(19px, 2.2vw, 24px)/1.35 var(--hand); color: var(--ink); text-wrap: pretty; }
+.grow-dis { margin-top: 18px; font: 500 14px/1.5 var(--mono); color: var(--secondary); max-width: 90ch; }
+
+/* the first time it scrolls into view the lines draw themselves; never under reduced motion */
+@media (prefers-reduced-motion: no-preference) {
+  .grow.g-first .g-val, .grow.g-first .g-put { stroke-dasharray: 1; animation: g-draw 1100ms cubic-bezier(.4, 0, .2, 1) both; }
+  .grow.g-first .g-put { stroke-dasharray: 1; }
+  .grow.g-first .g-area { animation: g-fade 900ms ease-out 300ms both; }
+  .grow.g-first .g-dot { animation: g-fade 300ms ease-out 1000ms both; }
+}
+@keyframes g-draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+@keyframes g-fade { from { opacity: 0; } to { opacity: var(--to, 1); } }
+.grow.g-first .g-area { --to: 0.12; }
+
+@media (max-width: 1000px) {
+  .grow-card { grid-template-columns: 1fr; padding: 22px; gap: 28px; }
+}
+@media (max-width: 640px) {
+  .grow { padding-top: 72px; }
+  .grow-card { padding: 18px; }
+  .g-nums { grid-template-columns: 1fr 1fr; }
+  .g-n-val { grid-column: 1 / -1; order: -1; }
+  .g-tick { font-size: 22px; }
+}
