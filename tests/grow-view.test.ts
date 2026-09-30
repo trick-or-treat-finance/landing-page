@@ -16,7 +16,8 @@ describe("grow view", () => {
     expect(html).not.toContain(GROW_DISCLAIMER);
     expect(html).not.toContain("grow-dis");
     const footer = readFileSync(join(__dirname, "..", "index.html"), "utf8").split("<footer")[1]!.split("</footer>")[0]!;
-    expect(footer).toContain(`${GROW_DISCLAIMER} The investing half is not built yet.`);
+    expect(footer).toContain(GROW_DISCLAIMER);
+    expect(footer.match(/not built yet/g)?.length).toBe(1);
     expect(GROW_DISCLAIMER).toBe(
       "Illustration only. Example rate, not a prediction or a return for any company shown. Investing can lose money. Not investment advice.",
     );

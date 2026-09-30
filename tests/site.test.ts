@@ -112,8 +112,14 @@ describe("index footer fine print", () => {
     for (const l of labels) expect(l.length).toBeLessThanOrEqual(32);
     expect((footer().match(/<p>/g) ?? []).length).toBe(labels.length);
   });
-  it("says 'Sample month.', 'Not real data.' and 'Not investment advice.' once each", () => {
+  it("says each fact once: sample month, no storage, not built yet, risk, advice, trademarks", () => {
     const t = text();
+    for (const re of [/not built yet/gi, /stores? nothing|nothing is stored/gi, /made-up/gi, /can lose money/gi, /not affiliated with or endorsed by Warren/gi, /trademarks of their owners/gi, /a preview/gi]) {
+      expect(t.match(re)?.length, String(re)).toBe(1);
+    }
+    expect(t).toContain("Nothing leaves this browser and nothing is stored");
+    expect(t).toContain("a made-up month that runs in this tab");
+    expect(t).toContain("Connecting a bank shares transactions with Trick or Treat through Plaid. Disconnect any time; your data for that bank is deleted after Plaid confirms.");
     expect(t.match(/Sample month\./g)?.length).toBe(1);
     expect(t.match(/Not real data\./g)?.length).toBe(1);
     expect(t.match(/Not investment advice\./gi)?.length).toBe(1);
