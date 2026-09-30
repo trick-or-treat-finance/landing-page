@@ -100,6 +100,72 @@ describe("typewriter quotes", () => {
     await ctx.close();
   });
 
+  it("switching to reduced motion mid-page: text shown, toggle off and hidden, no audio", async () => {
+    const { ctx, page } = await open();
+    await scrollToQuotes(page);
+    await page.waitForFunction(() => document.querySelectorAll(".tw-c.on").length > 10);
+    const btn = page.locator("#tw-sound");
+    await btn.click();
+    expect(await btn.getAttribute("aria-pressed")).toBe("true");
+    expect(await page.locator("#tw-state").textContent()).toBe("on");
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await page.waitForFunction(() => !document.querySelector(".tw-layer"));
+    expect(await btn.getAttribute("aria-pressed")).toBe("false");
+    expect(await page.locator("#tw-state").textContent()).toBe("off");
+    expect(await btn.isVisible()).toBe(false);
+    expect(await page.locator(".duo-q p").evaluateAll((ps) => ps.every((p) => getComputedStyle(p).opacity === "1"))).toBe(true);
+    const spy = await page.evaluate(() => {
+      const w = window as unknown as { __n: number };
+      w.__n = 0;
+      const P = AudioContext.prototype;
+      for (const k of ["createBufferSource", "createOscillator"] as const) { const o = P[k]; (P as never as Record<string, unknown>)[k] = function (this: AudioContext) { w.__n++; return (o as () => unknown).call(this); }; }
+      return true;
+    });
+    expect(spy).toBe(true);
+    await page.waitForTimeout(600);
+    expect(await page.evaluate(() => (window as unknown as { __n: number }).__n)).toBe(0);
+    await ctx.close();
+  });
+
+  it("a throwing audio hook still ends with all the text shown", async () => {
+    const { ctx, page } = await open();
+    await scrollToQuotes(page);
+    await page.waitForFunction(() => document.querySelectorAll(".tw-c.on").length > 3);
+    await page.locator("#tw-sound").click();
+    await page.evaluate(() => { AudioContext.prototype.createBufferSource = () => { throw new Error("boom"); }; });
+    await page.waitForFunction(() => !document.querySelector(".tw-layer"), undefined, { timeout: 10_000 });
+    expect(await page.locator(".duo-q p").evaluateAll((ps) => ps.every((p) => getComputedStyle(p).opacity === "1"))).toBe(true);
+    await ctx.close();
+  });
+
+  for (const key of ["Enter", " ", "Escape"]) {
+    it(`keyboard: ${key === " " ? "Space" : key} skips to the end, focus ring is visible`, async () => {
+      const { ctx, page } = await open();
+      await scrollToQuotes(page);
+      await page.waitForFunction(() => document.querySelectorAll(".tw-c.on").length > 5);
+      if (key !== "Escape") {
+        await page.locator(".duo-quotes").focus();
+        await page.keyboard.press("Tab"); await page.keyboard.press("Shift+Tab");
+        expect(await page.evaluate(() => document.activeElement?.classList.contains("duo-quotes"))).toBe(true);
+        expect(await page.locator(".duo-quotes").evaluate((e) => getComputedStyle(e).outlineStyle)).not.toBe("none");
+      }
+      await page.keyboard.press(key);
+      await page.waitForFunction(() => !document.querySelector(".tw-layer"));
+      expect(await page.locator(".duo-q p").evaluateAll((ps) => ps.every((p) => getComputedStyle(p).opacity === "1"))).toBe(true);
+      expect(await page.locator(".duo-quotes").getAttribute("tabindex")).toBeNull();
+      await ctx.close();
+    });
+  }
+
+  it("the caret is a thin, soft bar", async () => {
+    const { ctx, page } = await open();
+    await scrollToQuotes(page);
+    await page.waitForFunction(() => document.querySelector(".tw-caret"));
+    const c = await page.locator(".tw-caret").first().evaluate((e) => { const s = getComputedStyle(e, "::after"); return { w: parseFloat(s.width), o: parseFloat(s.opacity) }; });
+    expect(c.w).toBeLessThanOrEqual(3);
+    await ctx.close();
+  });
+
   it("real text stays in the DOM while typing; the animated layer is aria-hidden", async () => {
     const { ctx, page } = await open();
     await scrollToQuotes(page);
