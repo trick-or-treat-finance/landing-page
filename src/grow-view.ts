@@ -38,7 +38,7 @@ export function growSummary(i: GrowInput, r: GrowResult): string {
   return `${what}, ${yrs(i.years)}, example rate ${pct(i.rateBp)}: ${money(r.putInCents)} put in, ${money(r.valueCents)} total value.`;
 }
 
-const W = 640, H = 300, L = 60, R = 14, T = 14, B = 34;
+const W = 640, H = 300, L = 72, R = 14, T = 14, B = 34;
 
 export function growChart(i: GrowInput, r: GrowResult): string {
   const top = niceMax(r.valueCents);
@@ -59,11 +59,12 @@ export function growChart(i: GrowInput, r: GrowResult): string {
   const step = i.years <= 5 ? 1 : i.years <= 12 ? 2 : i.years <= 20 ? 5 : 10;
   let xt = "";
   for (let yr = 0; yr <= i.years; yr += step) {
+    if (yr && i.years % step && i.years - yr < step * 0.75) continue;
     const a = yr === 0 ? "start" : yr === i.years ? "end" : "middle";
-    xt += `<text class="g-tick" x="${x(yr * 12).toFixed(1)}" y="${H - 8}" text-anchor="${a}">${yr === 0 ? "start" : `yr ${yr}`}</text>`;
+    xt += `<text class="g-tick" x="${x(yr * 12).toFixed(1)}" y="${H - 8}" text-anchor="${a}">${yr === i.years ? `${yr} yrs` : yr}</text>`;
   }
   if (i.years % step) {
-    xt += `<text class="g-tick" x="${x(months).toFixed(1)}" y="${H - 8}" text-anchor="end">yr ${i.years}</text>`;
+    xt += `<text class="g-tick" x="${x(months).toFixed(1)}" y="${H - 8}" text-anchor="end">${i.years} yrs</text>`;
   }
   const ex = x(months).toFixed(1);
   return `<svg class="g-svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="${growSummary(i, r)}" preserveAspectRatio="xMidYMid meet">` +
