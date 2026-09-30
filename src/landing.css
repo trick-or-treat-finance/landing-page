@@ -391,23 +391,35 @@ input[type="range"]:disabled { cursor: default; opacity: 0.7; }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) .duo-fig { background: radial-gradient(70% 80% at 50% 38%, #f6efdd 0%, #e6dcc3 62%, #cfc3a6 100%); padding: 22px 22px 0; box-shadow: 0 0 0 1px #ffffff14, 0 0 60px rgb(255 190 110 / 0.28), 0 0 120px rgb(140 80 230 / 0.28); overflow: hidden; }
 }
-.duo-quotes { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; width: min(1040px, 100%); }
-.duo-q { margin: 0; display: flex; flex-direction: column; gap: 12px; padding: 24px 26px; border: 1.5px solid var(--line-strong); border-radius: 22px; background: var(--panel, #fff); box-shadow: 0 3px 0 var(--line-strong); }
-.duo-lynch { transform: rotate(-0.6deg); }
-.duo-buffett { transform: rotate(0.6deg); }
+/* Typewriter quotes: one calm column on the bare page, no cards. */
+.duo-quotes { display: flex; flex-direction: column; gap: 56px; width: min(640px, 100%); font-family: var(--mono); }
+.tw-bar { display: flex; justify-content: flex-end; min-height: 44px; margin-bottom: -28px; }
+.tw-sound { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 4px; border: 0; background: none; color: var(--secondary); font: 500 12.5px var(--mono); cursor: pointer; }
+.tw-sound:hover { color: var(--ink); }
+.tw-sound[hidden] { display: none; }
+.tw-sound b { font-weight: 700; color: var(--ink); }
+.tw-sound[aria-pressed="true"] .tw-off, .tw-sound[aria-pressed="false"] .tw-waves { display: none; }
+.duo-q { position: relative; margin: 0; display: flex; flex-direction: column; gap: 14px; padding: 0; }
 .duo-who { font-size: 13px; letter-spacing: 0.02em; color: var(--muted); }
-.duo-who span { display: block; font-size: 15px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink); }
-.duo-idea { font-size: clamp(28px, 3.2vw, 38px); line-height: 1.05; font-weight: 700; letter-spacing: -0.03em; color: var(--ink); }
-.duo-line { font-size: 17px; line-height: 1.45; font-weight: 600; color: var(--ink); text-wrap: pretty; }
-.duo-line-lg { font-size: 20px; }
-.duo-src { font-size: 13.5px; color: var(--muted); }
-.duo-tie { font-size: 15.5px; line-height: 1.5; color: var(--secondary); text-wrap: pretty; }
+.duo-who > span:not(.tw-c) { display: block; font-size: 14px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink); }
+.duo-idea { font-size: clamp(26px, 5.6vw, 36px); line-height: 1.12; font-weight: 700; letter-spacing: -0.04em; color: var(--ink); }
+.duo-line { font-size: 16.5px; line-height: 1.6; font-weight: 500; color: var(--ink); text-wrap: pretty; }
+.duo-line-lg { font-size: 19px; line-height: 1.55; }
+.duo-src { font-size: 13px; color: var(--muted); }
+.duo-tie { font-size: 14.5px; line-height: 1.6; color: var(--secondary); text-wrap: pretty; }
 .duo cite { font-style: italic; }
+/* the typing layer sits exactly over the untouched text, so nothing moves while it types */
+.tw-live > :not(.tw-layer) { opacity: 0; }
+.tw-layer { position: absolute; inset: 0; pointer-events: none; }
+.tw-c:not(.on) { opacity: 0; }
+.tw-caret { display: inline-block; position: relative; width: 0; height: 0; }
+.tw-caret::after { content: ""; position: absolute; left: 1px; bottom: -0.15em; width: 2px; height: 1em; border-radius: 1px; background: var(--primary); opacity: 0.55; animation: tw-blink 1.05s steps(1) infinite; }
+.duo-quotes:focus-visible { outline: 2px solid var(--primary); outline-offset: 10px; border-radius: 6px; }
+@keyframes tw-blink { 50% { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .tw-live > :not(.tw-layer) { opacity: 1; } .tw-layer { display: none; } }
 .duo-note { font-size: 13px; line-height: 1.5; color: var(--muted); text-align: center; max-width: 62ch; }
 @media (max-width: 860px) {
   .duo { padding-inline: 20px; padding-top: 16px; }
-  .duo-quotes { grid-template-columns: 1fr; gap: 18px; }
-  .duo-lynch, .duo-buffett { transform: none; }
+  .duo-quotes { gap: 44px; }
   .duo-lede { font-size: 17px; }
-  .duo-q { padding: 20px 20px; }
 }

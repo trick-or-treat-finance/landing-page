@@ -1,5 +1,7 @@
 // Takes over the finished HTML: the Trick/Treat flip, the sandbox, the slip, the ghost.
 // Nothing here fetches, stores or sends anything.
+import { typeAudio } from "./typeaudio";
+import { typewriter } from "./typewriter";
 import { FLIP, SAMPLE_MONTH, planFlip, treatBasket } from "./engine";
 import {
   SANDBOX, TREAT_BUDGET, defaultSandbox, money, sandboxTally, sandboxTotal, stayTreat, type SandboxState,
@@ -311,5 +313,63 @@ if (new Date().getMonth() === 9 || /[?&]october\b/.test(location.search)) {
     li.className = "slot oct";
     li.innerHTML = `<div class="ln"><span class="nm">Fun-size, 12 pack</span><i></i><b>&mdash;</b></div><span class="oct-note" aria-hidden="true">one of these is a tax on October.</span>`;
     first.after(li);
+  }
+}
+
+/* ---------- Typewriter quotes ---------- */
+// Runs once, when the quotes scroll into view. Reduced motion: text stays as printed, no sound.
+{
+  const quotes = $$<HTMLElement>(".duo-q");
+  const soundBtn = $<HTMLButtonElement>("#tw-sound");
+  if (quotes.length && !reduced.matches && "IntersectionObserver" in window) {
+    const audio = typeAudio();
+    const state = $<HTMLElement>("#tw-state");
+    const paintSound = (): void => {
+      soundBtn?.setAttribute("aria-pressed", String(audio.on));
+      if (state) state.textContent = audio.on ? "on" : "off";
+    };
+    if (soundBtn) {
+      soundBtn.hidden = false;
+      soundBtn.addEventListener("click", () => {
+        if (audio.on) audio.disable(); else audio.enable();
+        paintSound();
+      });
+    }
+    let tw: ReturnType<typeof typewriter> | null = null;
+    let visible = false;
+    const host = $<HTMLElement>(".duo-quotes");
+    const io = new IntersectionObserver((entries) => {
+      visible = entries.some((e) => e.isIntersecting);
+      if (visible && !tw && !reduced.matches) {
+        tw = typewriter(quotes, { key: (k) => audio.key(k), target: () => audio.bell() });
+        // while it types the quotes region can take focus, so the keyboard can skip too
+        host?.setAttribute("tabindex", "0");
+        host?.setAttribute("role", "group");
+        host?.setAttribute("aria-label", "Quotes, typing. Press Enter, Space or Escape to show them at once.");
+        void tw.finished.then(() => {
+          io.disconnect();
+          for (const a of ["tabindex", "role", "aria-label"]) host?.removeAttribute(a);
+        });
+      }
+      tw?.pause(!visible || document.hidden);
+    }, { rootMargin: "0px 0px -20% 0px" });
+    if (host) io.observe(host);
+    document.addEventListener("visibilitychange", () => tw?.pause(!visible || document.hidden));
+    // a tap or click anywhere on the quotes jumps to the end
+    host?.addEventListener("pointerdown", (e) => { if (!(e.target as Element).closest("button")) tw?.skip(); });
+    // so do Enter and Space on the focused region, and Escape from anywhere while it types
+    host?.addEventListener("keydown", (e) => {
+      if (e.target !== host || !tw || tw.done) return;
+      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); tw.skip(); }
+    });
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape" && tw && !tw.done) tw.skip(); });
+    // live switch to reduced motion: show the text, stop the sound, and put the toggle back to off and away
+    reduced.addEventListener("change", () => {
+      if (!reduced.matches) return;
+      tw?.skip();
+      audio.disable();
+      paintSound();
+      if (soundBtn) soundBtn.hidden = true;
+    });
   }
 }
