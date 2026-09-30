@@ -20,7 +20,7 @@ describe("grow view", () => {
   it("never says will, names a company, or quotes a ticker", () => {
     const text = html.replace(/<[^>]+>/g, " ");
     expect(text).not.toMatch(/\bwill\b|\bguarantee/i);
-    expect(text).not.toMatch(/\b(Apple|Tesla|Nvidia|Costco|Amazon|Google|Microsoft|Walmart|Netflix|Spotify|Starbucks|Uber)\b|\b[A-Z]{3,5}:/);
+    expect(text).not.toMatch(/\b(Apple|DoorDash|Nvidia|Costco|Amazon|Google|Microsoft|Walmart|Netflix|Spotify|Starbucks|Uber)\b|\b[A-Z]{3,5}:/);
   });
   it("labels every control and starts them disabled until JS wakes them", () => {
     expect(html).toMatch(/<label for="g-years"/);

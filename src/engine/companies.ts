@@ -3,7 +3,7 @@ import type { Company } from "./types";
 /** The twelve listed companies the sample month can map to, in tile order. */
 export const COMPANIES: readonly Company[] = [
   { ticker: "AAPL", name: "Apple" },
-  { ticker: "TSLA", name: "Tesla" },
+  { ticker: "DASH", name: "DoorDash" },
   { ticker: "GOOGL", name: "Alphabet" },
   { ticker: "WMT", name: "Walmart" },
   { ticker: "AMZN", name: "Amazon" },

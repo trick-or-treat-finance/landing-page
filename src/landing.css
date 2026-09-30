@@ -98,10 +98,12 @@ button.btn-soon { cursor: default; }
 .margin { position: absolute; left: 0; top: 0; width: 180px; height: 100%; pointer-events: none; }
 .margin .n1 { left: 22px; top: 118px; }
 .margin .n2 { left: 18px; top: 520px; }
+.margin .n5 { left: 20px; top: 250px; }
 
 /* margin notes: drawn with a green marker */
 .note { font-family: var(--hand); font-weight: 700; font-size: 17px; line-height: 1.15; color: var(--marker); margin: 0; max-width: 150px; transform: rotate(var(--r, -3deg)); position: absolute; }
 .note svg { display: block; margin-top: 2px; overflow: visible; }
+.n5 svg { margin: 0 0 4px; }
 .note path { stroke-dasharray: 1; stroke-dashoffset: 0; }
 .notes-pre .note path { stroke-dashoffset: 1; }
 .notes-in .note path { transition: stroke-dashoffset 500ms ease-out; stroke-dashoffset: 0; }

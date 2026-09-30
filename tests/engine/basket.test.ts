@@ -13,22 +13,22 @@ function rng(seed: number) {
     return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
   };
 }
-const TICKERS = ["AAPL", "TSLA", "GOOGL", "WMT", "AMZN", "MSFT", "NVDA", "SBUX", "NFLX", "COST", "UBER", "SPOT"];
+const TICKERS = ["AAPL", "DASH", "GOOGL", "WMT", "AMZN", "MSFT", "NVDA", "SBUX", "NFLX", "COST", "UBER", "SPOT"];
 
 describe("treatBasket", () => {
   it("splits the sample month to exactly $100.00, in first-seen order", () => {
     const b = treatBasket(SAMPLE_MONTH);
     expect(b.reduce((s, p) => s + p.treatCents, 0)).toBe(10000);
     expect(b.map((p) => p.ticker)).toEqual(SAMPLE_MONTH.filter((l) => l.ticker).map((l) => l.ticker));
-    expect(b[0]).toEqual({ ticker: "WMT", name: "Walmart", spendCents: 26841, treatCents: 1462 });
+    expect(b[0]).toEqual({ ticker: "WMT", name: "Walmart", spendCents: 14236, treatCents: 572 });
   });
   it("is stable: same input, same output", () => {
     expect(treatBasket(SAMPLE_MONTH)).toEqual(treatBasket(SAMPLE_MONTH));
   });
   it("gives leftover cents to the largest remainders, ties to the earlier company", () => {
-    const b = treatBasket([L("a", 1, "AAPL"), L("b", 1, "TSLA"), L("c", 1, "WMT")], 1);
+    const b = treatBasket([L("a", 1, "AAPL"), L("b", 1, "DASH"), L("c", 1, "WMT")], 1);
     expect(b.map((p) => p.treatCents)).toEqual([34, 33, 33]);
-    const c = treatBasket([L("a", 2, "AAPL"), L("b", 1, "TSLA")], 0.1);
+    const c = treatBasket([L("a", 2, "AAPL"), L("b", 1, "DASH")], 0.1);
     expect(c.map((p) => p.treatCents)).toEqual([7, 3]); // 6.67 -> 7, 3.33 -> 3
   });
   it("merges lines of one company", () => {

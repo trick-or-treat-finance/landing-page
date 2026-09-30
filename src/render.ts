@@ -23,7 +23,7 @@ export const esc = (s: string): string =>
 
 /** Official marks, bundled in public/logos. Costco is the Wikimedia Commons wordmark (simple-icons has none). */
 const LOGO: Record<string, string> = {
-  AAPL: "apple", TSLA: "tesla", GOOGL: "google", WMT: "walmart", COST: "costco", AMZN: "amazon", MSFT: "microsoft",
+  AAPL: "apple", DASH: "doordash", GOOGL: "google", WMT: "walmart", COST: "costco", AMZN: "amazon", MSFT: "microsoft",
   NVDA: "nvidia", SBUX: "starbucks", NFLX: "netflix", UBER: "uber", SPOT: "spotify",
 };
 

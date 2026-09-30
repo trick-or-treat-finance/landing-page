@@ -61,9 +61,10 @@ describe("no JS", () => {
     const page = await ctx.newPage();
     await page.goto(base);
     const text = await page.innerText("body");
-    expect(text).toContain("$4,812.63");
+    expect(text).toContain("$4,449.88");
     expect(text).toContain("JavaScript is off");
-    for (const n of ["Walmart", "Costco", "Spotify", "NVIDIA", "Tesla", "Alphabet"]) expect(text).toContain(n);
+    expect(await page.locator(".margin .n5").count()).toBe(1);
+    for (const n of ["Walmart", "Costco", "Spotify", "NVIDIA", "DoorDash", "Alphabet"]) expect(text).toContain(n);
     expect(text).toContain("Trick or Treat asks your bank for transactions only");
     expect(await page.locator(".tiles-wrap").isVisible()).toBe(true);
     expect(await page.locator(".tiles .tile").count()).toBe(12);
