@@ -10,8 +10,7 @@ export interface PurchaseKind {
 
 /** What the sandbox chips offer. Rent, utilities and local shops own nothing. */
 export const PURCHASE_KINDS: readonly PurchaseKind[] = [
-  { kind: "groceries", label: "Groceries", ticker: "WMT" },
-  { kind: "warehouse", label: "Warehouse club", ticker: "COST" },
+  { kind: "groceries", label: "Groceries", ticker: "COST" },
   { kind: "coffee", label: "Coffee & takeaway", ticker: "SBUX" },
   { kind: "online", label: "Online shopping", ticker: "AMZN" },
   { kind: "phone", label: "Phone & devices", ticker: "AAPL" },

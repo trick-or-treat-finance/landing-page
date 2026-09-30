@@ -10,7 +10,7 @@ describe("buildYourMonth", () => {
     ]);
     expect(m.trickCents).toBe(290000);
     expect(m.ownableCents).toBe(80000);
-    expect(m.basket.map((p) => [p.ticker, p.treatCents])).toEqual([["WMT", 7500], ["SBUX", 2500]]);
+    expect(m.basket.map((p) => [p.ticker, p.treatCents])).toEqual([["COST", 7500], ["SBUX", 2500]]);
   });
   it("gives an empty basket when only nothing-to-own kinds are chosen", () => {
     const m = buildYourMonth([{ kind: "rent", amountCents: 1000 }, { kind: "local", amountCents: 500 }]);
@@ -28,9 +28,14 @@ describe("buildYourMonth", () => {
     expect(() => buildYourMonth([{ kind: "rent", amountCents: -5 }])).toThrow(RangeError);
     expect(() => buildYourMonth([{ kind: "rent", amountCents: 1.5 }])).toThrow(RangeError);
   });
-  it("catalogue covers every company once, and the three owns-nothing kinds", () => {
+  it("catalogue covers every company once except Walmart, which lives only on the sample receipt", () => {
     const owned = PURCHASE_KINDS.filter((k) => k.ticker).map((k) => k.ticker).sort();
-    expect(owned).toEqual(COMPANIES.map((c) => c.ticker).sort());
+    expect(owned).toEqual(COMPANIES.map((c) => c.ticker).filter((t) => t !== "WMT").sort());
     expect(PURCHASE_KINDS.filter((k) => !k.ticker).map((k) => k.kind)).toEqual(["rent", "utilities", "local"]);
+  });
+  it("maps Groceries to Costco and has no separate warehouse kind", () => {
+    expect(PURCHASE_KINDS.find((k) => k.kind === "groceries")?.ticker).toBe("COST");
+    expect(PURCHASE_KINDS.some((k) => k.kind === "warehouse")).toBe(false);
+    expect(buildYourMonth([{ kind: "groceries", amountCents: 41200 }]).basket.map((p) => p.ticker)).toEqual(["COST"]);
   });
 });

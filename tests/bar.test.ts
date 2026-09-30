@@ -12,7 +12,7 @@ import { chromium, type Browser } from "playwright-core";
 const BASE = "/landing-page/";
 const out = mkdtempSync(join(tmpdir(), "tot-bar-"));
 const TYPES: Record<string, string> = {
-  ".html": "text/html", ".css": "text/css", ".js": "text/javascript", ".png": "image/png",
+  ".html": "text/html", ".css": "text/css", ".js": "text/javascript", ".png": "image/png", ".avif": "image/avif", ".webp": "image/webp",
   ".jpg": "image/jpeg", ".svg": "image/svg+xml", ".woff2": "font/woff2", ".woff": "font/woff",
 };
 let server: Server, base: string, browser: Browser;
@@ -165,4 +165,86 @@ describe("overlap", () => {
       for (const other of [boxes.heading, boxes.notes, boxes.ghost]) if (other) expect(hit(boxes.note!, other)).toBe(false);
     });
   }
+});
+
+// Owner request: Buffett + Lynch under the header, above the hero.
+const lum = (rgb: number[]): number => {
+  const [r, g, b] = rgb.map((v) => { const c = v / 255; return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4; });
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+};
+const ratio = (a: number[], b: number[]): number => {
+  const [hi, lo] = [lum(a), lum(b)].sort((x, y) => y - x);
+  return (hi + 0.05) / (lo + 0.05);
+};
+const rgbOf = (css: string): number[] => (css.match(/[\d.]+/g) ?? []).slice(0, 3).map(Number);
+
+describe("buffett + lynch section", () => {
+  it("sits directly under the header and above the hero, with alt naming both men and a set size", async () => {
+    const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+    await page.goto(base, { waitUntil: "networkidle" });
+    const m = await page.evaluate(() => {
+      const duo = document.querySelector(".duo")!.getBoundingClientRect();
+      const hero = document.querySelector(".hero")!.getBoundingClientRect();
+      const head = document.querySelector(".site-header")!.getBoundingClientRect();
+      const img = document.querySelector<HTMLImageElement>(".duo-img")!;
+      return { duo: duo.top, hero: hero.top, headBottom: head.bottom, alt: img.alt, w: img.getAttribute("width"), h: img.getAttribute("height"), loading: img.loading, src: img.currentSrc };
+    });
+    await page.close();
+    expect(m.duo).toBeGreaterThanOrEqual(m.headBottom - 1);
+    expect(m.duo).toBeLessThan(m.hero);
+    expect(m.alt).toMatch(/Peter Lynch/);
+    expect(m.alt).toMatch(/Warren Buffett/);
+    expect(m.w).toBe("1697");
+    expect(m.h).toBe("927");
+    expect(m.loading).toBe("eager");
+    expect(m.src).toMatch(/\.avif$/);
+  });
+  it("carries the attributions, the not-affiliated line and no unverified quote", async () => {
+    const ctx = await browser.newContext({ javaScriptEnabled: false });
+    const page = await ctx.newPage();
+    await page.goto(base);
+    const text = await page.innerText(".duo");
+    await ctx.close();
+    expect(text).toContain("Quotes for inspiration. Not affiliated with or endorsed by Warren Buffett or Peter Lynch.");
+    expect(text).toContain("Berkshire Hathaway shareholder letter, 1996");
+    expect(text).toContain("You only have to be able to evaluate companies within your circle of competence.");
+    expect(text).toContain("One Up on Wall Street");
+    expect(text).not.toMatch(/Never invest in a business you cannot understand|Know what you own/);
+  });
+  for (const w of [375, 768, 1280, 1920]) for (const scheme of ["light", "dark"] as const) {
+    it(`both faces stay whole and text is >= 4.5:1 at ${w}px in ${scheme}`, async () => {
+      const page = await browser.newPage({ viewport: { width: w, height: 900 }, colorScheme: scheme });
+      await page.goto(base, { waitUntil: "networkidle" });
+      const m = await page.evaluate(() => {
+        const img = document.querySelector<HTMLImageElement>(".duo-img")!.getBoundingClientRect();
+        const bg = (el: Element): string => {
+          for (let e: Element | null = el; e; e = e.parentElement) {
+            const c = getComputedStyle(e).backgroundColor;
+            if (c && c !== "rgba(0, 0, 0, 0)") return c;
+          }
+          return "rgb(255, 255, 255)";
+        };
+        const de = document.documentElement;
+        const text = [...document.querySelectorAll(".duo-q p, .duo-lede, .duo-note, .duo-title")].map((e) => ({
+          fg: getComputedStyle(e).color, bg: bg(e), t: e.className,
+        }));
+        return { l: img.left, r: img.right, w: img.width, h: img.height, vw: de.clientWidth, text };
+      });
+      await page.close();
+      expect(m.l).toBeGreaterThanOrEqual(0);
+      expect(m.r).toBeLessThanOrEqual(m.vw);
+      expect(Math.abs(m.w / m.h - 1697 / 927)).toBeLessThan(0.02);
+      for (const t of m.text) expect(ratio(rgbOf(t.fg), rgbOf(t.bg)), `${t.t}: ${t.fg} on ${t.bg}`).toBeGreaterThanOrEqual(4.5);
+    });
+  }
+  it("dark theme gives the drawing a light backdrop, and light stays straight on white", async () => {
+    const page = await browser.newPage({ viewport: { width: 1280, height: 900 }, colorScheme: "dark" });
+    await page.goto(base, { waitUntil: "networkidle" });
+    const dark = await page.evaluate(() => getComputedStyle(document.querySelector(".duo-fig")!).backgroundImage);
+    await page.evaluate(() => { document.documentElement.dataset.theme = "light"; });
+    const light = await page.evaluate(() => getComputedStyle(document.querySelector(".duo-fig")!).backgroundImage);
+    await page.close();
+    expect(dark).toContain("radial-gradient");
+    expect(light).toBe("none");
+  });
 });

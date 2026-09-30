@@ -377,3 +377,37 @@ input[type="range"]:disabled { cursor: default; opacity: 0.7; }
 @keyframes jump-flicker { 0%, 12% { opacity: 1; } 2% { opacity: 0.25; transform: scale(1.06); } 4% { opacity: 1; } 6% { opacity: 0.15; } 8% { opacity: 1; transform: scale(1.04); } 10% { opacity: 0.4; } 60% { opacity: 1; transform: none; } 62% { opacity: 0.3; } 64%, 100% { opacity: 1; } }
 @keyframes shiver { 0%, 100% { margin-left: 0; } 25% { margin-left: -2px; } 75% { margin-left: 2px; } }
 @keyframes lights { 0% { opacity: 1; } 92% { opacity: 0.7; } 94% { opacity: 1; } 97% { opacity: 0.55; } 98% { opacity: 1; } }
+
+/* ---------- Buffett + Lynch (top of page) ---------- */
+.duo { max-width: 1280px; margin: 0 auto; padding: 28px var(--gutter) 8px; }
+.duo-in { display: flex; flex-direction: column; align-items: center; gap: 28px; }
+.duo-head { display: flex; flex-direction: column; gap: 14px; align-items: center; text-align: center; max-width: 720px; }
+.duo-title { font-size: clamp(34px, 5.4vw, 64px); line-height: 1; font-weight: 700; letter-spacing: -0.035em; text-wrap: balance; }
+.duo-lede { font-size: 19px; line-height: 1.5; color: var(--secondary); text-wrap: pretty; }
+.duo-fig { margin: 0; width: min(760px, 100%); border-radius: 28px; }
+.duo-img { display: block; width: 100%; height: auto; aspect-ratio: 1697 / 927; }
+/* black ink vanishes on dark: give the drawing a moonlit paper backdrop, never invert */
+:root[data-theme="dark"] .duo-fig { background: radial-gradient(70% 80% at 50% 38%, #f6efdd 0%, #e6dcc3 62%, #cfc3a6 100%); padding: 22px 22px 0; box-shadow: 0 0 0 1px #ffffff14, 0 0 60px rgb(255 190 110 / 0.28), 0 0 120px rgb(140 80 230 / 0.28); overflow: hidden; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .duo-fig { background: radial-gradient(70% 80% at 50% 38%, #f6efdd 0%, #e6dcc3 62%, #cfc3a6 100%); padding: 22px 22px 0; box-shadow: 0 0 0 1px #ffffff14, 0 0 60px rgb(255 190 110 / 0.28), 0 0 120px rgb(140 80 230 / 0.28); overflow: hidden; }
+}
+.duo-quotes { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; width: min(1040px, 100%); }
+.duo-q { margin: 0; display: flex; flex-direction: column; gap: 12px; padding: 24px 26px; border: 1.5px solid var(--line-strong); border-radius: 22px; background: var(--panel, #fff); box-shadow: 0 3px 0 var(--line-strong); }
+.duo-lynch { transform: rotate(-0.6deg); }
+.duo-buffett { transform: rotate(0.6deg); }
+.duo-who { font-size: 13px; letter-spacing: 0.02em; color: var(--muted); }
+.duo-who span { display: block; font-size: 15px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink); }
+.duo-idea { font-size: clamp(28px, 3.2vw, 38px); line-height: 1.05; font-weight: 700; letter-spacing: -0.03em; color: var(--ink); }
+.duo-line { font-size: 17px; line-height: 1.45; font-weight: 600; color: var(--ink); text-wrap: pretty; }
+.duo-line-lg { font-size: 20px; }
+.duo-src { font-size: 13.5px; color: var(--muted); }
+.duo-tie { font-size: 15.5px; line-height: 1.5; color: var(--secondary); text-wrap: pretty; }
+.duo cite { font-style: italic; }
+.duo-note { font-size: 13px; line-height: 1.5; color: var(--muted); text-align: center; max-width: 62ch; }
+@media (max-width: 860px) {
+  .duo { padding-inline: 20px; padding-top: 16px; }
+  .duo-quotes { grid-template-columns: 1fr; gap: 18px; }
+  .duo-lynch, .duo-buffett { transform: none; }
+  .duo-lede { font-size: 17px; }
+  .duo-q { padding: 20px 20px; }
+}

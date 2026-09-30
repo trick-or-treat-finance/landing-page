@@ -21,17 +21,21 @@ export const plain = (cents: number): string => usd.format(cents / 100).slice(1)
 export const esc = (s: string): string =>
   s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 
-/** Official marks, bundled in public/logos. Costco has none in simple-icons: it gets a text badge. */
+/** Official marks, bundled in public/logos. Costco is the Wikimedia Commons wordmark (simple-icons has none). */
 const LOGO: Record<string, string> = {
-  AAPL: "apple", TSLA: "tesla", GOOGL: "google", WMT: "walmart", AMZN: "amazon", MSFT: "microsoft",
+  AAPL: "apple", TSLA: "tesla", GOOGL: "google", WMT: "walmart", COST: "costco", AMZN: "amazon", MSFT: "microsoft",
   NVDA: "nvidia", SBUX: "starbucks", NFLX: "netflix", UBER: "uber", SPOT: "spotify",
 };
+
+/** Wordmarks wider than a square mark. */
+const WIDE: Record<string, [number, number]> = { COST: [26, 9] };
 
 export function logo(ticker: string, base: string): string {
   const name = COMPANIES.find((c) => c.ticker === ticker)?.name ?? ticker;
   const slug = LOGO[ticker];
   if (!slug) return `<span class="logo logo-text" aria-hidden="true">${esc(name.toUpperCase())}</span>`;
-  return `<span class="logo"><img src="${base}logos/${slug}.svg" width="20" height="20" alt="${esc(name)} logo" /></span>`;
+  const [w, h] = WIDE[ticker] ?? [20, 20];
+  return `<span class="logo"><img src="${base}logos/${slug}.svg" width="${w}" height="${h}" alt="${esc(name)} logo" /></span>`;
 }
 
 const STAY_LABEL: Record<string, string> = {
