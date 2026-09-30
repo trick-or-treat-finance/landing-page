@@ -295,9 +295,9 @@ const theme = $<HTMLButtonElement>("#theme");
 if (theme) {
   const dark = (): boolean => (root.dataset.theme ? root.dataset.theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches);
   const paint = (): void => {
-    const on = dark();
-    theme.setAttribute("aria-pressed", String(on));
-    theme.textContent = on ? "daylight" : "after dark";
+    root.dataset.theme = dark() ? "dark" : "light";
+    theme.setAttribute("aria-checked", String(dark()));
+    theme.setAttribute("aria-label", dark() ? "After dark, on. Switch to daylight" : "After dark, off. Switch on");
   };
   theme.addEventListener("click", () => { root.dataset.theme = dark() ? "light" : "dark"; paint(); });
   paint();

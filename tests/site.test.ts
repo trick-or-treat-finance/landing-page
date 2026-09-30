@@ -13,7 +13,7 @@ const out = mkdtempSync(join(tmpdir(), "tot-landing-"));
 
 const TYPES: Record<string, string> = {
   ".html": "text/html", ".css": "text/css", ".js": "text/javascript",
-  ".png": "image/png", ".jpg": "image/jpeg", ".woff2": "font/woff2", ".woff": "font/woff",
+  ".png": "image/png", ".avif": "image/avif", ".webp": "image/webp", ".svg": "image/svg+xml", ".jpg": "image/jpeg", ".woff2": "font/woff2", ".woff": "font/woff",
 };
 
 function serve(root: string): Promise<{ server: Server; base: string }> {

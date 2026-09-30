@@ -6,11 +6,12 @@
 <title>Trick or Treat: one month of spending, read twice</title>
 <meta name="description" content="Play with a sample month. See what it cost, then the companies behind it. Runs in your browser. Sample data, not investment advice." />
 <link rel="icon" type="image/png" href="/favicon.png" />
+<link rel="apple-touch-icon" href="/favicon.png" />
 <meta property="og:type" content="website" />
 <meta property="og:title" content="One month of spending, read twice" />
 <meta property="og:description" content="A receipt for a sample month, then the same receipt sorted into the companies behind it. Sample data. Not investment advice." />
 <meta property="og:image" content="https://trick-or-treat-finance.github.io/landing-page/og.jpg" />
-<meta property="og:image:alt" content="The Trick or Treat ghost holding a bank bag, next to a till receipt for a sample month." />
+<meta property="og:image:alt" content="The Trick or Treat app icon, a ghost hugging a green bar chart." />
 <meta property="og:image:width" content="1200" />
 <meta property="og:image:height" content="630" />
 <meta name="twitter:card" content="summary_large_image" />
@@ -22,7 +23,7 @@
   .stage { grid-template-areas: "receipt" "right" !important; grid-template-columns: minmax(0, 1fr) !important; padding-left: 24px !important; }
   .margin { display: none !important; }
 </style></noscript>
-<link rel="preload" as="image" href="/hero.jpg" fetchpriority="high" />
+<link rel="preload" as="image" type="image/avif" imagesrcset="/duo/duo-375.avif 375w, /duo/duo-640.avif 640w, /duo/duo-960.avif 960w, /duo/duo-1280.avif 1280w, /duo/duo-1697.avif 1697w" imagesizes="(max-width: 800px) calc(100vw - 40px), 760px" fetchpriority="high" />
 <script type="module" src="/src/main.ts"></script>
 </head>
 <body class="home">
@@ -30,30 +31,63 @@
 <header class="site-header">
   <div class="site-header-inner">
     <a class="brand" href="./" aria-label="Trick or Treat, home">
-      <img class="ghost" src="/ghost.png" width="23" height="28" alt="" />
+      <img class="ghost mark" src="/mark.png" srcset="/mark.png 1x, /mark-2x.png 2x" width="32" height="32" alt="" />
       <span class="wordmark">trick <span class="or">or</span> treat</span>
     </a>
     <nav class="site-nav" aria-label="Main">
-      <a class="nav-link" href="about.html#how">How it works</a>
-      <a class="nav-link" href="#slip">What it won't ask for</a>
-      <button class="theme js-only" id="theme" type="button" aria-pressed="false">after dark</button>
-      <span class="nav-signin" aria-disabled="true" aria-label="Sign in, coming soon">Coming soon</span>
+      <a class="nav-link" href="about.html#how">how it works</a>
+      <a class="nav-link" href="#slip">what we won't ask</a>
+      <button class="theme js-only" id="theme" type="button" role="switch" aria-checked="false" aria-label="After dark"><span class="theme-track" aria-hidden="true"><svg class="ti ti-day" viewBox="0 0 24 24" width="17" height="17"><path d="M9 3h6M8 6h8l1 3v8l-2 3H9l-2-3V9Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="12" cy="13" r="2.6" fill="currentColor"/></svg><svg class="ti ti-night" viewBox="0 0 24 24" width="17" height="17"><path d="M12 5.5c-6 0-9 4-9 8s3 6.5 9 6.5 9-2.500 9-6.500-3-8-9-8Z" fill="currentColor"/><path d="M12 5.500c.2-1.500.8-2.500 2.200-3" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg><span class="theme-knob"></span></span></button>
+      <span class="nav-signin" aria-disabled="true">Coming soon</span>
     </nav>
   </div>
 </header>
 <main>
+  <section class="duo" aria-labelledby="duo-h">
+    <div class="duo-in">
+      <div class="duo-head">
+        <div class="eyebrow">Start here</div>
+        <h2 id="duo-h" class="duo-title">start with what you already know.</h2>
+        <p class="duo-lede">investing sounds like a club with a password. two people who spent careers on it say the first step is boring in the best way: look at the stuff you already buy.</p>
+      </div>
+      <figure class="duo-fig">
+        <picture>
+          <source type="image/avif" srcset="/duo/duo-375.avif 375w, /duo/duo-640.avif 640w, /duo/duo-960.avif 960w, /duo/duo-1280.avif 1280w, /duo/duo-1697.avif 1697w" sizes="(max-width: 800px) calc(100vw - 40px), 760px" />
+          <source type="image/webp" srcset="/duo/duo-375.webp 375w, /duo/duo-640.webp 640w, /duo/duo-960.webp 960w, /duo/duo-1280.webp 1280w, /duo/duo-1697.webp 1697w" sizes="(max-width: 800px) calc(100vw - 40px), 760px" />
+          <img class="duo-img" src="/duo/duo-960.png" srcset="/duo/duo-375.png 375w, /duo/duo-640.png 640w, /duo/duo-960.png 960w, /duo/duo-1280.png 1280w, /duo/duo-1697.png 1697w" sizes="(max-width: 800px) calc(100vw - 40px), 760px" width="1697" height="927" fetchpriority="high" loading="eager" decoding="async" alt="Ink drawing of investors Peter Lynch on the left, gesturing as he talks, and Warren Buffett on the right, smiling with his chin on his hand." />
+        </picture>
+      </figure>
+      <div class="duo-quotes">
+        <blockquote class="duo-q duo-lynch">
+          <p class="duo-who"><span>Peter Lynch</span> ran Fidelity's Magellan Fund</p>
+          <p class="duo-idea">invest in what you know.</p>
+          <p class="duo-tie">his big idea, from <cite>One Up on Wall Street</cite> (1989). look at your receipt: every company on it is one you already know.</p>
+          <p class="duo-line">&ldquo;How to Use What You Already Know to Make Money in the Market&rdquo;</p>
+          <p class="duo-src">the book's subtitle · <cite>One Up on Wall Street</cite>, 1989</p>
+        </blockquote>
+        <blockquote class="duo-q duo-buffett">
+          <p class="duo-who"><span>Warren Buffett</span> chairman of Berkshire Hathaway</p>
+          <p class="duo-line duo-line-lg">&ldquo;You don't have to be an expert on every company, or even many. You only have to be able to evaluate companies within your circle of competence.&rdquo;</p>
+          <p class="duo-src">Berkshire Hathaway shareholder letter, 1996</p>
+          <p class="duo-tie">translation: start with what you already understand, and skip the rest.</p>
+        </blockquote>
+      </div>
+      <p class="duo-note">Quotes for inspiration. Not affiliated with or endorsed by Warren Buffett or Peter Lynch. Investing is the idea behind Trick or Treat, not something the app does today. Not investment advice.</p>
+    </div>
+  </section>
+
   <section class="hero" aria-labelledby="h1">
     <div class="hero-copy">
       <div class="eyebrow">Sample month · September</div>
-      <h1 id="h1" class="hero-title">One month. Read twice.</h1>
-      <p class="hero-lede">The same purchases give you two readings. One tells you what the month cost. The other shows which companies were on the receipt. Flip the switch.</p>
+      <h1 id="h1" class="hero-title">you spent it. now see who got paid.</h1>
+      <p class="hero-lede">a sample month, read two ways. first the total (brace). then the same receipt, sorted by the companies behind it. flip the switch.</p>
       <div class="hero-cta">
-        <a class="btn" id="see-treat" href="#stage">See the same month, sorted</a>
-        <a class="btn btn-ghost" href="#sandbox">Build your own month</a>
+        <a class="btn" id="see-treat" href="#stage">show me who got paid</a>
+        <a class="btn btn-ghost" href="#sandbox">build your own month</a>
       </div>
       <p class="hero-hint">Flip the switch. Nothing else on this page needs a mouse.</p>
     </div>
-    <img class="hero-art" fetchpriority="high" src="/hero.jpg" width="760" height="560" alt="The trick or treat ghost, carrying a bank in its backpack, between a row of spending cards and a row of company stock tiles" />
+    <img class="hero-art" fetchpriority="high" src="/hero.jpg" srcset="/hero.jpg 560w, /hero-2x.jpg 1120w" sizes="(max-width: 960px) 240px, 500px" width="560" height="560" alt="The Trick or Treat app icon: a ghost hugging a green bar chart" />
   </section>
 
   <section class="stage-sec" id="stage" aria-labelledby="stage-h" tabindex="-1">
@@ -89,7 +123,7 @@
         <div class="right-stack">
           <div class="ghost-spot" aria-hidden="true">
             <div class="lamp"></div>
-            <svg viewBox="0 0 200 250" class="gh gh-hero" role="img" aria-label="Decorative. The Trick or Treat ghost with a bank bag and a phone."><use href="#ghost-body"/><g class="eyes"><ellipse class="eye" cx="102" cy="88" rx="6" ry="9" fill="#0B211C"/><ellipse class="eye" cx="136" cy="88" rx="6" ry="9" fill="#0B211C"/></g><path d="M110 108q10 8 20 0" stroke="#0B211C" stroke-width="3.2" fill="none" stroke-linecap="round"/><g><path d="M44 122c-22 4-26 40-22 62 2 12 14 16 26 12l14-6V122Z" fill="#0C302B" stroke="#0B211C" stroke-width="3" stroke-linejoin="round"/><rect x="26" y="152" width="22" height="26" rx="3" fill="#155646"/><path d="M30 160h14M31 156l6-3 6 3M33 160v12M37 160v12M41 160v12" stroke="#FCFCF6" stroke-width="1.6" fill="none"/><path d="M58 120c22-6 36 4 40 24" stroke="#0C302B" stroke-width="7" fill="none" stroke-linecap="round"/></g><g transform="rotate(14 150 150)"><rect x="142" y="120" width="30" height="56" rx="5" fill="#0C302B" stroke="#0B211C" stroke-width="3"/><rect x="146" y="126" width="22" height="40" rx="2" fill="#155646"/></g><path d="M120 178c8 10 24 10 34-4" fill="#FCFCF6" stroke="#0B211C" stroke-width="3" stroke-linecap="round"/></svg>
+            <svg viewBox="0 0 200 250" class="gh gh-hero" role="img" aria-label="Decorative. The Trick or Treat ghost with a bank bag and a phone."><use href="#ghost-body"/><g class="eyes"><ellipse class="eye" cx="102" cy="88" rx="6" ry="9" fill="#0B211C"/><ellipse class="eye" cx="136" cy="88" rx="6" ry="9" fill="#0B211C"/></g><path d="M110 108q10 8 20 0" stroke="#0B211C" stroke-width="3.2" fill="none" stroke-linecap="round"/><g class="hands"><rect x="92.2" y="74" width="4.6" height="28" rx="2.3"/><rect x="98.8" y="74" width="4.6" height="28" rx="2.3"/><rect x="105.4" y="74" width="4.6" height="28" rx="2.3"/><rect x="112.0" y="74" width="4.6" height="28" rx="2.3"/><rect x="126.2" y="74" width="4.6" height="28" rx="2.3"/><rect x="132.8" y="74" width="4.6" height="28" rx="2.3"/><rect x="139.4" y="74" width="4.6" height="28" rx="2.3"/><rect x="146.0" y="74" width="4.6" height="28" rx="2.3"/></g><g><path d="M44 122c-22 4-26 40-22 62 2 12 14 16 26 12l14-6V122Z" fill="#0C302B" stroke="#0B211C" stroke-width="3" stroke-linejoin="round"/><rect x="26" y="152" width="22" height="26" rx="3" fill="#155646"/><path d="M30 160h14M31 156l6-3 6 3M33 160v12M37 160v12M41 160v12" stroke="#FCFCF6" stroke-width="1.6" fill="none"/><path d="M58 120c22-6 36 4 40 24" stroke="#0C302B" stroke-width="7" fill="none" stroke-linecap="round"/></g><g transform="rotate(14 150 150)"><rect x="142" y="120" width="30" height="56" rx="5" fill="#0C302B" stroke="#0B211C" stroke-width="3"/><rect x="146" y="126" width="22" height="40" rx="2" fill="#155646"/></g><path d="M120 178c8 10 24 10 34-4" fill="#FCFCF6" stroke="#0B211C" stroke-width="3" stroke-linecap="round"/></svg>
           </div>
           <div class="tiles-wrap">
             <h3 class="t-h">Landing in company tiles<small>$100.00 treat · sample</small></h3>
