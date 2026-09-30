@@ -6,11 +6,12 @@
 <title>Trick or Treat: one month of spending, read twice</title>
 <meta name="description" content="Play with a sample month. See what it cost, then the companies behind it. Runs in your browser. Sample data, not investment advice." />
 <link rel="icon" type="image/png" href="/favicon.png" />
+<link rel="apple-touch-icon" href="/favicon.png" />
 <meta property="og:type" content="website" />
 <meta property="og:title" content="One month of spending, read twice" />
 <meta property="og:description" content="A receipt for a sample month, then the same receipt sorted into the companies behind it. Sample data. Not investment advice." />
 <meta property="og:image" content="https://trick-or-treat-finance.github.io/landing-page/og.jpg" />
-<meta property="og:image:alt" content="The Trick or Treat ghost holding a bank bag, next to a till receipt for a sample month." />
+<meta property="og:image:alt" content="The Trick or Treat app icon, a ghost hugging a green bar chart." />
 <meta property="og:image:width" content="1200" />
 <meta property="og:image:height" content="630" />
 <meta name="twitter:card" content="summary_large_image" />
@@ -22,7 +23,7 @@
   .stage { grid-template-areas: "receipt" "right" !important; grid-template-columns: minmax(0, 1fr) !important; padding-left: 24px !important; }
   .margin { display: none !important; }
 </style></noscript>
-<link rel="preload" as="image" href="/hero.jpg" fetchpriority="high" />
+<link rel="preload" as="image" href="/hero.jpg" imagesrcset="/hero.jpg 560w, /hero-2x.jpg 1120w" imagesizes="(max-width: 960px) 240px, 500px" fetchpriority="high" />
 <script type="module" src="/src/main.ts"></script>
 </head>
 <body class="home">
@@ -30,7 +31,7 @@
 <header class="site-header">
   <div class="site-header-inner">
     <a class="brand" href="./" aria-label="Trick or Treat, home">
-      <img class="ghost" src="/ghost.png" width="23" height="28" alt="" />
+      <img class="ghost mark" src="/mark.png" srcset="/mark.png 1x, /mark-2x.png 2x" width="32" height="32" alt="" />
       <span class="wordmark">trick <span class="or">or</span> treat</span>
     </a>
     <nav class="site-nav" aria-label="Main">
@@ -53,7 +54,7 @@
       </div>
       <p class="hero-hint">Flip the switch. Nothing else on this page needs a mouse.</p>
     </div>
-    <img class="hero-art" fetchpriority="high" src="/hero.jpg" width="760" height="560" alt="The trick or treat ghost, carrying a bank in its backpack, between a row of spending cards and a row of company stock tiles" />
+    <img class="hero-art" fetchpriority="high" src="/hero.jpg" srcset="/hero.jpg 560w, /hero-2x.jpg 1120w" sizes="(max-width: 960px) 240px, 500px" width="560" height="560" alt="The Trick or Treat app icon: a ghost hugging a green bar chart" />
   </section>
 
   <section class="stage-sec" id="stage" aria-labelledby="stage-h" tabindex="-1">
