@@ -136,3 +136,33 @@ describe("overflow", () => {
     });
   }
 });
+
+// Design gate defects 1 and 2: the stamp must never cover the total, and the logos note
+// must never sit on the tiles heading (or anything else in the right column).
+describe("overlap", () => {
+  type Box = { l: number; t: number; r: number; b: number };
+  const hit = (a: Box, b: Box) => a.l < b.r && b.l < a.r && a.t < b.b && b.t < a.b;
+  for (const w of [375, 768, 1280, 1920]) for (const view of ["trick", "treat"]) {
+    it(`stamp clears the total, note clears the tiles heading at ${w}px in the ${view} view`, async () => {
+      const page = await browser.newPage({ viewport: { width: w, height: 900 } });
+      await page.goto(base, { waitUntil: "networkidle" });
+      if (view === "treat") { await page.click("#sw"); await page.waitForTimeout(2500); }
+      const boxes = await page.evaluate(() => {
+        const box = (el: Element | null) => {
+          if (!el) return null;
+          const r = el.getBoundingClientRect();
+          return r.width && r.height ? { l: r.left, t: r.top, r: r.right, b: r.bottom } : null;
+        };
+        const q = (s: string) => document.querySelector(s);
+        return {
+          stamp: box(q(".stamp")), total: box(q("#total")), note: box(q(".logos-note")),
+          heading: box(q(".t-h")), notes: box(q(".treat-notes")), ghost: box(q(".ghost-spot")),
+        };
+      });
+      await page.close();
+      expect(boxes.stamp && boxes.total && boxes.note).toBeTruthy();
+      expect(hit(boxes.stamp!, boxes.total!)).toBe(false);
+      for (const other of [boxes.heading, boxes.notes, boxes.ghost]) if (other) expect(hit(boxes.note!, other)).toBe(false);
+    });
+  }
+});

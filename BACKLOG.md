@@ -13,3 +13,4 @@
 - [copy] Sandbox gym default ($40) and slider maxima are not in copy.md; confirm, src/render.ts:SANDBOX (worker-landing-interactive, 2026-09-29)
 - [ops] Chromium cannot launch in the agent sandbox (Mach ports); tests/bar.test.ts and lighthouse need CHROMIUM_PATH and an unsandboxed run, package.json:scripts (worker-landing-interactive, 2026-09-29)
 - [perf] Mobile Lighthouse performance is 96, not 100: render-blocking CSS with 20 font-face rules; inline critical CSS or drop unused Nunito 700 subsets, src/main.ts:1 (worker-landing-interactive, 2026-09-29)
+- [design] Receipt has a ~230px empty run of dashed slots in Treat view; the stamp now sits in it at top:150px, so it depends on the first 9 lines flying away, src/landing.css:129 (worker-landing-fix2, 2026-09-29)
