@@ -143,8 +143,8 @@ button.btn-soon { cursor: default; }
 [data-view="treat"] .tot-a { display: none; }
 [data-view="treat"] .tot-b { display: inline; }
 .bar { display: block; width: 100%; height: 22px; margin-top: 10px; color: var(--paper-ink); opacity: 0.85; }
-.stamp { display: none; width: fit-content; margin: 8px auto 10px; transform: rotate(-8deg); border: 2px solid var(--marker); color: #1e7a4c; background: transparent; font: 700 11px var(--mono); letter-spacing: 0.14em; padding: 3px 7px; border-radius: 2px; pointer-events: none; }
-[data-view="treat"] .stamp { display: block; }
+.stamp { position: absolute; opacity: 0; width: fit-content; margin: 8px auto 10px; transform: rotate(-8deg); border: 2px solid var(--marker); color: #1e7a4c; background: transparent; font: 700 11px var(--mono); letter-spacing: 0.14em; padding: 3px 7px; border-radius: 2px; pointer-events: none; }
+[data-view="treat"] .stamp { position: static; opacity: 1; display: block; }
 .slot.oct .ln { flex-wrap: wrap; height: auto; }
 .oct-note { font-family: var(--hand); font-weight: 700; font-size: 13px; color: #1e7a4c; position: absolute; right: 6px; top: 20px; transform: rotate(-2deg); }
 
@@ -426,7 +426,8 @@ input[type="range"]:disabled { cursor: default; opacity: 0.7; }
 }
 
 /* Treat receipt: once the ownable lines have landed in tiles their rows fold away, so the paper holds only what stays. */
-.stage.collapsed .slot[data-ticker] { height: 0; border-bottom-width: 0; overflow: hidden; transition: height 240ms ease-in; }
+.stage.collapsed .slot[data-ticker] { height: 0; border-bottom-width: 0; overflow: hidden; }
+@media (prefers-reduced-motion: no-preference) { .stage.collapsed .slot[data-ticker] { transition: height 240ms ease-in; } }
 .nto { display: block; font-size: 11.5px; letter-spacing: 0.04em; color: var(--paper-mute); }
 .slot.stay .ln { align-items: flex-end; }
 [data-view="treat"] .tot-sub { text-align: left; }
