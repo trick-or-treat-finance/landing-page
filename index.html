@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Trick or Treat: one month of spending, read twice</title>
+<meta name="description" content="Play with a sample month. See what it cost, then the companies behind it. Runs in your browser. Sample data, not investment advice." />
+<link rel="icon" type="image/png" href="/favicon.png" />
+<meta property="og:type" content="website" />
+<meta property="og:title" content="One month of spending, read twice" />
+<meta property="og:description" content="A receipt for a sample month, then the same receipt sorted into the companies behind it. Sample data. Not investment advice." />
+<meta property="og:image" content="https://trick-or-treat-finance.github.io/landing-page/og.jpg" />
+<meta property="og:image:alt" content="The Trick or Treat ghost holding a bank bag, next to a till receipt for a sample month." />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="color-scheme" content="light dark" />
+<noscript><style>
+  .stage .tiles-wrap { display: block !important; }
+  .stage .ghost-spot, .js-only { display: none !important; }
+  .stage .why, .slip-sec .why { display: block !important; }
+  .stage { grid-template-areas: "receipt" "right" !important; grid-template-columns: minmax(0, 1fr) !important; padding-left: 24px !important; }
+  .margin { display: none !important; }
+</style></noscript>
+<link rel="preload" as="image" href="/hero.jpg" fetchpriority="high" />
+<script type="module" src="/src/main.ts"></script>
+</head>
+<body class="home">
+<a class="skip" href="#stage">Skip to the receipt</a>
+<header class="site-header">
+  <div class="site-header-inner">
+    <a class="brand" href="./" aria-label="Trick or Treat, home">
+      <img class="ghost" src="/ghost.png" width="23" height="28" alt="" />
+      <span class="wordmark">trick <span class="or">or</span> treat</span>
+    </a>
+    <nav class="site-nav" aria-label="Main">
+      <a class="nav-link" href="about.html#how">How it works</a>
+      <a class="nav-link" href="#slip">What it won't ask for</a>
+      <button class="theme js-only" id="theme" type="button" aria-pressed="false">after dark</button>
+      <span class="nav-signin" aria-disabled="true" aria-label="Sign in, coming soon">Coming soon</span>
+    </nav>
+  </div>
+</header>
+<main>
+  <section class="hero" aria-labelledby="h1">
+    <div class="hero-copy">
+      <div class="eyebrow">Sample month · September</div>
+      <h1 id="h1" class="hero-title">you spent it. now see who got paid.</h1>
+      <p class="hero-lede">a sample month, read two ways. first the total (brace). then the same receipt, sorted by the companies behind it. flip the switch.</p>
+      <div class="hero-cta">
+        <a class="btn" id="see-treat" href="#stage">show me who got paid</a>
+        <a class="btn btn-ghost" href="#sandbox">Build your own month</a>
+      </div>
+      <p class="hero-hint">Flip the switch. Nothing else on this page needs a mouse.</p>
+    </div>
+    <img class="hero-art" fetchpriority="high" src="/hero.jpg" width="760" height="560" alt="The trick or treat ghost, carrying a bank in its backpack, between a row of spending cards and a row of company stock tiles" />
+  </section>
+
+  <section class="stage-sec" id="stage" aria-labelledby="stage-h" tabindex="-1">
+    <h2 id="stage-h" class="sr">The sample month, as a receipt and as a basket</h2>
+    <noscript><p class="nojs">JavaScript is off, so the switch and the sliders sit still. The receipt below is the whole sample month.</p></noscript>
+    <div class="stage desk" data-view="trick">
+      <div class="margin" aria-hidden="true">
+        <p class="note n1" style="--r:-4deg">this is where it went.<svg width="60" height="34" viewBox="0 0 60 34" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path pathLength="1" d="M6 4C24 4 34 12 46 26M38 25l9 2-1-10"/></svg></p>
+        <p class="note n2" style="--r:-2deg">you can't own a landlord.<svg width="70" height="30" viewBox="0 0 70 30" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path pathLength="1" d="M8 6C24 4 44 10 62 24M62 24l-9-2M62 24l-2-9"/></svg></p>
+      </div>
+      <div class="receipt-area" style="grid-area:receipt">
+        <div class="rc"><div class="rc-in">
+          <div class="rc-h"><span class="wm">Trick <em>or</em> Treat</span><span class="mono s">Sample month · September</span></div>
+          <div class="perf"></div>
+          <ul class="lines"><!--@lines--></ul>
+          <div class="perf"></div>
+          <div class="tot"><span class="tot-l"><span class="tot-a">THE TRICK</span><span class="tot-b">THE TREAT</span></span><b id="total">$4,812.63</b></div>
+          <p class="mono s tot-sub"><span class="tot-a">what the month cost</span><span class="tot-b">a $100.00 treat, in proportion</span></p>
+          <p class="mono s c">Sample month. Not real data. Nothing left this browser.</p>
+          <svg class="bar" viewBox="0 0 200 26" preserveAspectRatio="none" role="img" aria-label="Decorative barcode"><path fill="currentColor" d="M2 0h1v26H2zM5 0h3v26H5zM10 0h1v26h-1zM13 0h1v26h-1zM18 0h1v26h-1zM23 0h3v26h-3zM29 0h2v26h-2zM34 0h3v26h-3zM39 0h2v26h-2zM46 0h1v26h-1zM49 0h3v26h-3zM54 0h3v26h-3zM61 0h3v26h-3zM66 0h2v26h-2zM70 0h3v26h-3zM78 0h2v26h-2zM87 0h3v26h-3zM94 0h3v26h-3zM101 0h3v26h-3zM106 0h3v26h-3zM115 0h2v26h-2zM123 0h1v26h-1zM130 0h1v26h-1zM134 0h3v26h-3zM143 0h3v26h-3zM149 0h2v26h-2zM153 0h3v26h-3zM163 0h3v26h-3zM170 0h1v26h-1zM176 0h1v26h-1zM183 0h2v26h-2zM190 0h2v26h-2zM196 0h3v26h-3z"/></svg>
+        </div></div>
+        <div class="stamp" aria-hidden="true">NOTHING TO OWN</div>
+      </div>
+
+      <div class="right" style="grid-area:right">
+        <div class="switch-wrap js-only" role="group" aria-label="View of the sample month">
+          <span class="lab lab-trick on">Trick<small>what it cost</small></span>
+          <button class="sw" id="sw" type="button" role="switch" aria-checked="false" aria-label="Switch between Trick, what the month cost, and Treat, what it could buy"><span class="knob"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><ellipse cx="8.5" cy="11" rx="2" ry="3" fill="#0B211C"/><ellipse cx="15.5" cy="11" rx="2" ry="3" fill="#0B211C"/><path d="M9 16.5q3 2 6 0" stroke="#0B211C" stroke-width="1.6" fill="none" stroke-linecap="round"/></svg></span></button>
+          <span class="lab lab-treat">Treat<small>what it could buy</small></span>
+          <p class="note n3" aria-hidden="true" style="--r:3deg">same purchases, new sort.<svg width="90" height="14" viewBox="0 0 90 14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path pathLength="1" d="M2 8c20-6 40-4 86-2"/></svg></p>
+        </div>
+        <p class="sr" id="live" role="status" aria-live="polite"></p>
+        <div class="right-stack">
+          <div class="ghost-spot" aria-hidden="true">
+            <div class="lamp"></div>
+            <svg viewBox="0 0 200 250" class="gh gh-hero" role="img" aria-label="Decorative. The Trick or Treat ghost with a bank bag and a phone."><use href="#ghost-body"/><g class="eyes"><ellipse class="eye" cx="102" cy="88" rx="6" ry="9" fill="#0B211C"/><ellipse class="eye" cx="136" cy="88" rx="6" ry="9" fill="#0B211C"/></g><path d="M110 108q10 8 20 0" stroke="#0B211C" stroke-width="3.2" fill="none" stroke-linecap="round"/><g><path d="M44 122c-22 4-26 40-22 62 2 12 14 16 26 12l14-6V122Z" fill="#0C302B" stroke="#0B211C" stroke-width="3" stroke-linejoin="round"/><rect x="26" y="152" width="22" height="26" rx="3" fill="#155646"/><path d="M30 160h14M31 156l6-3 6 3M33 160v12M37 160v12M41 160v12" stroke="#FCFCF6" stroke-width="1.6" fill="none"/><path d="M58 120c22-6 36 4 40 24" stroke="#0C302B" stroke-width="7" fill="none" stroke-linecap="round"/></g><g transform="rotate(14 150 150)"><rect x="142" y="120" width="30" height="56" rx="5" fill="#0C302B" stroke="#0B211C" stroke-width="3"/><rect x="146" y="126" width="22" height="40" rx="2" fill="#155646"/></g><path d="M120 178c8 10 24 10 34-4" fill="#FCFCF6" stroke="#0B211C" stroke-width="3" stroke-linecap="round"/></svg>
+          </div>
+          <div class="tiles-wrap">
+            <h3 class="t-h">Landing in company tiles<small>$100.00 treat · sample</small></h3>
+            <ul class="tiles"><!--@tiles--></ul>
+            <p class="treat-notes"><span class="stamp-txt">Nothing to own.</span> The lines that map to a listed company move. The rest stay on the paper. Of $4,812.63, $1,835.47 mapped to a company you can buy. That is this sample, not yours. <span class="preview">Preview. The investing half is not built yet.</span></p>
+          </div>
+        </div>
+        <noscript><p class="nojs">With the switch on Treat: $1,835.47 of the $4,812.63 maps to a company you can buy. Rent, the corner restaurant and utilities map to nothing. This is a sample.</p></noscript>
+        <p class="logos-note">Company names and logos are trademarks of their owners. Trick or Treat is not affiliated with or endorsed by any company shown.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="how" id="how" aria-labelledby="how-h">
+    <div class="how-head">
+      <h2 id="how-h" class="h2">The same number, resorted.</h2>
+      <p class="lede">The reading that unsettles and the reading that pleases are built from the same purchases.</p>
+    </div>
+    <ol class="how-list">
+      <li><h3>Connect banks.</h3><p>Through Plaid, which asks your bank for transactions and nothing more. Several banks and all their cards, pooled into one picture.</p></li>
+      <li><h3>Read the month.</h3><p>Your purchases, added up, with money you moved between your own accounts taken back out. We match the pair: same amount, within four days, out of a current account and into a card. It is our inference and it can be wrong, so every removal is listed with its reason.</p></li>
+      <li><h3>Then the treat, later.</h3><p>The same purchases, sorted into the listed companies behind them. Coming later. The spending half works today; the investing half is a preview on this page.</p></li>
+    </ol>
+    <p class="startle">The number is arithmetic. There is no score, no traffic light and no red on a total.</p>
+  </section>
+
+  <section class="sandbox" id="sandbox" aria-labelledby="sb-h">
+    <div class="how-head">
+      <h2 id="sb-h" class="h2">Build your own month</h2>
+      <p class="lede">Tap what you buy. Nudge the amounts. The receipt and the basket move together.</p>
+    </div>
+    <div class="sand">
+      <div class="sand-l">
+        <div role="group" aria-label="Categories in your made-up month"><ul class="chips"><!--@chips--></ul></div>
+        <div class="rows"><!--@rows--></div>
+        <p class="says">Runs in this tab, stores nothing. Close it and it is gone.</p>
+        <p class="hint js-only">nudge a slider. the basket moves with it, both ways.</p>
+      </div>
+      <div class="sand-r">
+        <div class="tally">
+          <span class="k">Tally · sample</span>
+          <p class="big" id="sb-total" role="status" aria-atomic="true"><!--@total--></p>
+          <span class="s">what this made-up month cost</span>
+          <hr />
+          <div id="sb-detail"><!--@detail--></div>
+          <hr />
+          <p class="s dis">Made-up month. Not real data. Not investment advice.</p>
+        </div>
+        <button class="btn btn-ghost js-only" id="sb-reset" type="button">Start over</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="slip-sec" id="slip" aria-labelledby="slip-h">
+    <div class="how-head">
+      <h2 id="slip-h" class="h2">What it won't ask for</h2>
+      <p class="lede">A form you would actually sign. Each line is struck out. Tap one to see why.</p>
+    </div>
+    <div class="slip-wrap">
+      <div class="peeker" aria-hidden="true">
+        <svg viewBox="0 0 200 170" class="gh gh-peek"><defs><clipPath id="pk"><rect x="0" y="0" width="200" height="132"/></clipPath></defs><g class="peek-body" clip-path="url(#pk)"><g transform="translate(0 -6)"><use href="#ghost-body"/><g class="eyes"><ellipse class="eye" cx="96" cy="88" rx="6" ry="9" fill="#0B211C"/><ellipse class="eye" cx="130" cy="88" rx="6" ry="9" fill="#0B211C"/></g><path d="M104 108q8 5 16 0" stroke="#0B211C" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M40 116c-14-4-22 8-14 16 6 6 16 2 22-4" fill="#FCFCF6" stroke="#0B211C" stroke-width="3.2" stroke-linecap="round"/></g></g><rect x="0" y="126" width="200" height="14" fill="#DFE6DC" stroke="#0B211C" stroke-width="3"/></svg>
+      </div>
+      <div class="slip">
+        <span class="f">Permission slip · form 1 of 1 · read only</span>
+        <h3>The undersigned will not be asked to allow:</h3>
+        <ol class="slip-list">
+          <li data-open="true"><button type="button" class="slip-btn" aria-expanded="true" aria-controls="why1" aria-label="Struck out: moving a cent. Press for the reason."><span class="box" aria-hidden="true"></span><span class="strike">Moving a cent.</span></button><p class="why" id="why1">Trick or Treat asks your bank for transactions only, and has no code that moves money.</p></li>
+          <li><button type="button" class="slip-btn" aria-expanded="false" aria-controls="why2" aria-label="Struck out: your banking password. Press for the reason."><span class="box" aria-hidden="true"></span><span class="strike">Your banking password.</span></button><p class="why" id="why2">You type it into your bank or into Plaid, and this app only ever receives a token in return.</p></li>
+          <li><button type="button" class="slip-btn" aria-expanded="false" aria-controls="why3" aria-label="Struck out: reading on after you disconnect. Press for the reason."><span class="box" aria-hidden="true"></span><span class="strike">Reading on after you disconnect.</span></button><p class="why" id="why3">Disconnecting stops reading straight away and revokes the link at Plaid, and that bank's transactions are deleted once Plaid confirms.</p></li>
+        </ol>
+        <p class="tap js-only">Tap a line for the reason.</p>
+        <div class="sig" aria-hidden="true"><div><svg width="120" height="28" viewBox="0 0 120 28" fill="none" stroke="#0C302B" stroke-width="2" stroke-linecap="round"><path d="M4 20c6-16 10-16 8-2 6-12 12-12 10 0 6-6 10-6 14 2M50 14c14-4 30 0 46-4"/></svg></div><span>signed</span><div class="sig-d"></div><span>date</span></div>
+      </div>
+      <p class="note n4" aria-hidden="true" style="--r:-2deg">no small print. this is the print.<svg width="50" height="24" viewBox="0 0 50 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path pathLength="1" d="M4 4c14 0 28 4 40 16M36 18l9 1-2-9"/></svg></p>
+    </div>
+  </section>
+
+  <section class="cta" id="signin" aria-labelledby="cta-h">
+    <div class="cta-copy">
+      <h2 id="cta-h" class="h2">Your own month is next.</h2>
+      <p class="lede">Sign-in is not open on this page yet.</p>
+      <div class="cta-btn">
+        <button class="btn btn-soon" type="button" aria-disabled="true" aria-label="Sign in, coming soon. Not available yet.">Coming soon</button>
+        <svg viewBox="0 0 220 250" class="gh gh-wave" aria-hidden="true" focusable="false"><use href="#ghost-body"/><ellipse cx="104" cy="88" rx="6" ry="9" fill="#0B211C"/><ellipse cx="138" cy="88" rx="6" ry="9" fill="#0B211C"/><path d="M110 108q10 10 22-1" stroke="#0B211C" stroke-width="3.2" fill="none"/><g class="arm"><path d="M160 150c30-6 40-40 28-68" stroke="#0B211C" stroke-width="3.2" fill="none" stroke-linecap="round"/><path d="M160 130c26-6 34-34 24-58" stroke="#0B211C" stroke-width="3.2" fill="none" stroke-linecap="round"/><ellipse cx="184" cy="72" rx="9" ry="12" fill="#FCFCF6" stroke="#0B211C" stroke-width="3.2" transform="rotate(20 184 72)"/></g><path class="ticks" d="M198 50l6-8M203 62l9-3M196 40l1-9" stroke="#2F9E63" stroke-width="3" stroke-linecap="round"/></svg>
+      </div>
+      <p class="cta-hint">Google and Facebook sign-in are planned.</p>
+    </div>
+  </section>
+</main>
+<footer class="site-footer">
+  <p><strong>Sample month.</strong> Not real data. Every receipt, total and figure on this page is a sample.</p>
+  <p><strong>Not investment advice.</strong> Trick or Treat shows an illustration of how spending could map to companies. It is not investment advice, a recommendation, or an offer to buy or sell any security. Investing carries risk, including loss of principal. Nothing here is a claim about returns.</p>
+  <p>The spending half works today. The investing half is not built yet; what you see is a preview.</p>
+  <p>Company names and logos are trademarks of their owners. Trick or Treat is not affiliated with or endorsed by any company shown.</p>
+  <p>Connecting a bank shares transactions with Trick or Treat through Plaid. Disconnect any time; your data for that bank is deleted after Plaid confirms.</p>
+  <p>A spending total can be wrong. Pending charges move, and matching the two sides of a transfer is our inference.</p>
+  <p>The demos on this page run in your browser and store nothing.</p>
+</footer>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
+  <filter id="wob"><feTurbulence type="fractalNoise" baseFrequency=".035" numOctaves="2" seed="4"/><feDisplacementMap in="SourceGraphic" scale="3.2"/></filter>
+  <g id="ghost-body"><path d="M40 222C32 150 28 92 66 48 96 12 152 14 166 62c12 40 6 100 3 160q-14 20-28 2-14 18-30 0-14 18-30 0-16 16-41-2Z" fill="#FCFCF6" stroke="#0B211C" stroke-width="3.2" stroke-linejoin="round" filter="url(#wob)"/><path d="M150 70c14 30 10 90 6 148" stroke="#DFE6DC" stroke-width="10" fill="none" stroke-linecap="round" opacity=".8"/></g>
+</defs></svg>
+</body>
+</html>
