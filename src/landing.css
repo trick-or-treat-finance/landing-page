@@ -300,8 +300,11 @@ input[type="range"]:disabled { cursor: default; opacity: 0.7; }
 
 /* tablet */
 @media (max-width: 1100px) {
-  .desk { padding-left: 0; }
-  .margin { display: none; }
+  .desk { padding-left: 0; grid-template-areas: "receipt right" "rnote right"; grid-template-rows: auto 1fr; }
+  /* the phone joke stays: only n5, right under the receipt */
+  .margin { position: static; width: auto; height: auto; grid-area: rnote; pointer-events: auto; }
+  .margin .n1, .margin .n2 { display: none; }
+  .margin .n5 { position: relative; left: auto; top: auto; margin: 4px 0 0 12px; max-width: 220px; font-size: 19px; }
   .n4 { display: none; }
 }
 @media (max-width: 960px) {
@@ -315,7 +318,7 @@ input[type="range"]:disabled { cursor: default; opacity: 0.7; }
   .sand { grid-template-columns: 1fr; }
 }
 @media (max-width: 820px) {
-  .desk { grid-template-columns: minmax(0, 1fr); grid-template-areas: "sw" "receipt" "stack" "note"; }
+  .desk { grid-template-columns: minmax(0, 1fr); grid-template-areas: "sw" "receipt" "rnote" "stack" "note"; grid-template-rows: none; }
   .right { display: contents; }
   .switch-wrap { grid-area: sw; }
   .right-stack { grid-area: stack; }
