@@ -64,9 +64,21 @@ describe("margin note n1", () => {
     await page.waitForTimeout(1500);
     expect(await page.locator(".margin .n1").isVisible()).toBe(false);
     expect(await page.locator(".margin .n2").isVisible()).toBe(true);
+    expect(await page.locator(".margin .n5").isVisible()).toBe(false);
     await page.click("#sw");
     await page.waitForTimeout(1500);
     expect(await page.locator(".margin .n1").isVisible()).toBe(true);
+    expect(await page.locator(".margin .n5").isVisible()).toBe(true);
+    await page.close();
+  });
+
+  it("keeps the iPhone note n5 with the Apple line: shown in Trick view, hidden in Treat view, on a phone too", async () => {
+    const page = await browser.newPage({ viewport: { width: 375, height: 800 } });
+    await page.goto(base, { waitUntil: "networkidle" });
+    expect(await page.locator(".margin .n5").isVisible()).toBe(true);
+    await page.click("#sw");
+    await page.waitForTimeout(1500);
+    expect(await page.locator(".margin .n5").isVisible()).toBe(false);
     await page.close();
   });
 });
