@@ -401,7 +401,7 @@ input[type="range"]:disabled { cursor: default; opacity: 0.7; }
 .tw-sound[aria-pressed="true"] .tw-off, .tw-sound[aria-pressed="false"] .tw-waves { display: none; }
 .duo-q { position: relative; margin: 0; display: flex; flex-direction: column; gap: 14px; padding: 0; }
 .duo-who { font-size: 13px; letter-spacing: 0.02em; color: var(--muted); }
-.duo-who span { display: block; font-size: 14px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink); }
+.duo-who > span:not(.tw-c) { display: block; font-size: 14px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink); }
 .duo-idea { font-size: clamp(26px, 5.6vw, 36px); line-height: 1.12; font-weight: 700; letter-spacing: -0.04em; color: var(--ink); }
 .duo-line { font-size: 16.5px; line-height: 1.6; font-weight: 500; color: var(--ink); text-wrap: pretty; }
 .duo-line-lg { font-size: 19px; line-height: 1.55; }
