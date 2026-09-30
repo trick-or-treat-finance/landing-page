@@ -12,7 +12,7 @@
 .g-opt { display: flex; align-items: center; gap: 12px; min-height: 48px; padding: 0 16px; border: 1px solid var(--line-strong); border-radius: 999px; cursor: pointer; font-weight: 600; font-size: 16px; color: var(--ink); background: var(--ground); }
 .g-opt:has(input:checked) { background: var(--ink); color: var(--ground); border-color: var(--ink); }
 .g-opt:has(input:focus-visible) { outline: 2px solid var(--green-ink); outline-offset: 3px; }
-.g-opt input { appearance: none; -webkit-appearance: none; width: 44px; height: 44px; margin: -13px; flex: none; border-radius: 50%; background: radial-gradient(circle, transparent 0 6px, currentColor 6.5px 7.5px, transparent 8px 8.5px, transparent 100%); background-color: transparent; cursor: inherit; }
+.g-opt input { appearance: none; -webkit-appearance: none; width: 44px; height: 44px; margin: -13px; flex: none; border-radius: 50%; background: radial-gradient(circle, transparent 0 6px, currentColor 6.5px 7.5px, transparent 8px 8.5px, transparent 100%); background-color: transparent; cursor: inherit; color: inherit; }
 .g-opt input:checked { background: radial-gradient(circle, currentColor 0 4.5px, transparent 5px 6px, currentColor 6.5px 7.5px, transparent 8px); }
 .g-field { display: flex; flex-direction: column; gap: 4px; }
 .g-field label { display: flex; justify-content: space-between; align-items: baseline; font-weight: 600; font-size: 16px; color: var(--ink); }
