@@ -306,3 +306,20 @@ describe("404 page", () => {
       }
   }, 60_000);
 });
+
+describe("sign-up form and SOON tag", () => {
+  it("the sign-up form opens Buttondown in a new tab without handing it this page", () => {
+    const html = readFileSync(join(out, "index.html"), "utf8");
+    const form = html.match(/<form[^>]*id="notify-form"[^>]*>/)?.[0] ?? "";
+    expect(form).toContain('target="_blank"');
+    expect(form).toContain('rel="noopener noreferrer"');
+  });
+  it("the SOON tag looks like the app's: 2px 6px padding, .08em spacing, app track colours", () => {
+    const css = readFileSync(join(import.meta.dirname, "../src/landing.css"), "utf8");
+    const rule = css.match(/\.soon-tag \{[^}]*\}/)?.[0] ?? "";
+    expect(rule).toContain("padding: 2px 6px");
+    expect(rule).toContain("letter-spacing: 0.08em");
+    expect(rule).toContain("#E3EAE1");
+    expect(css).toMatch(/\.soon-tag \{ background: #2A1F36; \}/);
+  });
+});
