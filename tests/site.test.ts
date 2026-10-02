@@ -213,6 +213,20 @@ describe("email sign-up", () => {
   }, 20_000);
 });
 
+describe("what you get today", () => {
+  const sec = () => readFileSync(join(out, "index.html"), "utf8").split('id="today"')[1]!.split("</section>")[0]!;
+  it("lists the live items under 'Available right away', soon items under a soon tag, investing under Later", () => {
+    const [now, soon, later] = sec().split('class="today-col"').slice(1) as [string, string, string];
+    for (const t of ["every purchase", "transactions behind it", "merchant names and logos", "month by month"]) expect(now).toContain(t);
+    expect(now).not.toContain("soon-tag");
+    expect(soon).toContain('class="soon-tag">soon<');
+    for (const t of ["budget", "rewards"]) expect(soon).toContain(t);
+    expect(soon).toContain("Not live yet");
+    expect(later).toContain("investing");
+    for (const t of ["budget", "rewards"]) expect(now + later).not.toContain(t);
+  });
+});
+
 describe("header pill contrast", () => {
   const lum = (c: string): number => {
     const [r, g, b] = c.match(/\d+(\.\d+)?/g)!.slice(0, 3).map((v) => { const x = Number(v) / 255; return x <= 0.03928 ? x / 12.92 : ((x + 0.055) / 1.055) ** 2.4; }) as [number, number, number];

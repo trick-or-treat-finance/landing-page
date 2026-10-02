@@ -35,3 +35,4 @@
 - [security] security contact is the owner's personal mailbox for now; move to security@<domain> in public/.well-known/security.txt and hello-hacker.html once the domain exists (god, 2026-10-02)
 - [signup] #notify-form action is empty: set the email provider endpoint in index.html or the form sends nothing (thank-you still shows); index.html:~200 (landing-copy, 2026-10-02)
 - [header] 404.html and hello-hacker.html have no 'Coming soon' pill or theme switch, so they are not covered by the pill fix; 404.html:16 (landing-copy, 2026-10-02)
+- [tests] tests/bar.test.ts "buffett + lynch section" fails on 60e076b already (duo <img> src is empty string, expects .avif); also suites hit 10s hook timeouts when run in parallel with browsers (worker-landing-copy2, 2026-10-02)
