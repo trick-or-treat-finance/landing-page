@@ -156,6 +156,65 @@ describe("how it works", () => {
   });
 });
 
+describe("about page is short and scannable", () => {
+  const html = () => readFileSync(join(out, "about.html"), "utf8");
+  const main = () => html().split("<main")[1]!.split("</main>")[0]!;
+  const words = (h: string) => h.replace(/<[^>]+>/g, " ").split(/\s+/).filter(Boolean).length;
+  it("drops the resorted figure, the trick/treat dollar block and the long essay", () => {
+    const h = html();
+    expect(h).not.toMatch(/resorted/i);
+    expect(h).not.toMatch(/\$4,449|\$2,48[89]|\$100\.00|class="stats?"/);
+    expect(h).not.toMatch(/THE LOGO ALREADY SAYS IT|WHY THE ORDER MATTERS|whole argument/i);
+  });
+  it("has one catchy line: a short headline and a lede under 15 words", () => {
+    const h = html();
+    expect(h.match(/<h1/g)?.length).toBe(1);
+    expect(words(h.match(/<h1[^>]*>([^<]+)<\/h1>/)![1]!)).toBeLessThanOrEqual(8);
+    expect(words(h.match(/<p class="about-lede">([^<]+)<\/p>/)![1]!)).toBeLessThanOrEqual(15);
+  });
+  it("is three short steps: connect, see where every swipe went, budget and rewards soon", () => {
+    const list = html().split('class="how-list"')[1]!.split("</ol>")[0]!;
+    expect(list.match(/<li>/g)?.length).toBe(3);
+    expect(list).toMatch(/Connect/);
+    expect(list).toMatch(/every swipe/i);
+    expect(list).toMatch(/budget/i);
+    expect(list).toMatch(/rewards/i);
+    expect(list).toContain('class="soon-tag">soon<');
+    for (const m of list.matchAll(/<p>([^<]+)<\/p>/g)) expect(m[1]!.length).toBeLessThanOrEqual(80);
+  });
+  it("has one short 'what it will never do' list with an anchor for the nav", () => {
+    const sec = main().split('id="limits"')[1]!.split("</section>")[0]!;
+    const items = sec.match(/<li>/g) ?? [];
+    expect(items.length).toBeGreaterThanOrEqual(3);
+    expect(items.length).toBeLessThanOrEqual(5);
+    expect(sec).toMatch(/never do/i);
+  });
+  it("the whole page body is under 150 words", () => {
+    expect(words(main())).toBeLessThanOrEqual(150);
+  });
+  it("keeps the legal lines: plaid, no advice, risk, trademarks, not built yet, example numbers", () => {
+    const f = html().split("<footer")[1]!.split("</footer>")[0]!.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ");
+    for (const t of ["Not real data.", "not built yet", "Not investment advice", "Investing carries risk", "trademarks of their owners", "not affiliated with or endorsed by any company shown", "Connecting a bank shares transactions with Trick or Treat through Plaid. Disconnect any time; your data for that bank is deleted after Plaid confirms."])
+      expect(f, t).toContain(t);
+  });
+  for (const theme of ["light", "dark"] as const) it(`renders in ${theme} with readable text and no overflow at 375 and 1280`, async () => {
+    for (const w of [375, 1280]) {
+      const page = await browser.newPage({ viewport: { width: w, height: 900 }, colorScheme: theme });
+      await page.goto(`${base}${BASE}about.html`, { waitUntil: "networkidle" });
+      await page.evaluate((t) => { document.documentElement.dataset.theme = t; }, theme);
+      const m = await page.evaluate(() => {
+        const px = (c: string) => c.match(/[\d.]+/g)!.slice(0, 3).map(Number);
+        const bg = px(getComputedStyle(document.body).backgroundColor);
+        const rows = [...document.querySelectorAll(".about-main h1, .about-main h2, .about-main h3, .about-main p, .about-main li")].map((el) => ({ fg: px(getComputedStyle(el).color), t: el.textContent!.slice(0, 20) }));
+        return { bg, rows, over: document.documentElement.scrollWidth > innerWidth };
+      });
+      await page.close();
+      expect(m.over, `${theme} ${w}`).toBe(false);
+      for (const r of m.rows) expect(r.fg.join() !== m.bg.join(), `${theme} ${w} ${r.t}`).toBe(true);
+    }
+  }, 30_000);
+});
+
 describe("email sign-up", () => {
   const html = () => readFileSync(join(out, "index.html"), "utf8");
   it("has one email field, a button, the one-line promise and a fine print link, and nothing else", () => {

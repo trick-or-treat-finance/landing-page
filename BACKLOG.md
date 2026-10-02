@@ -39,3 +39,4 @@
 
 - Hero hint "nothing leaves your tab" is true for the sample month but the email sign-up does leave; reword when Buttondown goes live. (gate13-security, minor)
 - index.html fine print drops the word "recommendation" that about.html still uses; align the two. (gate13-security, minor)
+- [cleanup] style.css still has dead about styles (.panel, .stats, .limits, .card*, .line) after the about.html rewrite, src/style.css:77-123 (about-page, 2026-10-02)

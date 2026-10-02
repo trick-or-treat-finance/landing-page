@@ -482,6 +482,20 @@ input[type="range"]:disabled { cursor: default; opacity: 0.7; }
 .today-col:nth-child(n+2) .today-list li::before { background: transparent; border: 2px solid var(--muted); box-sizing: border-box; }
 .today-note { font-size: 14px; color: var(--muted); }
 .soon-tag { font: 700 11px/1 var(--sans); letter-spacing: 0.08em; text-transform: uppercase; color: var(--secondary); background: #E3EAE1; padding: 2px 6px; border-radius: 999px; margin-left: 6px; }
-:root[data-theme="dark"] .home .soon-tag { background: #2A1F36; }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .home .soon-tag { background: #2A1F36; } }
+:root[data-theme="dark"] .soon-tag { background: #2A1F36; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .soon-tag { background: #2A1F36; } }
 @media (max-width: 800px) { .today-grid { grid-template-columns: 1fr; gap: 32px; } }
+
+/* about: short version, same voice as home */
+.about .about-main { gap: 72px; padding-top: 72px; }
+.about .about-intro { flex-direction: column; gap: 18px; }
+.about .about-title { flex: none; font-size: clamp(40px, 7vw, 84px); line-height: 1; letter-spacing: -0.035em; text-wrap: balance; }
+.about .about-lede { flex: none; margin: 0; font-size: clamp(18px, 2vw, 22px); }
+.about-how { padding-top: 8px; }
+.about-never { display: flex; flex-direction: column; gap: 22px; border-top: 1px solid var(--line); padding-top: 38px; scroll-margin-top: 16px; }
+.never-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.never-list li { font-size: 20px; line-height: 1.35; color: var(--secondary); padding-left: 32px; position: relative; }
+.never-list li::before { content: "\00d7"; position: absolute; left: 0; top: -2px; font-size: 26px; line-height: 1.2; font-weight: 700; color: #9b2c1e; }
+:root[data-theme="dark"] .never-list li::before { color: #e0836f; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .never-list li::before { color: #e0836f; } }
+@media (max-width: 800px) { .about .about-main { gap: 48px; padding-top: 44px; } .never-list li { font-size: 18px; } }
