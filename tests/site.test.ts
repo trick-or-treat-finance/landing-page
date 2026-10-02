@@ -153,3 +153,40 @@ describe("responsive", () => {
     });
   }
 });
+
+describe("404 page", () => {
+  const html = () => readFileSync(join(out, "404.html"), "utf8");
+  it("is emitted at the dist root so Pages serves it for unknown paths", () => {
+    expect(existsSync(join(out, "404.html"))).toBe(true);
+    expect(html()).toContain('name="robots" content="noindex"');
+  });
+  it("hero is an eager, sized, alt-texted picture with AVIF, WebP and PNG sources that exist", () => {
+    const h = html();
+    expect(h).toMatch(/<source type="image\/avif"/);
+    expect(h).toMatch(/<source type="image\/webp"/);
+    const img = h.match(/<img class="nf-art"[^>]*>/)![0];
+    expect(img).toMatch(/width="1536"/);
+    expect(img).toMatch(/height="1024"/);
+    expect(img).toMatch(/loading="eager"/);
+    expect(img).toMatch(/alt="[^"]{20,}"/);
+    for (const m of h.matchAll(/(?:src|srcset)="([^"]+)"/g))
+      for (const part of m[1]!.split(",")) {
+        const u = part.trim().split(/\s+/)[0]!;
+        if (u.startsWith(`${BASE}404/`)) expect(existsSync(join(out, u.slice(BASE.length))), u).toBe(true);
+      }
+  });
+  it("links home and to the about page with absolute, base-prefixed hrefs", () => {
+    expect(html()).toContain(`<a class="btn" href="${BASE}">`);
+    expect(html()).toContain(`href="${BASE}about.html"`);
+  });
+  it("has one h1 and no horizontal overflow at 375/768/1280/1920, light and dark", async () => {
+    for (const w of WIDTHS)
+      for (const scheme of ["light", "dark"] as const) {
+        const page = await browser.newPage({ viewport: { width: w, height: 800 }, colorScheme: scheme });
+        await page.goto(`${base}${BASE}404.html`, { waitUntil: "load" });
+        expect(await page.locator("h1").count()).toBe(1);
+        expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `${w} ${scheme}`).toBe(true);
+        await page.close();
+      }
+  }, 60_000);
+});

@@ -28,3 +28,5 @@
 - [copy] "even the OGs agree" beat still leads with Lynch's idea at 36px; consider demoting .duo-idea now it is a mid-page beat, index.html:~150 (worker-landing-genz-story, 2026-09-30)
 - [hero] 390 CTA row sits below the fold (ctaBottom 858 > 844 at 390x844); not in scope, stack is tall on phones, file src/landing.css:309 (Pam genz-fix, 2026-09-30)
 - [cleanup] public/hero.jpg and hero-2x.jpg are no longer referenced by the hero (now an inline SVG); delete if nothing else uses them, public/hero.jpg (worker-landing-quick-maths, 2026-09-30)
+- [design] 404 hero art has a typo on one bill ("FINAL FA NOTICE"); regenerate the image and re-run the optimise step, public/404/buried-*.{avif,webp,png} (worker-404-landing, 2026-10-02)
+- [ops] tests/site.test.ts and scripts/*.mjs serve unknown paths as bare 404s; if more 404 assertions are wanted, make the test server return 404.html (worker-404-landing, 2026-10-02)
