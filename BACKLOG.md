@@ -32,3 +32,4 @@
 - [ops] tests/site.test.ts and scripts/*.mjs serve unknown paths as bare 404s; if more 404 assertions are wanted, make the test server return 404.html (worker-404-landing, 2026-10-02)
 - [ops] Pages serves this as a project site under /landing-page/, so crawlers look for /robots.txt and /.well-known/security.txt at the host root and never see ours; they only take effect on a custom domain at root (then set vite base to "/"), vite.config.ts:base (worker-bot-landing, 2026-10-02)
 - [tooling] Browser suites (bar, grow, site, typewriter) hit "Hook timed out in 10000ms" on afterAll browser.close when run together; give afterAll a timeout or run files serially, tests/bar.test.ts:33 (worker-bot-landing, 2026-10-02)
+- [security] security contact is the owner's personal mailbox for now; move to security@<domain> in public/.well-known/security.txt and hello-hacker.html once the domain exists (god, 2026-10-02)

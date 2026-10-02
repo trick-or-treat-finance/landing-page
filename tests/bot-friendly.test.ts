@@ -61,7 +61,7 @@ describe("Given a visitor opens /.well-known/security.txt", () => {
   const sec = () => read(".well-known/security.txt");
   const field = (n: string) => sec().match(new RegExp(`^${n}:\\s*(.+)$`, "im"))?.[1].trim();
   it("then Contact is the placeholder the owner fills in", () => {
-    expect(field("Contact")).toBe("mailto:security@REPLACE-WITH-DOMAIN");
+    expect(field("Contact")).toBe("mailto:polegarh@gmail.com");
   });
   it("then Expires is in the future and under a year from 2026-10-02", () => {
     const exp = new Date(field("Expires") ?? "");
@@ -87,7 +87,7 @@ describe("Given a visitor opens /hello-hacker", () => {
   });
   it("then it asks them to tell us instead", () => {
     expect(html()).toMatch(/<h1[^>]*>[^<]*(hack|poking)/i);
-    expect(html()).toMatch(/mailto:security@REPLACE-WITH-DOMAIN/);
+    expect(html()).toMatch(/mailto:polegarh@gmail.com/);
   });
   it("then it names no technology and no route", () => {
     const text = html().replace(/<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>/g, "");
