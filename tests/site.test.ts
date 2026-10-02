@@ -382,3 +382,10 @@ describe("sign-up form and SOON tag", () => {
     expect(css).toMatch(/\.soon-tag \{ background: #2A1F36; \}/);
   });
 });
+
+describe("about page theme", () => {
+  it("the how-it-works page follows dark mode like the home page", () => {
+    const html = readFileSync(join(out, "about.html"), "utf8");
+    expect(html).toMatch(/<body class="[^"]*\bhome\b[^"]*">/);
+  });
+});
