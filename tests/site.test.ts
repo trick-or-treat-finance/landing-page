@@ -160,7 +160,7 @@ describe("email sign-up", () => {
   const html = () => readFileSync(join(out, "index.html"), "utf8");
   it("has one email field, a button, the one-line promise and a fine print link, and nothing else", () => {
     const form = html().split('id="notify-form"')[1]!.split("</form>")[0]!;
-    expect(form.match(/<input/g)?.length).toBe(1);
+    expect(form.match(/<input(?![^>]*type="hidden")/g)?.length).toBe(1);
     expect(form).toMatch(/type="email"/);
     expect(form).toMatch(/Unsubscribe any time/);
     expect(form).toContain('href="#fine-print"');
@@ -169,30 +169,48 @@ describe("email sign-up", () => {
   it("adds no third-party script", () => {
     expect(html()).not.toMatch(/<script[^>]*src="https?:/);
   });
-  it("shows a thank-you after a valid email and an error for a bad one", async () => {
+  it("points at Buttondown's embed-subscribe endpoint with one placeholder username", () => {
+    expect(html()).toMatch(/<form[^>]*method="post"[^>]*action="https:\/\/buttondown\.com\/api\/emails\/embed-subscribe\/YOUR-BUTTONDOWN-USERNAME"/);
+    expect(html()).toContain('name="email"');
+    expect(html()).toMatch(/check your inbox/i);
+  });
+  const open = async (user: string) => {
     const page = await browser.newPage();
+    await page.route("**/index.html", async (r) => {
+      const res = await r.fetch();
+      await r.fulfill({ status: 200, contentType: "text/html", body: (await res.text()).replaceAll("YOUR-BUTTONDOWN-USERNAME", user) });
+    });
+    await page.context().route("https://buttondown.com/**", (r) => r.fulfill({ status: 200, body: "ok" }));
     await page.goto(`${base}${BASE}index.html`, { waitUntil: "networkidle" });
+    return page;
+  };
+  it("is disabled, with no thank-you, while the username is still the placeholder", async () => {
+    const page = await open("YOUR-BUTTONDOWN-USERNAME");
+    expect(await page.locator(".notify-btn").isDisabled()).toBe(true);
+    expect(await page.locator("#notify-email").isDisabled()).toBe(true);
+    expect(await page.locator("#notify-wait").isVisible()).toBe(true);
+    expect(await page.locator("#notify-thanks").isVisible()).toBe(false);
+    await page.close();
+  });
+  it("when configured: errors on a bad email, posts only email+embed natively, then says what happens next", async () => {
+    const page = await open("owner");
+    expect(await page.locator(".notify-btn").isDisabled()).toBe(false);
     await page.fill("#notify-email", "nope");
     await page.click(".notify-btn");
     expect(await page.locator("#notify-err").isVisible()).toBe(true);
     expect(await page.locator("#notify-thanks").isVisible()).toBe(false);
     await page.fill("#notify-email", "a@b.co");
+    const popup = page.waitForEvent("popup");
+    const req = page.context().waitForEvent("request", (q) => q.url().startsWith("https://buttondown.com/"));
     await page.click(".notify-btn");
+    const sent = await req;
+    expect(sent.url()).toBe("https://buttondown.com/api/emails/embed-subscribe/owner");
+    expect(sent.method()).toBe("POST");
+    expect(sent.postData()).toBe("embed=1&email=a%40b.co");
+    await (await popup).close();
     expect(await page.locator("#notify-thanks").isVisible()).toBe(true);
-    expect(await page.locator("#notify-form").isVisible()).toBe(false);
     await page.close();
-  });
-  it("posts only the email to the configured action", async () => {
-    const page = await browser.newPage();
-    await page.route("**/subscribe-test", (r) => r.fulfill({ status: 200, body: "ok" }));
-    await page.goto(`${base}${BASE}index.html`, { waitUntil: "networkidle" });
-    await page.evaluate(() => document.querySelector("#notify-form")!.setAttribute("action", "http://127.0.0.1:1/subscribe-test"));
-    const req = page.waitForRequest("**/subscribe-test");
-    await page.fill("#notify-email", "a@b.co");
-    await page.click(".notify-btn");
-    expect((await req).postData()).toBe("email=a%40b.co");
-    await page.close();
-  });
+  }, 20_000);
 });
 
 describe("header pill contrast", () => {

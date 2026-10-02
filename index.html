@@ -197,17 +197,19 @@
     <div class="cta-copy">
       <h2 id="cta-h" class="h2">Be the first to know.</h2>
       <p class="lede">Your own month is next. Leave your email and we&rsquo;ll tell you when it opens.</p>
-      <!-- TODO(provider): set this form's action to the email provider's endpoint. It is the only place the URL lives; src/notify.ts reads it. Until then nothing is sent. -->
-      <form class="notify" id="notify-form" method="post" action="">
+      <!-- CONFIG: replace YOUR-BUTTONDOWN-USERNAME below with the Buttondown username. It is the only place it lives; src/notify.ts reads it. While it is still the placeholder the form shows as disabled. -->
+      <form class="notify" id="notify-form" method="post" action="https://buttondown.com/api/emails/embed-subscribe/YOUR-BUTTONDOWN-USERNAME" target="_blank">
+        <input type="hidden" name="embed" value="1" />
         <label class="sr" for="notify-email">Email</label>
         <div class="notify-row">
           <input class="notify-in" id="notify-email" name="email" type="email" inputmode="email" autocomplete="email" placeholder="you@email.com" required />
           <button class="btn notify-btn" type="submit">Tell me</button>
         </div>
         <p class="notify-err" id="notify-err" role="alert" hidden>That doesn&rsquo;t look like an email. Try again?</p>
-        <p class="notify-line">One email, when we launch. Unsubscribe any time. Details in the <a href="#fine-print">fine print</a>.</p>
+        <p class="notify-wait" id="notify-wait" hidden>Sign-up opens in a moment.</p>
+        <p class="notify-line">One email, when we launch. Buttondown will ask you to confirm: check your inbox. Unsubscribe any time. Details in the <a href="#fine-print">fine print</a>.</p>
       </form>
-      <p class="notify-thanks" id="notify-thanks" role="status" tabindex="-1" hidden>You&rsquo;re on the list. One email when we launch, nothing else.</p>
+      <p class="notify-thanks" id="notify-thanks" role="status" tabindex="-1" hidden>Almost there: confirm in the tab that just opened, then check your inbox for the confirmation email.</p>
     </div>
   </section>
 </main>
