@@ -37,6 +37,7 @@ export default defineConfig({
       input: {
         index: resolve(import.meta.dirname, "index.html"),
         about: resolve(import.meta.dirname, "about.html"),
+        "hello-hacker": resolve(import.meta.dirname, "hello-hacker.html"),
         // GitHub Pages serves dist/404.html, with an HTTP 404, for every unknown path.
         notfound: resolve(import.meta.dirname, "404.html"),
       },

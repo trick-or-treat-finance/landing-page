@@ -1,0 +1,20 @@
+# Hello, robot. We would like you to leave.
+# Nothing here is a treat. If you are a person, hi.
+
+User-agent: GPTBot
+User-agent: ChatGPT-User
+User-agent: OAI-SearchBot
+User-agent: ClaudeBot
+User-agent: Claude-Web
+User-agent: CCBot
+User-agent: Google-Extended
+User-agent: PerplexityBot
+User-agent: Bytespider
+User-agent: Applebot-Extended
+User-agent: Meta-ExternalAgent
+User-agent: Amazonbot
+Disallow: /
+
+# Everyone else, search engines included, may read the front door.
+User-agent: *
+Allow: /

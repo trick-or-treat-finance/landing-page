@@ -1,0 +1,4 @@
+# Poking around? We would rather you told us.
+Contact: mailto:security@REPLACE-WITH-DOMAIN
+Expires: 2027-08-31T00:00:00.000Z
+Preferred-Languages: en
