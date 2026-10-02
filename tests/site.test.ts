@@ -71,9 +71,9 @@ describe("links", () => {
         if (hash) expect(readFileSync(file, "utf8"), h).toContain(`id="${hash}"`);
       }
     });
-    it(`${p}: sign-in is 'Coming soon', not a link`, () => {
+    it(`${p}: 'Coming soon' pill goes to the email sign-up, there is no sign-in link`, () => {
       const html = readFileSync(join(out, p), "utf8");
-      expect(html).toMatch(/<span class="nav-signin[^"]*"[^>]*>Coming soon<\/span>/);
+      expect(html).toMatch(/<a class="nav-signin" href="[^"]*#notify">Coming soon<\/a>/);
       expect(html).not.toMatch(/<a[^>]*>\s*(Sign in|See your month)/);
     });
     it(`${p}: favicon and og:image are set`, () => {
@@ -88,7 +88,7 @@ describe("links", () => {
       const footer = text.split("<footer")[1]!.split("</footer>")[0]!;
       expect(footer).toContain("the fine print");
       expect(footer).toContain("Not investment advice");
-      expect(footer).toMatch(/Sample (data|month)/);
+      expect(footer).toMatch(/example numbers/i);
       expect(footer).toContain("not built yet");
       const body = text.split("<footer")[0]!.split("<main")[1]!;
       expect(body).not.toMatch(/not affiliated|Trademarks? of their owners|Not investment advice\./i);
@@ -117,22 +117,106 @@ describe("index footer fine print", () => {
     expect(html).not.toContain("Sample month · September");
     expect(html).not.toContain('class="eyebrow">Sample');
     expect(html).toContain("quick maths, no cap");
-    expect(html).toContain("this page reads a sample month");
+    const lede = html.match(/<p class="hero-lede">([^<]+)<\/p>/)![1]!;
+    expect(lede).not.toMatch(/sample month|receipt|flip the switch/i);
+    expect(lede.split(/\s+/).length).toBeLessThanOrEqual(15);
     expect(html).toMatch(/<svg class="hero-art"[^>]*aria-label="[^"]*receipt/);
     expect(html).not.toMatch(/<img class="hero-art"/);
   });
-  it("says each fact once: sample month, no storage, not built yet, risk, advice, trademarks", () => {
+  it("says each fact once: example numbers, no storage, not built yet, risk, advice, trademarks", () => {
     const t = text();
-    for (const re of [/not built yet/gi, /stores? nothing|nothing is stored/gi, /made-up/gi, /can lose money/gi, /not affiliated with or endorsed by Warren/gi, /trademarks of their owners/gi, /a preview/gi]) {
+    for (const re of [/not built yet/gi, /nothing is stored/gi, /made-up/gi, /can lose money/gi, /not affiliated with or endorsed by Warren/gi, /trademarks of their owners/gi]) {
       expect(t.match(re)?.length, String(re)).toBe(1);
     }
     expect(t).toContain("Nothing leaves this browser and nothing is stored");
     expect(t).toContain("a made-up month that runs in this tab");
     expect(t).toContain("Connecting a bank shares transactions with Trick or Treat through Plaid. Disconnect any time; your data for that bank is deleted after Plaid confirms.");
-    expect(t.match(/Sample month\./g)?.length).toBe(1);
+    expect(t).not.toMatch(/Sample month\.|SAMPLE DATA/);
     expect(t.match(/Not real data\./g)?.length).toBe(1);
-    expect(t.match(/Not investment advice\./gi)?.length).toBe(1);
+    expect(t.match(/Not investment advice/gi)?.length).toBe(1);
   });
+  it("fine print is small and not shouting", () => {
+    const css = readFileSync(join(import.meta.dirname, "../src/style.css"), "utf8");
+    expect(css).toMatch(/\.site-footer p \{[^}]*font-size: 12px/);
+    expect(css).toMatch(/\.fp-h \{[^}]*font-size: 11px/);
+    expect(css).not.toMatch(/\.fp-h \{[^}]*uppercase/);
+  });
+});
+
+describe("how it works", () => {
+  const html = () => readFileSync(join(out, "index.html"), "utf8");
+  it("is three one-line steps, no 'same number' headline, no transfer-matching paragraph", () => {
+    const h = html();
+    expect(h).not.toContain("The same number, resorted");
+    expect(h).not.toContain("within four days");
+    expect(h).not.toContain("The number is arithmetic");
+    const list = h.split('class="how-list"')[1]!.split("</ol>")[0]!;
+    expect(list.match(/<li>/g)?.length).toBe(3);
+    for (const m of list.matchAll(/<p>([^<]+)<\/p>/g)) expect(m[1]!.length).toBeLessThanOrEqual(80);
+  });
+});
+
+describe("email sign-up", () => {
+  const html = () => readFileSync(join(out, "index.html"), "utf8");
+  it("has one email field, a button, the one-line promise and a fine print link, and nothing else", () => {
+    const form = html().split('id="notify-form"')[1]!.split("</form>")[0]!;
+    expect(form.match(/<input/g)?.length).toBe(1);
+    expect(form).toMatch(/type="email"/);
+    expect(form).toMatch(/Unsubscribe any time/);
+    expect(form).toContain('href="#fine-print"');
+    expect(html()).toMatch(/<form[^>]*method="post"[^>]*action=/);
+  });
+  it("adds no third-party script", () => {
+    expect(html()).not.toMatch(/<script[^>]*src="https?:/);
+  });
+  it("shows a thank-you after a valid email and an error for a bad one", async () => {
+    const page = await browser.newPage();
+    await page.goto(`${base}${BASE}index.html`, { waitUntil: "networkidle" });
+    await page.fill("#notify-email", "nope");
+    await page.click(".notify-btn");
+    expect(await page.locator("#notify-err").isVisible()).toBe(true);
+    expect(await page.locator("#notify-thanks").isVisible()).toBe(false);
+    await page.fill("#notify-email", "a@b.co");
+    await page.click(".notify-btn");
+    expect(await page.locator("#notify-thanks").isVisible()).toBe(true);
+    expect(await page.locator("#notify-form").isVisible()).toBe(false);
+    await page.close();
+  });
+  it("posts only the email to the configured action", async () => {
+    const page = await browser.newPage();
+    await page.route("**/subscribe-test", (r) => r.fulfill({ status: 200, body: "ok" }));
+    await page.goto(`${base}${BASE}index.html`, { waitUntil: "networkidle" });
+    await page.evaluate(() => document.querySelector("#notify-form")!.setAttribute("action", "http://127.0.0.1:1/subscribe-test"));
+    const req = page.waitForRequest("**/subscribe-test");
+    await page.fill("#notify-email", "a@b.co");
+    await page.click(".notify-btn");
+    expect((await req).postData()).toBe("email=a%40b.co");
+    await page.close();
+  });
+});
+
+describe("header pill contrast", () => {
+  const lum = (c: string): number => {
+    const [r, g, b] = c.match(/\d+(\.\d+)?/g)!.slice(0, 3).map((v) => { const x = Number(v) / 255; return x <= 0.03928 ? x / 12.92 : ((x + 0.055) / 1.055) ** 2.4; }) as [number, number, number];
+    return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+  };
+  const ratio = (a: string, b: string): number => { const [x, y] = [lum(a), lum(b)].sort((p, q) => q - p); return (x! + 0.05) / (y! + 0.05); };
+  for (const p of PAGES) for (const theme of ["light", "dark"] as const) {
+    it(`${p} ${theme}: every header pill is at least 4.5:1, resting and hovered`, async () => {
+      const page = await browser.newPage({ viewport: { width: 1280, height: 800 }, colorScheme: theme });
+      await page.goto(`${base}${BASE}${p}`, { waitUntil: "networkidle" });
+      await page.evaluate((t) => { document.documentElement.dataset.theme = t; }, theme);
+      for (const el of await page.locator(".site-nav .nav-link, .site-nav .nav-signin").all()) {
+        for (const hover of [false, true]) {
+          if (hover) await el.hover();
+          await page.waitForTimeout(450);
+          const { fg, bg } = await el.evaluate((n) => ({ fg: getComputedStyle(n).color, bg: getComputedStyle(n).backgroundColor }));
+          expect(ratio(fg, bg), `${await el.innerText()} ${hover ? "hover" : "rest"} ${fg} on ${bg}`).toBeGreaterThanOrEqual(4.5);
+        }
+      }
+      await page.close();
+    });
+  }
 });
 
 describe("responsive", () => {
