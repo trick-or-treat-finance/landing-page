@@ -5,6 +5,7 @@ import { tmpdir } from "node:os";
 import { extname, join, normalize } from "node:path";
 import { gzipSync } from "node:zlib";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { BEEHIIV, stubBeehiiv } from "./beehiiv-stub";
 import { chromium, type Browser } from "playwright-core";
 
 const BASE = "/landing-page/";
@@ -26,10 +27,12 @@ beforeAll(async () => {
   });
   await new Promise<void>((ok) => server.listen(0, "127.0.0.1", ok));
   base = `http://127.0.0.1:${(server.address() as { port: number }).port}`;
-  browser = await chromium.launch({ executablePath: process.env.CHROMIUM_PATH });
+  browser = stubBeehiiv(await chromium.launch({ executablePath: process.env.CHROMIUM_PATH }));
 }, 120_000);
 afterAll(async () => { await browser?.close(); server?.close(); });
 
+// The one allowed third party: the beehiiv sign-up form and what its iframe loads (beehiiv's business, not this page's).
+const inBeehiivForm = (r: import("playwright-core").Request) => r.url().startsWith(`${BEEHIIV}/`) || new URL(r.frame().url() === "about:blank" ? `${BEEHIIV}/` : r.frame().url()).origin === BEEHIIV;
 const open = async (opts: { js?: boolean; scheme?: "light" | "dark"; reduced?: boolean; width?: number } = {}) => {
   const ctx = await browser.newContext({
     viewport: { width: opts.width ?? 1280, height: 900 }, javaScriptEnabled: opts.js ?? true,
@@ -37,7 +40,7 @@ const open = async (opts: { js?: boolean; scheme?: "light" | "dark"; reduced?: b
   });
   const page = await ctx.newPage();
   const foreign: string[] = [];
-  page.on("request", (r) => { if (!r.url().startsWith(base)) foreign.push(r.url()); });
+  page.on("request", (r) => { if (!r.url().startsWith(base) && !inBeehiivForm(r)) foreign.push(r.url()); });
   await page.goto(`${base}${BASE}index.html`, { waitUntil: "networkidle" });
   return { ctx, page, foreign };
 };

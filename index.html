@@ -229,19 +229,7 @@
     <div class="cta-copy">
       <h2 id="cta-h" class="h2">Be the first to know.</h2>
       <p class="lede">Your own month is next. Leave your email and we&rsquo;ll tell you when it opens.</p>
-      <!-- CONFIG: replace YOUR-BUTTONDOWN-USERNAME below with the Buttondown username. It is the only place it lives; src/notify.ts reads it. While it is still the placeholder the form shows as disabled. -->
-      <form class="notify" id="notify-form" method="post" action="https://buttondown.com/api/emails/embed-subscribe/YOUR-BUTTONDOWN-USERNAME" target="_blank" rel="noopener noreferrer">
-        <input type="hidden" name="embed" value="1" />
-        <label class="sr" for="notify-email">Email</label>
-        <div class="notify-row">
-          <input class="notify-in" id="notify-email" name="email" type="email" inputmode="email" autocomplete="email" placeholder="you@email.com" required />
-          <button class="btn notify-btn" type="submit">Tell me</button>
-        </div>
-        <p class="notify-err" id="notify-err" role="alert" hidden>That doesn&rsquo;t look like an email. Try again?</p>
-        <p class="notify-wait" id="notify-wait" hidden>Sign-up opens in a moment.</p>
-        <p class="notify-line">One email, when we launch. Buttondown will ask you to confirm: check your inbox. Unsubscribe any time. Details in the <a href="#fine-print">fine print</a>.</p>
-      </form>
-      <p class="notify-thanks" id="notify-thanks" role="status" tabindex="-1" hidden>Almost there: confirm in the tab that just opened, then check your inbox for the confirmation email.</p>
+      <script async src="https://subscribe-forms.beehiiv.com/v3/loader.js" data-beehiiv-form="0815b6bf-3f5b-42a1-8bbf-97dbe3917f4f"></script>
     </div>
   </section>
 </main>
@@ -258,6 +246,10 @@
   <section class="fp" aria-labelledby="fp-names">
     <h3 id="fp-names" class="fp-h">names, logos and Plaid</h3>
     <p>Quotes for inspiration. Not affiliated with or endorsed by Warren Buffett or Peter Lynch. Company names and logos are trademarks of their owners. Trick or Treat is not affiliated with or endorsed by any company shown. Connecting a bank shares transactions with Trick or Treat through Plaid. Disconnect any time; your data for that bank is deleted after Plaid confirms.</p>
+  </section>
+  <section class="fp" aria-labelledby="fp-email">
+    <h3 id="fp-email" class="fp-h">the email sign-up</h3>
+    <p>The &ldquo;Be the first to know&rdquo; form is run by beehiiv, a newsletter service. It loads a script and a form from beehiiv, and beehiiv handles your email address and sends the confirmation and launch emails. One email when we launch. Unsubscribe any time.</p>
   </section>
 </footer>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
