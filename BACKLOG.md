@@ -33,9 +33,12 @@
 - [ops] Pages serves this as a project site under /landing-page/, so crawlers look for /robots.txt and /.well-known/security.txt at the host root and never see ours; they only take effect on a custom domain at root (then set vite base to "/"), vite.config.ts:base (worker-bot-landing, 2026-10-02)
 - [tooling] Browser suites (bar, grow, site, typewriter) hit "Hook timed out in 10000ms" on afterAll browser.close when run together; give afterAll a timeout or run files serially, tests/bar.test.ts:33 (worker-bot-landing, 2026-10-02)
 - [security] security contact is the owner's personal mailbox for now; move to security@<domain> in public/.well-known/security.txt and hello-hacker.html once the domain exists (god, 2026-10-02)
-- [signup] #notify-form action is empty: set the email provider endpoint in index.html or the form sends nothing (thank-you still shows); index.html:~200 (landing-copy, 2026-10-02)
 - [header] 404.html and hello-hacker.html have no 'Coming soon' pill or theme switch, so they are not covered by the pill fix; 404.html:16 (landing-copy, 2026-10-02)
 - [tests] tests/bar.test.ts "buffett + lynch section" fails on 60e076b already (duo <img> src is empty string, expects .avif); also suites hit 10s hook timeouts when run in parallel with browsers (worker-landing-copy2, 2026-10-02)
 
-- Hero hint "nothing leaves your tab" is true for the sample month but the email sign-up does leave; reword when Buttondown goes live. (gate13-security, minor)
+- Hero hint "nothing leaves your tab" is true for the sample month but the email sign-up does leave; reword now the beehiiv sign-up is live (it loads beehiiv's script and form). (gate13-security, minor)
 - index.html fine print drops the word "recommendation" that about.html still uses; align the two. (gate13-security, minor)
+
+- [tests] tests lean on `networkidle` and the embedded beehiiv iframe never settles live; they stub the beehiiv origin (tests/beehiiv-stub.ts). A real-iframe smoke test would catch a loader change, tests/beehiiv-stub.ts:1 (worker-beehiiv-signup, 2026-10-02)
+- [signup] beehiiv form at 375px truncates the email placeholder ("Enter y") and in dark mode sits as a white panel; fix in the beehiiv form's own design settings, not in this repo (worker-beehiiv-signup, 2026-10-02)
+- [signup] beehiiv form placeholder reads "Enter your ssn, oh sorry email" and the button "Request access"; owner may want plainer copy in the form settings (worker-beehiiv-signup, 2026-10-02)

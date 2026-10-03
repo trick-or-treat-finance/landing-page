@@ -7,4 +7,4 @@ import "./landing.css";
 import "./grow.css";
 
 // Only the home page has anything to wake up; the about page stays script-free.
-if (document.body.classList.contains("home")) { void import("./landing"); void import("./grow"); void import("./notify"); }
+if (document.body.classList.contains("home")) { void import("./landing"); void import("./grow"); }

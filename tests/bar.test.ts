@@ -5,6 +5,7 @@ import { tmpdir } from "node:os";
 import { extname, join, normalize } from "node:path";
 import { gzipSync } from "node:zlib";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { BEEHIIV, stubBeehiiv } from "./beehiiv-stub";
 import { chromium, type Browser } from "playwright-core";
 
 // The bar from the brief: JS <= 60 KB gzipped, 0 third-party requests, no-JS render,
@@ -28,7 +29,7 @@ beforeAll(async () => {
   });
   await new Promise<void>((ok) => server.listen(0, "127.0.0.1", ok));
   base = `http://127.0.0.1:${(server.address() as { port: number }).port}${BASE}`;
-  browser = await chromium.launch({ executablePath: process.env.CHROMIUM_PATH });
+  browser = stubBeehiiv(await chromium.launch({ executablePath: process.env.CHROMIUM_PATH }));
 }, 120_000);
 afterAll(async () => { await browser?.close(); server?.close(); });
 
@@ -41,11 +42,15 @@ describe("bundle", () => {
   });
 });
 
+// The one allowed third party: the beehiiv sign-up form (its loader script and the iframe it opens). What the
+// iframe itself then loads is beehiiv's business, not this page's, so it is not counted here.
+const inBeehiivForm = (r: import("playwright-core").Request) => r.url().startsWith(`${BEEHIIV}/`) || new URL(r.frame().url() === "about:blank" ? `${BEEHIIV}/` : r.frame().url()).origin === BEEHIIV;
+
 describe("requests", () => {
-  it("makes no request to any other origin, and none after load", async () => {
+  it("makes no request to any other origin than the beehiiv sign-up, and none after load", async () => {
     const page = await browser.newPage();
     const urls: string[] = [];
-    page.on("request", (r) => urls.push(r.url()));
+    page.on("request", (r) => { if (!inBeehiivForm(r)) urls.push(r.url()); });
     await page.goto(base, { waitUntil: "networkidle" });
     await page.click("#sw");
     await page.waitForTimeout(1500);

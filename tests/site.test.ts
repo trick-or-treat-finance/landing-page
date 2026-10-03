@@ -4,6 +4,7 @@ import { createServer, type Server } from "node:http";
 import { tmpdir } from "node:os";
 import { extname, join, normalize } from "node:path";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { stubBeehiiv } from "./beehiiv-stub";
 import { chromium, type Browser } from "playwright-core";
 
 const BASE = "/landing-page/";
@@ -38,7 +39,7 @@ beforeAll(async () => {
     stdio: "pipe",
   });
   ({ server, base } = await serve(out));
-  browser = await chromium.launch({ executablePath: process.env.CHROMIUM_PATH });
+  browser = stubBeehiiv(await chromium.launch({ executablePath: process.env.CHROMIUM_PATH }));
 }, 120_000);
 
 afterAll(async () => { await browser?.close(); server?.close(); });
@@ -50,7 +51,8 @@ describe("build", () => {
   it("bundles fonts locally, no third-party requests", () => {
     for (const p of PAGES) {
       const html = readFileSync(join(out, p), "utf8");
-      expect(html).not.toMatch(/fonts\.googleapis|fonts\.gstatic|<script[^>]+src="https?:/);
+      expect(html).not.toMatch(/fonts\.googleapis|fonts\.gstatic/);
+      expect([...html.matchAll(/<script[^>]+src="(https?:[^"]+)"/g)].map((m) => m[1]).filter((u) => !u.startsWith("https://subscribe-forms.beehiiv.com/"))).toEqual([]);
     }
     expect(readdirSync(join(out, "assets")).some((f) => f.endsWith(".woff2"))).toBe(true);
   });
@@ -60,7 +62,7 @@ describe("links", () => {
   for (const p of PAGES) {
     it(`${p}: internal links, anchors and assets resolve under ${BASE}; no app or external links`, () => {
       const html = readFileSync(join(out, p), "utf8");
-      const hrefs = [...html.matchAll(/(?:href|src)="([^"]+)"/g)].map((m) => m[1]);
+      const hrefs = [...html.matchAll(/(?:href|src)="([^"]+)"/g)].map((m) => m[1]).filter((h) => !h.startsWith("https://subscribe-forms.beehiiv.com/"));
       expect(html).not.toContain("localhost");
       for (const h of hrefs) {
         expect(h.startsWith("http"), h).toBe(false);
@@ -158,59 +160,25 @@ describe("how it works", () => {
 
 describe("email sign-up", () => {
   const html = () => readFileSync(join(out, "index.html"), "utf8");
-  it("has one email field, a button, the one-line promise and a fine print link, and nothing else", () => {
-    const form = html().split('id="notify-form"')[1]!.split("</form>")[0]!;
-    expect(form.match(/<input(?![^>]*type="hidden")/g)?.length).toBe(1);
-    expect(form).toMatch(/type="email"/);
-    expect(form).toMatch(/Unsubscribe any time/);
-    expect(form).toContain('href="#fine-print"');
-    expect(html()).toMatch(/<form[^>]*method="post"[^>]*action=/);
+  const BEEHIIV = "https://subscribe-forms.beehiiv.com";
+  it("embeds the owner's beehiiv form in #notify, between the lede and the end of the section", () => {
+    const sec = html().split('id="notify"')[1]!.split("</section>")[0]!;
+    expect(sec).toContain("Be the first to know.");
+    expect(sec).toMatch(/<p class="lede">[\s\S]*<script async src="https:\/\/subscribe-forms\.beehiiv\.com\/v3\/loader\.js" data-beehiiv-form="0815b6bf-3f5b-42a1-8bbf-97dbe3917f4f"><\/script>/);
   });
-  it("adds no third-party script", () => {
-    expect(html()).not.toMatch(/<script[^>]*src="https?:/);
+  it("the only external script is beehiiv's loader, and no Buttondown is left", () => {
+    const srcs = [...html().matchAll(/<script[^>]*src="(https?:[^"]+)"/g)].map((m) => m[1]);
+    expect(srcs).toEqual([`${BEEHIIV}/v3/loader.js`]);
+    expect(html()).not.toMatch(/buttondown/i);
+    expect(html()).not.toContain('id="notify-form"');
   });
-  it("points at Buttondown's embed-subscribe endpoint with one placeholder username", () => {
-    expect(html()).toMatch(/<form[^>]*method="post"[^>]*action="https:\/\/buttondown\.com\/api\/emails\/embed-subscribe\/YOUR-BUTTONDOWN-USERNAME"/);
-    expect(html()).toContain('name="email"');
-    expect(html()).toMatch(/check your inbox/i);
+  it("the fine print says beehiiv handles the sign-up", () => {
+    const fp = html().split('id="fp-email"')[1]!.split("</section>")[0]!;
+    expect(fp).toMatch(/beehiiv handles your email address/);
   });
-  const open = async (user: string) => {
-    const page = await browser.newPage();
-    await page.route("**/index.html", async (r) => {
-      const res = await r.fetch();
-      await r.fulfill({ status: 200, contentType: "text/html", body: (await res.text()).replaceAll("YOUR-BUTTONDOWN-USERNAME", user) });
-    });
-    await page.context().route("https://buttondown.com/**", (r) => r.fulfill({ status: 200, body: "ok" }));
-    await page.goto(`${base}${BASE}index.html`, { waitUntil: "networkidle" });
-    return page;
-  };
-  it("is disabled, with no thank-you, while the username is still the placeholder", async () => {
-    const page = await open("YOUR-BUTTONDOWN-USERNAME");
-    expect(await page.locator(".notify-btn").isDisabled()).toBe(true);
-    expect(await page.locator("#notify-email").isDisabled()).toBe(true);
-    expect(await page.locator("#notify-wait").isVisible()).toBe(true);
-    expect(await page.locator("#notify-thanks").isVisible()).toBe(false);
-    await page.close();
+  it("sets no Content-Security-Policy, so the one allowed origin is the loader's", () => {
+    expect(html()).not.toMatch(/Content-Security-Policy/i);
   });
-  it("when configured: errors on a bad email, posts only email+embed natively, then says what happens next", async () => {
-    const page = await open("owner");
-    expect(await page.locator(".notify-btn").isDisabled()).toBe(false);
-    await page.fill("#notify-email", "nope");
-    await page.click(".notify-btn");
-    expect(await page.locator("#notify-err").isVisible()).toBe(true);
-    expect(await page.locator("#notify-thanks").isVisible()).toBe(false);
-    await page.fill("#notify-email", "a@b.co");
-    const popup = page.waitForEvent("popup");
-    const req = page.context().waitForEvent("request", (q) => q.url().startsWith("https://buttondown.com/"));
-    await page.click(".notify-btn");
-    const sent = await req;
-    expect(sent.url()).toBe("https://buttondown.com/api/emails/embed-subscribe/owner");
-    expect(sent.method()).toBe("POST");
-    expect(sent.postData()).toBe("embed=1&email=a%40b.co");
-    await (await popup).close();
-    expect(await page.locator("#notify-thanks").isVisible()).toBe(true);
-    await page.close();
-  }, 20_000);
 });
 
 describe("what you get today", () => {
@@ -307,13 +275,7 @@ describe("404 page", () => {
   }, 60_000);
 });
 
-describe("sign-up form and SOON tag", () => {
-  it("the sign-up form opens Buttondown in a new tab without handing it this page", () => {
-    const html = readFileSync(join(out, "index.html"), "utf8");
-    const form = html.match(/<form[^>]*id="notify-form"[^>]*>/)?.[0] ?? "";
-    expect(form).toContain('target="_blank"');
-    expect(form).toContain('rel="noopener noreferrer"');
-  });
+describe("SOON tag", () => {
   it("the SOON tag looks like the app's: 2px 6px padding, .08em spacing, app track colours", () => {
     const css = readFileSync(join(import.meta.dirname, "../src/landing.css"), "utf8");
     const rule = css.match(/\.soon-tag \{[^}]*\}/)?.[0] ?? "";
