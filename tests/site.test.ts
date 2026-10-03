@@ -166,6 +166,12 @@ describe("email sign-up", () => {
     expect(sec).toContain("Be the first to know.");
     expect(sec).toMatch(/<p class="lede">[\s\S]*<script async src="https:\/\/subscribe-forms\.beehiiv\.com\/v3\/loader\.js" data-beehiiv-form="0815b6bf-3f5b-42a1-8bbf-97dbe3917f4f"><\/script>/);
   });
+  it("wraps the embed in a 400px-capped container and adds the reassurance line under it", () => {
+    const sec = html().split('id="notify"')[1]!.split("</section>")[0]!;
+    expect(sec).toMatch(/<div class="cta-embed">\s*<script async src="https:\/\/subscribe-forms\.beehiiv\.com\/v3\/loader\.js"[^>]*><\/script>\s*<\/div>\s*<p class="cta-hint">One email when it opens to everyone\. No spam, unsubscribe any time\.<\/p>/);
+    expect(sec).toContain("Your own month is next. Leave your email and we&rsquo;ll tell you when it opens.");
+    expect(readFileSync(join(import.meta.dirname, "../src/landing.css"), "utf8")).toMatch(/\.cta-embed \{[^}]*max-width: 400px/);
+  });
   it("the only external script is beehiiv's loader, and no Buttondown is left", () => {
     const srcs = [...html().matchAll(/<script[^>]*src="(https?:[^"]+)"/g)].map((m) => m[1]);
     expect(srcs).toEqual([`${BEEHIIV}/v3/loader.js`]);
