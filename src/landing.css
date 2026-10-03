@@ -256,6 +256,8 @@ input[type="range"]:disabled { cursor: default; opacity: 0.7; }
 /* sign-in */
 .cta { padding-bottom: 40px; }
 .cta-copy { display: flex; flex-direction: column; gap: 12px; align-items: flex-start; }
+.cta-embed { width: 100%; max-width: 400px; }
+.cta-embed iframe { display: block; width: 100% !important; max-width: 100%; }
 .cta-hint { font-size: 14px; color: var(--muted); }
 .site-footer { margin-top: 72px; }
 
