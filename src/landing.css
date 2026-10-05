@@ -191,6 +191,9 @@ button.btn { font-family: inherit; cursor: pointer; }
 .how-list li { padding-top: 0; display: flex; flex-direction: column; gap: 8px; counter-increment: h; }
 .how-list li::before { content: "0" counter(h); font: 600 12px var(--mono); letter-spacing: 0.1em; color: var(--green); }
 .how-list h3 { font: 700 24px/1.15 var(--sans); letter-spacing: -0.02em; }
+/* The owner's ghost states (scripts/ghosts/cutout.py). Fixed square so nothing shifts while they load; transparent, so they sit on either theme. */
+.how-ghost { display: block; width: 128px; height: 128px; object-fit: contain; margin: 0 0 4px -8px; }
+.cta-ghost { display: block; flex: none; width: 176px; height: 176px; object-fit: contain; }
 .how-list p { font-size: 16.5px; line-height: 1.55; color: var(--secondary); }
 
 /* sandbox */
@@ -254,7 +257,8 @@ input[type="range"]:disabled { cursor: default; opacity: 0.7; }
 .slip-wrap .n4 { position: absolute; right: -4px; top: 30px; }
 
 /* sign-in */
-.cta { padding-bottom: 40px; }
+.cta { padding-bottom: 40px; display: flex; flex-wrap: wrap; align-items: center; gap: 16px 40px; }
+.cta-copy { flex: 1 1 320px; min-width: 0; }
 .cta-copy { display: flex; flex-direction: column; gap: 12px; align-items: flex-start; }
 .cta-embed { width: 100%; max-width: 400px; }
 .cta-embed iframe { display: block; width: 100% !important; max-width: 100%; }
