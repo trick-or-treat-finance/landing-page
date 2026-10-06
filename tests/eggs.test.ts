@@ -93,6 +93,19 @@ describe("easter eggs on the home page", () => {
   it("Konami code: a status toast, fixed (no layout shift, no focus taken, nothing fetched), not counted while a slider has focus", async () => {
     const { page } = await open({ width: 320 });
     await page.waitForLoadState("networkidle");
+    // Focusing the slider scrolls lazy images into view; load them all first so only the egg's own fetches count.
+    await page.evaluate(() =>
+      Promise.all(
+        [...document.images].map((img) => {
+          img.loading = "eager";
+          if (img.complete) return null;
+          return new Promise((done) => {
+            img.addEventListener("load", done, { once: true });
+            img.addEventListener("error", done, { once: true });
+          });
+        }),
+      ),
+    );
     const requests: string[] = [];
     page.on("request", (r) => requests.push(r.url()));
     await page.locator(".sand input[type=range]").first().focus();
