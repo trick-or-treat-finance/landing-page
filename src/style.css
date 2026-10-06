@@ -1,6 +1,7 @@
 :root { --gutter: 64px; }
 * { box-sizing: border-box; }
-html { -webkit-text-size-adjust: 100%; }
+/* anchor jumps (#how, #limits, #notify) stop below the sticky header, which is up to 81px tall */
+html { -webkit-text-size-adjust: 100%; scroll-padding-top: 88px; }
 body { margin: 0; background: var(--ground); color: var(--ink); font-family: var(--sans); -webkit-font-smoothing: antialiased; overflow-x: hidden; }
 a { color: var(--primary); }
 a:hover { color: var(--ink); }
