@@ -4,13 +4,13 @@
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) .grow { --g-line: var(--marker); --g-put: var(--muted); --g-glow: drop-shadow(0 0 5px rgb(var(--glow) / 0.75)) drop-shadow(0 0 14px rgb(var(--glow) / 0.4)); }
 }
-.grow-card { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.4fr); gap: 40px; align-items: start; background: var(--panel); border: 1px solid var(--line-strong); border-radius: 20px; padding: 28px; }
+.grow-card { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.4fr); gap: 40px; align-items: start; background: var(--panel); border: 1.5px solid var(--line-strong); border-radius: var(--radius-card); box-shadow: 4px 4px 0 var(--hard); padding: 28px; }
 .grow-ctl, .grow-out { min-width: 0; }
 .grow-ctl { display: flex; flex-direction: column; gap: 22px; }
 .g-mode { border: 0; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
 .g-mode legend { font: 600 12px var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--secondary); padding: 0 0 8px; }
-.g-opt { display: flex; align-items: center; gap: 12px; min-height: 48px; padding: 0 16px; border: 1px solid var(--line-strong); border-radius: 999px; cursor: pointer; font-weight: 600; font-size: 16px; color: var(--ink); background: var(--ground); }
-.g-opt:has(input:checked) { background: var(--ink); color: var(--ground); border-color: var(--ink); }
+.g-opt { display: flex; align-items: center; gap: 12px; min-height: 48px; padding: 0 16px; border: 1.5px solid var(--line-strong); border-radius: var(--radius-btn); box-shadow: 2px 2px 0 var(--hard); cursor: pointer; font-weight: 600; font-size: 16px; color: var(--ink); background: var(--ground); }
+.g-opt:has(input:checked) { background: var(--bright); color: var(--on-bright); }
 .g-opt:has(input:focus-visible) { outline: 2px solid var(--green-ink); outline-offset: 3px; }
 .g-opt input { appearance: none; -webkit-appearance: none; width: 44px; height: 44px; margin: -13px; flex: none; border-radius: 50%; background: radial-gradient(circle, transparent 0 6px, currentColor 6.5px 7.5px, transparent 8px 8.5px, transparent 100%); background-color: transparent; cursor: inherit; color: inherit; }
 .g-opt input:checked { background: radial-gradient(circle, currentColor 0 4.5px, transparent 5px 6px, currentColor 6.5px 7.5px, transparent 8px); }

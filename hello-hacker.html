@@ -9,6 +9,7 @@
 <link rel="icon" type="image/png" href="/favicon.png" />
 <link rel="apple-touch-icon" href="/favicon.png" />
 <link rel="preload" as="image" type="image/avif" href="/404/buried-1536.avif" imagesrcset="/404/buried-640.avif 640w, /404/buried-1024.avif 1024w, /404/buried-1536.avif 1536w" imagesizes="(min-width: 1200px) 1200px, 100vw" />
+<meta name="color-scheme" content="light dark" />
 <script type="module" src="/src/notfound.ts"></script>
 </head>
 <body class="notfound">
@@ -17,8 +18,11 @@
   <div class="site-header-inner">
     <a class="brand" href="%BASE_URL%">
       <img class="ghost mark" src="/mark.png" srcset="/mark.png 1x, /mark-2x.png 2x" width="32" height="32" alt="" />
-      <span class="wordmark">trick or treat</span>
+      <span class="wordmark">trick <span class="or">or</span> treat</span>
     </a>
+    <nav class="site-nav" aria-label="Main">
+      <button class="theme js-only" id="theme" type="button" role="switch" aria-checked="false" aria-label="Dark mode"><span class="theme-track" aria-hidden="true"><svg class="ti ti-day" viewBox="0 0 24 24" width="17" height="17"><path d="M9 3h6M8 6h8l1 3v8l-2 3H9l-2-3V9Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="12" cy="13" r="2.6" fill="currentColor"/></svg><svg class="ti ti-night" viewBox="0 0 24 24" width="17" height="17"><path d="M12 5.5c-6 0-9 4-9 8s3 6.5 9 6.5 9-2.500 9-6.500-3-8-9-8Z" fill="currentColor"/><path d="M12 5.500c.2-1.500.8-2.500 2.200-3" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg><span class="theme-knob"></span></span></button>
+    </nav>
   </div>
 </header>
 <main id="main" class="nf-main">

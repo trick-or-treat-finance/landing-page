@@ -1,16 +1,7 @@
-/* 404: the buried ghost is the page. Dark tokens mirror the home page's after-dark set. */
-.notfound { --stage: #fcf9f2; --stage-ring: var(--line); }
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) .notfound { --ground: #0d0912; --ink: #f4f0f7; --secondary: #c6bccf; --muted: #a094ad; --line: #261b31; --line-strong: #43334f; --primary: #4fcf8a; --stage-ring: #43334f; color-scheme: dark; }
-}
-:root[data-theme="dark"] .notfound { --ground: #0d0912; --ink: #f4f0f7; --secondary: #c6bccf; --muted: #a094ad; --line: #261b31; --line-strong: #43334f; --primary: #4fcf8a; --stage-ring: #43334f; color-scheme: dark; }
-.notfound .wordmark { font-size: 26px; line-height: 1; white-space: nowrap; }
-@media (max-width: 420px) { .notfound .wordmark { font-size: 19px; } }
+/* 404 and hello-hacker: the buried ghost is the page. Colours come from theme.css. */
+.notfound { --stage: #fcf9f2; --stage-ring: var(--line-strong); }
 .notfound .brand, .notfound .brand:hover { color: var(--ink); }
 .notfound a:not(.btn) { color: var(--primary); }
-.notfound .btn, .notfound .btn:hover { color: #fff; }
-:root[data-theme="dark"] .notfound .btn { background: #1a7f4b; }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .notfound .btn { background: #1a7f4b; } }
 .notfound a:focus-visible { outline: 3px solid var(--primary); outline-offset: 3px; border-radius: 6px; }
 
 .skip { position: absolute; left: 12px; top: -64px; z-index: 20; background: var(--ink); color: var(--ground); padding: 10px 16px; border-radius: 8px; font-weight: 700; text-decoration: none; }
@@ -18,18 +9,13 @@
 
 .nf-main { max-width: 1200px; margin: 0 auto; padding: 8px 20px 72px; display: flex; flex-direction: column; align-items: center; gap: 28px; }
 /* The art has no transparency: its cream is the stage, so no box edge shows in either theme. */
-.nf-stage { width: 100%; max-width: min(100%, calc(72svh * 1.5)); background: var(--stage); border-radius: 28px; box-shadow: 0 0 0 1px var(--stage-ring); overflow: hidden; }
+.nf-stage { width: 100%; max-width: min(100%, calc(72svh * 1.5)); background: var(--stage); border-radius: var(--radius-card); border: 1.5px solid var(--stage-ring); box-shadow: 4px 4px 0 var(--hard); overflow: hidden; }
 .nf-art { display: block; width: 100%; height: auto; }
 .nf-copy { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 16px; max-width: 640px; }
 .nf-title { font-size: clamp(34px, 5.4vw, 60px); line-height: 1.03; font-weight: 800; letter-spacing: -0.03em; font-family: var(--round); text-wrap: balance; }
 .nf-lede { font-size: clamp(17px, 2vw, 20px); line-height: 1.55; color: var(--secondary); text-wrap: pretty; }
-.nf-why { margin-top: 8px; padding: 18px 22px; border: 1.5px solid var(--line-strong); border-radius: 16px; text-align: left; }
+.nf-why { margin-top: 8px; padding: 18px 22px; background: var(--panel); border: 1.5px solid var(--line-strong); border-radius: var(--radius-card); box-shadow: 4px 4px 0 var(--hard); text-align: left; }
 .nf-h2 { font-size: 13px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
 .nf-why p { font-size: 16px; line-height: 1.6; color: var(--secondary); }
 .nf-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 8px; }
-.btn-ghost { background: transparent; border: 1.5px solid var(--line-strong); }
-.notfound .btn-ghost, .notfound .btn-ghost:hover { color: var(--ink); background: transparent; }
-.notfound .btn-ghost:hover { border-color: var(--primary); }
-:root[data-theme="dark"] .notfound .btn-ghost { background: transparent; }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .notfound .btn-ghost { background: transparent; } }
-@media (max-width: 480px) { .nf-main { padding-inline: 14px; } .nf-stage { border-radius: 18px; } .nf-actions .btn { width: 100%; justify-content: center; } }
+@media (max-width: 480px) { .nf-main { padding-inline: 14px; }  .nf-actions .btn { width: 100%; justify-content: center; } }

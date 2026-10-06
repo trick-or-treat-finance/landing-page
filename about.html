@@ -4,110 +4,66 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>About Trick or Treat</title>
-<meta name="description" content="How trick or treat works, and what it does not do." />
+<meta name="description" content="How Trick or Treat works in three steps, and what it never asks for." />
 <link rel="icon" type="image/png" href="/favicon.png" />
 <link rel="apple-touch-icon" href="/favicon.png" />
 <meta property="og:type" content="website" />
 <meta property="og:title" content="About Trick or Treat" />
-<meta property="og:description" content="How trick or treat works, and what it does not do." />
+<meta property="og:description" content="How Trick or Treat works in three steps, and what it never asks for." />
 <meta property="og:image" content="https://trick-or-treat-finance.github.io/landing-page/og.jpg" />
 <meta property="og:image:width" content="1200" />
 <meta property="og:image:height" content="630" />
 <meta name="twitter:card" content="summary_large_image" />
+<meta name="color-scheme" content="light dark" />
 <script type="module" src="/src/main.ts"></script>
 </head>
 <body class="about">
 <header class="site-header">
   <div class="site-header-inner">
-    <a class="brand" href="./">
+    <a class="brand" href="./" aria-label="Trick or Treat, home">
       <img class="ghost mark" src="/mark.png" srcset="/mark.png 1x, /mark-2x.png 2x" width="32" height="32" alt="" />
-      <span class="wordmark">trick or treat</span>
+      <span class="wordmark">trick <span class="or">or</span> treat</span>
     </a>
     <nav class="site-nav" aria-label="Main">
       <a href="about.html#how" class="nav-link is-current" aria-current="page">how it works</a>
       <a class="nav-link" href="about.html#limits">what it won't do</a>
+      <button class="theme js-only" id="theme" type="button" role="switch" aria-checked="false" aria-label="Dark mode"><span class="theme-track" aria-hidden="true"><svg class="ti ti-day" viewBox="0 0 24 24" width="17" height="17"><path d="M9 3h6M8 6h8l1 3v8l-2 3H9l-2-3V9Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="12" cy="13" r="2.6" fill="currentColor"/></svg><svg class="ti ti-night" viewBox="0 0 24 24" width="17" height="17"><path d="M12 5.5c-6 0-9 4-9 8s3 6.5 9 6.5 9-2.500 9-6.500-3-8-9-8Z" fill="currentColor"/><path d="M12 5.500c.2-1.500.8-2.500 2.200-3" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg><span class="theme-knob"></span></span></button>
       <a class="nav-signin" href="./#notify">Coming soon</a>
     </nav>
   </div>
 </header>
 <main class="about-main">
-  <section class="about-intro" id="how">
-    <h1 class="about-title">The name is not decoration. It is the whole argument.</h1>
-    <p class="about-lede">There are not two features here. There is one month of your spending, read twice. The reading that unsettles people and the reading that pleases them would be built from the same purchases, in the same proportions, on the same day. The first reading is what the spending half does today. The second is a preview: the investing half is not built yet. It would be worthless if you did not trust the first.</p>
+  <section class="about-intro" id="how" aria-labelledby="how-h">
+    <p class="eyebrow">how it works</p>
+    <h1 id="how-h" class="about-title">three steps. that&rsquo;s it.</h1>
+    <ol class="how-list">
+      <li class="card-hard"><img class="how-ghost" src="/ghosts/syncing-256.webp" srcset="/ghosts/syncing-256.webp 256w, /ghosts/syncing-512.webp 512w" sizes="128px" width="128" height="128" loading="lazy" decoding="async" alt="" /><h3>Connect your bank. Read-only, via Plaid.</h3></li>
+      <li class="card-hard"><img class="how-ghost" src="/ghosts/left-positive-256.webp" srcset="/ghosts/left-positive-256.webp 256w, /ghosts/left-positive-512.webp 512w" sizes="128px" width="128" height="128" loading="lazy" decoding="async" alt="" /><h3>See your month, sorted by company.</h3></li>
+      <li class="card-hard"><img class="how-ghost" src="/ghosts/payday-256.webp" srcset="/ghosts/payday-256.webp 256w, /ghosts/payday-512.webp 512w" sizes="128px" width="128" height="128" loading="lazy" decoding="async" alt="" /><h3>Invest later. Preview only, not built yet.</h3></li>
+    </ol>
   </section>
 
-  <section class="panel">
-    <div class="panel-cols">
-      <div class="panel-col">
-        <div class="panel-head"><img class="ghost mark" src="/mark.png" srcset="/mark.png 1x, /mark-2x.png 2x" width="28" height="28" alt="" /><span class="panel-eyebrow">THE LOGO ALREADY SAYS IT</span></div>
-        <p>Cards and charts on one side. Company stock on the other (the investing half, not built yet). The ghost in the middle, holding a bank in its bag and a phone in its hand, with a line rising from one side to the other. There is no second explanation to invent: the picture and the product are the same idea, and the two halves were never meant to be separate things.</p>
-      </div>
-      <div class="panel-col panel-col-wide">
-        <div class="panel-eyebrow">WHY THE ORDER MATTERS</div>
-        <p>The spending half comes first and stands alone. Not as a funnel — as the evidence. Nobody should let software pick what they own on the strength of a categorisation they have not checked. That is why the spending half comes first, and why the investing half is not built until the first reading can be trusted.</p>
-      </div>
-    </div>
-    <div class="stats">
-      <div class="stat"><div class="stat-eyebrow">THE TRICK</div><div class="stat-num">$4,449.88</div><div class="stat-note">what one sample September cost, across three banks and five accounts (sample, not real data)</div></div>
-      <div class="stat-rule" aria-hidden="true"></div>
-      <div class="stat"><div class="stat-eyebrow">THE SAME NUMBER, RESORTED</div><div class="stat-num">$2,488.88</div><div class="stat-note">in this sample, the part of it paid to companies anyone can own a piece of</div></div>
-      <div class="stat-rule" aria-hidden="true"></div>
-      <div class="stat"><div class="stat-eyebrow stat-eyebrow-treat">THE TREAT (PREVIEW, NOT BUILT YET)</div><div class="stat-num">$100.00</div><div class="stat-note">an illustration: split between those companies in proportion to the amounts above</div></div>
-    </div>
-  </section>
-
-  <section class="line">
-    <div class="line-head">
-      <div class="eyebrow">A LINE WE WILL NOT CROSS</div>
-      <h2 class="h2-small">The number startles. We don't.</h2>
-    </div>
-    <div class="line-body">
-      <p>An app that sets out to unsettle you is one bad decision away from lecturing you, and we would rather lose the joke than become that. So the first reading is arithmetic and nothing else. There is no score, no traffic light, no comparison with “people like you”, no red on a total, and no copy anywhere suggesting what you should have done with your own money.</p>
-      <p>And the second reading, once it exists, is not a prize for feeling bad. It would be offered the same way on a month you are pleased with as on one you are not — because it is the same calculation either way, and pretending otherwise would be a trick of a different kind.</p>
-    </div>
-  </section>
-
-  <section class="limits" id="limits">
-    <div class="limits-col limits-yes">
-      <div class="limits-head"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#155646" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"></path></svg><div class="limits-eyebrow">WHAT YOUR BANK SENDS US</div></div>
+  <section class="limits" id="limits" aria-label="What we read and what we never ask for">
+    <div class="limits-col limits-yes card-hard">
+      <h2 class="limits-eyebrow">what your bank sends us</h2>
       <ul class="limits-list">
-        <li>The date, amount and merchant of each purchase<span class="li-note">Plus the category your bank assigned it, which is how a transfer gets told apart from a coffee. Connecting a bank shares transactions with Trick or Treat through Plaid.</span></li>
-        <li>Which account each purchase came from<span class="li-note">Name, last four digits, and whether it is a card, a current account or savings.</span></li>
-        <li>Corrections, when a pending charge settles<span class="li-note">A $4 hold that posts at $4.60 usually arrives as an amendment, not a second purchase.</span></li>
+        <li>The date, amount and merchant of each purchase.</li>
+        <li>Which account it came from: name and last four digits.</li>
+        <li>The update when a pending charge settles.</li>
       </ul>
     </div>
-    <div class="limits-col limits-no">
-      <div class="limits-head"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#9B2C1E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12"></path></svg><div class="limits-eyebrow limits-eyebrow-no">WHAT IT DOES NOT ASK FOR</div></div>
+    <div class="limits-col limits-no card-hard">
+      <h2 class="limits-eyebrow">what it never asks for</h2>
       <ul class="limits-list">
-        <li>Any way to move money<span class="li-note">Trick or Treat asks Plaid for transactions only, and has no code that moves money.</span></li>
-        <li>Your banking password<span class="li-note">You type it at your bank or at Plaid, never here. We receive a token instead, and it is kept in its own encrypted table, apart from your transactions.</span></li>
-        <li>To keep reading after you disconnect<span class="li-note">Disconnecting stops syncing as soon as you disconnect. Your data for that bank is deleted once Plaid confirms the disconnect.</span></li>
+        <li>A way to move money. There is no code that does.</li>
+        <li>Your banking password. You type it at your bank or Plaid.</li>
+        <li>To keep reading after you disconnect.</li>
       </ul>
-    </div>
-  </section>
-
-  <section class="cards-section">
-    <h2 class="h2-big">The three hard parts of the first reading</h2>
-    <p class="section-lede">Drawing a chart of your categories is easy. These are the reasons most spending apps show a number that is quietly wrong — and a wrong first reading makes the second one worse than useless.</p>
-    <div class="card-grid">
-      <div class="card"><div class="card-num">ONE</div><h3 class="card-title">Your own money, counted as spending</h3><p>Paying a card from your current account is one movement on two statements. We match the pair — same amount, within four days, out of a current account and into a card — and remove both sides. Every removal is listed with its reason. The pairing is our inference and can be wrong.</p></div>
-      <div class="card"><div class="card-num">TWO</div><h3 class="card-title">Numbers that change after you read them</h3><p>A pending charge can settle at a different amount days later, so last week's total is not final. We show pending charges and mark them, so a total that can still move is not presented as final.</p></div>
-      <div class="card card-accent"><div class="card-num">THREE</div><h3 class="card-title">A picture missing one of its sources</h3><p>If a bank stops syncing, the charts still look perfectly normal — they are just wrong, and nothing would tell you. Each bank connection carries a status, so a stale one can be spotted and named. Showing the total as a floor when a bank is stale is planned, not built yet.</p></div>
-    </div>
-  </section>
-
-  <section class="cards-section">
-    <h2 class="h2-big">And what the second reading would honestly be worth</h2>
-    <p class="section-lede">Preview only. None of this is built yet, and nothing here can be bought.</p>
-    <div class="card-grid">
-      <div class="card card-soft"><h3 class="card-title">Just over half of it maps to anything</h3><p>Your landlord is not listed on an exchange, and neither is the restaurant on the corner. In the sample September above, $2,489 of $4,450 could be matched to a company you can buy. Matching real merchants to companies is not built yet. A basket built from that would be a slice of a life, not a portrait of one.</p></div>
-      <div class="card card-soft"><h3 class="card-title">Nothing would be bought before you have seen it</h3><p>The plan is that showing a basket is the default and buying it is a separate, deliberate act. None of that is built yet, so nothing can be bought here. Spending where you already spend is also not a strategy anyone has shown to work; it is a way of owning what you use.</p></div>
-      <div class="card card-soft"><h3 class="card-title">The money would sit behind its own wall</h3><p>The plan is a separate account you fund and cap yourself. It does not exist yet, and today nothing in Trick or Treat moves money.</p></div>
     </div>
   </section>
 
   <section class="closer">
-    <p>The app is not public yet. Leave your email and we’ll tell you when it opens.</p>
+    <p>Not public yet. One email when it opens.</p>
     <a class="btn btn-square" href="./#notify">Be the first to know</a>
   </section>
 </main>
