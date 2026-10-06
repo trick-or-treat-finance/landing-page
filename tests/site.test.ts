@@ -364,3 +364,46 @@ describe("one theme on every page (issue #18)", () => {
     });
   }
 });
+
+// Issue #20: the October receipt line was covered by the row below it, and "how it works" landed under the sticky header.
+describe("issue #20", () => {
+  const SIZES = [[320, 800], [390, 844], [768, 1024], [1440, 900], [1536, 999]] as const;
+  for (const [w, h] of SIZES) for (const theme of ["light", "dark"] as const) {
+    it(`${w}x${h} ${theme}: "Fun-size, 12 pack" and its note are fully visible, Trick and Treat`, async () => {
+      const page = await browser.newPage({ viewport: { width: w, height: h }, colorScheme: theme, reducedMotion: "reduce" });
+      await page.goto(`${base}${BASE}index.html?october`, { waitUntil: "load" });
+      await page.evaluate((t) => { document.documentElement.dataset.theme = t; }, theme);
+      for (const view of ["trick", "treat"]) {
+        if (view === "treat") { await page.click("#sw"); await page.waitForTimeout(600); }
+        const r = await page.evaluate(() => {
+          const slot = document.querySelector<HTMLElement>(".slot.oct")!;
+          slot.scrollIntoView({ block: "center" });
+          const s = slot.getBoundingClientRect();
+          return [slot.querySelector(".nm")!, slot.querySelector(".oct-note")!].map((el) => {
+            const b = el.getBoundingClientRect();
+            const hit = (x: number, y: number) => el.contains(document.elementFromPoint(x, y));
+            return { inside: b.top >= s.top - 1 && b.bottom <= s.bottom + 1, seen: [0.05, 0.5, 0.95].every((f) => hit(b.left + b.width * f, b.top + b.height / 2)) };
+          });
+        });
+        expect(r, view).toEqual([{ inside: true, seen: true }, { inside: true, seen: true }]);
+      }
+      await page.close();
+    });
+    it(`${w}x${h} ${theme}: "how it works" lands with its heading below the sticky header`, async () => {
+      const page = await browser.newPage({ viewport: { width: w, height: h }, colorScheme: theme });
+      await page.goto(`${base}${BASE}index.html`, { waitUntil: "load" });
+      const link = page.locator('.site-nav a[href$="#how"]');
+      if (await link.isVisible()) await link.click();
+      else await page.goto(`${base}${BASE}about.html#how`);
+      await page.waitForURL(/about\.html#how$/);
+      await page.waitForLoadState("load");
+      await page.waitForTimeout(300);
+      const { header, eyebrow } = await page.evaluate(() => ({
+        header: document.querySelector(".site-header")!.getBoundingClientRect().bottom,
+        eyebrow: document.querySelector("#how .eyebrow")!.getBoundingClientRect().top,
+      }));
+      expect(eyebrow, `eyebrow top ${eyebrow} vs header bottom ${header}`).toBeGreaterThanOrEqual(header);
+      await page.close();
+    });
+  }
+});
