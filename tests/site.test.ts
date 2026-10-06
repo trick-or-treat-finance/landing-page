@@ -9,7 +9,7 @@ import { chromium, type Browser } from "playwright-core";
 
 const BASE = "/landing-page/";
 const PAGES = ["index.html", "about.html"];
-const WIDTHS = [375, 768, 1280, 1920];
+const WIDTHS = [320, 375, 768, 1280, 1920];
 const out = mkdtempSync(join(tmpdir(), "tot-landing-"));
 
 const TYPES: Record<string, string> = {
@@ -153,8 +153,9 @@ describe("how it works", () => {
     expect(h).not.toContain("within four days");
     expect(h).not.toContain("The number is arithmetic");
     const list = h.split('class="how-list"')[1]!.split("</ol>")[0]!;
-    expect(list.match(/<li>/g)?.length).toBe(3);
-    for (const m of list.matchAll(/<p>([^<]+)<\/p>/g)) expect(m[1]!.length).toBeLessThanOrEqual(80);
+    expect(list.match(/<li[ >]/g)?.length).toBe(3);
+    expect(list).not.toContain("<p>");
+    for (const m of list.matchAll(/<h3>([^<]+)<\/h3>/g)) expect(m[1]!.length).toBeLessThanOrEqual(48);
   });
 });
 
@@ -288,6 +289,78 @@ describe("SOON tag", () => {
     expect(rule).toContain("padding: 2px 6px");
     expect(rule).toContain("letter-spacing: 0.08em");
     expect(rule).toContain("#E3EAE1");
-    expect(css).toMatch(/\.soon-tag \{ background: #2A1F36; \}/);
+    expect(css).toMatch(/\.soon-tag \{ background: #24423A; \}/);
   });
+});
+
+describe("one theme on every page (issue #18)", () => {
+  const ALL = ["index.html", "about.html", "404.html", "hello-hacker.html"];
+  const src = (f: string) => readFileSync(join(import.meta.dirname, "../src", f), "utf8");
+  it("only theme.css declares colour tokens; the app's ground, ink and hard shadow, light and dark", () => {
+    const theme = src("theme.css");
+    for (const v of ["--ground: #faf8f0", "--ink: #12261f", "--hard: #155646", "--ground: #0e1f1a", "--hard: #3ddc84"]) expect(theme).toContain(v);
+    for (const f of ["style.css", "landing.css", "grow.css", "notfound.css"]) expect(src(f), f).not.toMatch(/--(ground|ink|primary):/);
+    expect(src("landing.css") + src("notfound.css")).not.toMatch(/#0d0912|#ff8a2b|#ffa04d|140 80 230/i);
+  });
+  it("every page loads the shared theme and has the same day/night switch", () => {
+    expect(src("main.ts")).toContain('import "./theme.css"');
+    expect(src("notfound.ts")).toContain('import "./theme.css"');
+    for (const p of ALL) expect(readFileSync(join(out, p), "utf8"), p).toMatch(/<button class="theme js-only" id="theme"[^>]*role="switch"/);
+  });
+  it("the switch is remembered from one page to the next", async () => {
+    const page = await browser.newPage({ colorScheme: "light" });
+    await page.goto(`${base}${BASE}about.html`, { waitUntil: "load" });
+    await page.click("#theme");
+    await page.goto(`${base}${BASE}404.html`, { waitUntil: "load" });
+    await page.waitForFunction(() => document.documentElement.dataset.theme === "dark");
+    expect(await page.evaluate(() => getComputedStyle(document.body).backgroundColor)).toBe("rgb(14, 31, 26)");
+    await page.close();
+  });
+  it("about is short: three one-line steps, two three-line lists, no essay", () => {
+    const h = readFileSync(join(out, "about.html"), "utf8");
+    const main = h.split("<main")[1]!.split("</main>")[0]!;
+    const list = main.split('class="how-list"')[1]!.split("</ol>")[0]!;
+    expect(list.match(/<li[ >]/g)?.length).toBe(3);
+    for (const m of list.matchAll(/<h3>([^<]+)<\/h3>/g)) expect(m[1]!.length).toBeLessThanOrEqual(48);
+    const words = main.replace(/<[^>]+>/g, " ").split(/\s+/).filter(Boolean).length;
+    expect(words).toBeLessThan(150);
+    expect(main).not.toContain("The name is not decoration");
+  });
+  it("every page sets the saved theme inline, before any stylesheet or module, so it never flashes", () => {
+    for (const p of ALL.flatMap((f) => [join(out, f), join(import.meta.dirname, "..", f)])) {
+      const head = readFileSync(p, "utf8").split("</head>")[0]!;
+      const inline = head.search(/<script>[^<]*localStorage\.getItem\("tot-theme"\)[^<]*dataset\.theme/);
+      expect(inline, p).toBeGreaterThan(-1);
+      for (const m of head.matchAll(/<link[^>]*rel="stylesheet"|<style|<script[^>]*type="module"/g)) expect(inline, `${p}: ${m[0]}`).toBeLessThan(m.index!);
+    }
+  });
+  it("a saved dark holds on a light system even before the modules run", async () => {
+    const page = await browser.newPage({ colorScheme: "light" });
+    await page.goto(`${base}${BASE}about.html`, { waitUntil: "load" });
+    await page.evaluate(() => localStorage.setItem("tot-theme", "dark"));
+    await page.route("**/*.js", (r) => r.abort());
+    for (const p of ALL) {
+      await page.goto(`${base}${BASE}${p}`, { waitUntil: "domcontentloaded" });
+      expect(await page.evaluate(() => document.documentElement.dataset.theme), p).toBe("dark");
+    }
+    await page.close();
+  });
+  for (const theme of ["light", "dark"] as const) {
+    it(`${theme}: the small text on a tile is at least 4.5:1`, async () => {
+      const lum = (c: string): number => {
+        const [r, g, b] = c.match(/\d+(\.\d+)?/g)!.slice(0, 3).map((v) => { const x = Number(v) / 255; return x <= 0.03928 ? x / 12.92 : ((x + 0.055) / 1.055) ** 2.4; }) as [number, number, number];
+        return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+      };
+      const page = await browser.newPage({ colorScheme: theme });
+      await page.goto(`${base}${BASE}index.html`, { waitUntil: "load" });
+      await page.evaluate((t) => { document.documentElement.dataset.theme = t; }, theme);
+      const pairs = await page.locator(".tile small").evaluateAll((ns) => ns.map((n) => ({ fg: getComputedStyle(n).color, bg: getComputedStyle(n.closest(".tile")!).backgroundColor })));
+      expect(pairs.length).toBeGreaterThan(0);
+      for (const { fg, bg } of pairs) {
+        const [x, y] = [lum(fg), lum(bg)].sort((p, q) => q - p);
+        expect((x! + 0.05) / (y! + 0.05), `${fg} on ${bg}`).toBeGreaterThanOrEqual(4.5);
+      }
+      await page.close();
+    });
+  }
 });

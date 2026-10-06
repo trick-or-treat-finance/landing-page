@@ -301,19 +301,6 @@ function wakeDraw(): void {
 }
 wakeDraw();
 
-/* ---------- After dark ---------- */
-const theme = $<HTMLButtonElement>("#theme");
-if (theme) {
-  const dark = (): boolean => (root.dataset.theme ? root.dataset.theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches);
-  const paint = (): void => {
-    root.dataset.theme = dark() ? "dark" : "light";
-    theme.setAttribute("aria-checked", String(dark()));
-    theme.setAttribute("aria-label", dark() ? "After dark, on. Switch to daylight" : "After dark, off. Switch on");
-  };
-  theme.addEventListener("click", () => { root.dataset.theme = dark() ? "light" : "dark"; paint(); });
-  paint();
-}
-
 /* ---------- October ---------- */
 if (new Date().getMonth() === 9 || /[?&]october\b/.test(location.search)) {
   const first = $<HTMLElement>(".lines > li:nth-child(4)");

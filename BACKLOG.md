@@ -42,3 +42,4 @@
 - [tests] tests lean on `networkidle` and the embedded beehiiv iframe never settles live; they stub the beehiiv origin (tests/beehiiv-stub.ts). A real-iframe smoke test would catch a loader change, tests/beehiiv-stub.ts:1 (worker-beehiiv-signup, 2026-10-02)
 - [signup] beehiiv form at 375px truncates the email placeholder ("Enter y") and in dark mode sits as a white panel; fix in the beehiiv form's own design settings, not in this repo (worker-beehiiv-signup, 2026-10-02)
 - [signup] beehiiv form placeholder reads "Enter your ssn, oh sorry email" and the button "Request access"; owner may want plainer copy in the form settings (worker-beehiiv-signup, 2026-10-02)
+- [design] The receipt, slip and duo drawing still use fixed cream paper and dark ink in dark mode (by design: paper stays paper); if the owner wants them dark too, add paper tokens to src/theme.css, src/landing.css:.rc-in (worker-landing-theme, 2026-10-06)
