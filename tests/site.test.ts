@@ -326,4 +326,41 @@ describe("one theme on every page (issue #18)", () => {
     expect(words).toBeLessThan(150);
     expect(main).not.toContain("The name is not decoration");
   });
+  it("every page sets the saved theme inline, before any stylesheet or module, so it never flashes", () => {
+    for (const p of ALL.flatMap((f) => [join(out, f), join(import.meta.dirname, "..", f)])) {
+      const head = readFileSync(p, "utf8").split("</head>")[0]!;
+      const inline = head.search(/<script>[^<]*localStorage\.getItem\("tot-theme"\)[^<]*dataset\.theme/);
+      expect(inline, p).toBeGreaterThan(-1);
+      for (const m of head.matchAll(/<link[^>]*rel="stylesheet"|<style|<script[^>]*type="module"/g)) expect(inline, `${p}: ${m[0]}`).toBeLessThan(m.index!);
+    }
+  });
+  it("a saved dark holds on a light system even before the modules run", async () => {
+    const page = await browser.newPage({ colorScheme: "light" });
+    await page.goto(`${base}${BASE}about.html`, { waitUntil: "load" });
+    await page.evaluate(() => localStorage.setItem("tot-theme", "dark"));
+    await page.route("**/*.js", (r) => r.abort());
+    for (const p of ALL) {
+      await page.goto(`${base}${BASE}${p}`, { waitUntil: "domcontentloaded" });
+      expect(await page.evaluate(() => document.documentElement.dataset.theme), p).toBe("dark");
+    }
+    await page.close();
+  });
+  for (const theme of ["light", "dark"] as const) {
+    it(`${theme}: the small text on a tile is at least 4.5:1`, async () => {
+      const lum = (c: string): number => {
+        const [r, g, b] = c.match(/\d+(\.\d+)?/g)!.slice(0, 3).map((v) => { const x = Number(v) / 255; return x <= 0.03928 ? x / 12.92 : ((x + 0.055) / 1.055) ** 2.4; }) as [number, number, number];
+        return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+      };
+      const page = await browser.newPage({ colorScheme: theme });
+      await page.goto(`${base}${BASE}index.html`, { waitUntil: "load" });
+      await page.evaluate((t) => { document.documentElement.dataset.theme = t; }, theme);
+      const pairs = await page.locator(".tile small").evaluateAll((ns) => ns.map((n) => ({ fg: getComputedStyle(n).color, bg: getComputedStyle(n.closest(".tile")!).backgroundColor })));
+      expect(pairs.length).toBeGreaterThan(0);
+      for (const { fg, bg } of pairs) {
+        const [x, y] = [lum(fg), lum(bg)].sort((p, q) => q - p);
+        expect((x! + 0.05) / (y! + 0.05), `${fg} on ${bg}`).toBeGreaterThanOrEqual(4.5);
+      }
+      await page.close();
+    });
+  }
 });
