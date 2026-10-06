@@ -85,13 +85,16 @@ describe("easter eggs: the rules behind them", () => {
 describe("easter eggs on the home page", () => {
   it("console: devtools gets a note pointing to hello-hacker", async () => {
     const { page, logs } = await open();
-    expect(logs.join("\n")).toMatch(/you opened devtools\. respect\.[\s\S]*hello-hacker\.html/);
+    expect(logs.join("\n")).toMatch(/you opened devtools\. respect\.[\s\S]*sample month, not real data[\s\S]*hello-hacker\.html/);
     await stillWorks(page);
     await page.close();
   });
 
-  it("Konami code: a status toast, fixed (no layout shift), not counted while a slider has focus", async () => {
+  it("Konami code: a status toast, fixed (no layout shift, no focus taken, nothing fetched), not counted while a slider has focus", async () => {
     const { page } = await open({ width: 320 });
+    await page.waitForLoadState("networkidle");
+    const requests: string[] = [];
+    page.on("request", (r) => requests.push(r.url()));
     await page.locator(".sand input[type=range]").first().focus();
     for (const k of KONAMI) await page.keyboard.press(k);
     expect(await toast(page)).toBeNull();
@@ -99,6 +102,8 @@ describe("easter eggs on the home page", () => {
     const h0 = await page.evaluate(() => document.documentElement.scrollHeight);
     for (const k of KONAMI) await page.keyboard.press(k);
     const t = await toast(page);
+    expect(await page.evaluate(() => document.activeElement === document.body)).toBe(true);
+    expect(requests).toEqual([]);
     expect(t).toMatchObject({ on: true, role: "status", position: "fixed" });
     expect(t?.text).toContain("money has no cheat codes");
     expect(await page.evaluate(() => document.documentElement.scrollHeight)).toBe(h0);

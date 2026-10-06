@@ -64,7 +64,7 @@ function wiggle(el: Element | null, cls: string): void {
 function consoleNote(base: string): void {
   console.log(
     "%c👻 you opened devtools. respect.%c\n" +
-      "nothing to find in here: every number on this page is a sample month, and it never leaves your tab.\n" +
+      "nothing to find in here: every number on this page is a sample month, not real data.\n" +
       `found a real bug anyway? ${location.origin}${base}hello-hacker.html has our email. we say thank you.\n` +
       "psst: ↑ ↑ ↓ ↓ ← → ← → b a",
     "font: 700 14px system-ui; color: #155646",
@@ -77,7 +77,7 @@ function konami(): void {
   document.addEventListener("keydown", (e) => {
     // sliders, the switch and form fields use arrow keys for real work; the code only counts from the page itself
     const t = e.target as Element | null;
-    if (t?.closest("input, textarea, select, [contenteditable]")) return;
+    if (e.ctrlKey || e.metaKey || e.altKey || t?.closest("input, textarea, select, [contenteditable], [role=slider]")) return;
     if (!match(e.key)) return;
     toast("cheat code accepted. sadly money has no cheat codes. +0 net worth unlocked.");
     wiggle(document.querySelector(".gh-hero"), "egg-spin");
