@@ -2,6 +2,7 @@
 // Nothing here fetches, stores or sends anything.
 import { typeAudio } from "./typeaudio";
 import { typewriter } from "./typewriter";
+import { wakeEggs } from "./eggs";
 import { FLIP, SAMPLE_MONTH, planFlip, treatBasket } from "./engine";
 import {
   SANDBOX, TREAT_BUDGET, defaultSandbox, money, sandboxTally, sandboxTotal, stayTreat, type SandboxState,
@@ -369,3 +370,6 @@ if (new Date().getMonth() === 9 || /[?&]october\b/.test(location.search)) {
     });
   }
 }
+
+/* ---------- Easter eggs ---------- */
+wakeEggs(BASE);
