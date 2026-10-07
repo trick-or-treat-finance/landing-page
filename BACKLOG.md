@@ -1,10 +1,8 @@
 # Backlog
 
 - [design] Home/About boards contain no [DATE] or footer/legal content; a footer (privacy, terms, contact) is undecided, index.html:end (worker-landing-initial, 2026-09-29)
-- [design] Hero art is a crop of brand/trick-or-trat-logo.png (board's blob was not in the spec folder); replace with the owner's exact export, public/hero.jpg (worker-landing-initial, 2026-09-29)
 - [ops] Dev server default port 5173 collides with the app's default sign-in URL port, vite.config.ts (worker-landing-initial, 2026-09-29)
 - [ci] Pages workflow runs build only; tests need a Chromium so are not run in CI, .github/workflows/pages.yml (worker-landing-golive, 2026-09-29)
-- [design] Hero JPEG background (#faf6ee-ish) shows a faint box edge against the page background at 1280; match the page colour or mask the edge, public/hero.jpg + src/style.css:58 (worker-landing-v1-fix, 2026-09-29)
 - [tooling] No coverage provider or fast-check installed (no network); add @vitest/coverage-v8 and fast-check as devDependencies and a coverage threshold, package.json:devDependencies (worker-landing-engine, 2026-09-29)
 - [design] Motion spec says lines "fan out on a 300 ms stagger"; engine reads it as a 300 ms window across all ownable lines (12 lines) not 300 ms per line, confirm, src/engine/flip.ts:FLIP.fanOutMs (worker-landing-engine, 2026-09-29)
 - [design] direction.html still shows the 5-category placeholder split and generic monogram tiles; replace with SAMPLE_MONTH and the 12 company tiles, direction.html:164-184 (worker-landing-engine, 2026-09-29)
@@ -26,11 +24,9 @@
 - [design] direction.html still shows the old sample lines and Tesla tile; regenerate from SAMPLE_MONTH, direction.html (worker-landing-realistic, 2026-09-30)
 - [a11y] disabled radio inputs in grow card are 18x18 (label is the tap area); verify label hit area is >=44px, src/grow-view.ts:106 (worker-landing-responsive-2, 2026-09-30)
 - [copy] "even the OGs agree" beat still leads with Lynch's idea at 36px; consider demoting .duo-idea now it is a mid-page beat, index.html:~150 (worker-landing-genz-story, 2026-09-30)
-- [cleanup] public/hero.jpg and hero-2x.jpg are no longer referenced by the hero (now an inline SVG); delete if nothing else uses them, public/hero.jpg (worker-landing-quick-maths, 2026-09-30)
 - [design] 404 hero art has a typo on one bill ("FINAL FA NOTICE"); regenerate the image and re-run the optimise step, public/404/buried-*.{avif,webp,png} (worker-404-landing, 2026-10-02)
 - [ops] tests/site.test.ts and scripts/*.mjs serve unknown paths as bare 404s; if more 404 assertions are wanted, make the test server return 404.html (worker-404-landing, 2026-10-02)
 - [ops] Pages serves this as a project site under /landing-page/, so crawlers look for /robots.txt and /.well-known/security.txt at the host root and never see ours; they only take effect on a custom domain at root (then set vite base to "/"), vite.config.ts:base (worker-bot-landing, 2026-10-02)
-- [tooling] Browser suites (bar, grow, site, typewriter) hit "Hook timed out in 10000ms" on afterAll browser.close when run together; give afterAll a timeout or run files serially, tests/bar.test.ts:33 (worker-bot-landing, 2026-10-02)
 - [security] security contact is the owner's personal mailbox for now; move to security@<domain> in public/.well-known/security.txt and hello-hacker.html once the domain exists (god, 2026-10-02)
 - [header] 404.html and hello-hacker.html have no 'Coming soon' pill or theme switch, so they are not covered by the pill fix; 404.html:16 (landing-copy, 2026-10-02)
 - [tests] tests/bar.test.ts "buffett + lynch section" fails on 60e076b already (duo <img> src is empty string, expects .avif); also suites hit 10s hook timeouts when run in parallel with browsers (worker-landing-copy2, 2026-10-02)

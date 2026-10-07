@@ -43,7 +43,7 @@ beforeAll(async () => {
   ({ server, base } = await serve(out));
   browser = stubBeehiiv(await chromium.launch({ executablePath: process.env.CHROMIUM_PATH }));
 }, 120_000);
-afterAll(async () => { await browser?.close(); server?.close(); });
+afterAll(async () => { await browser?.close(); server?.close(); }, 60_000);
 
 const WORDS = [
   "Peter Lynch", "ran Fidelity's Magellan Fund", "invest in what you know.", "his big idea, from", "One Up on Wall Street",

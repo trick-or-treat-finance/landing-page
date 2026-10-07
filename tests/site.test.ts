@@ -42,7 +42,7 @@ beforeAll(async () => {
   browser = stubBeehiiv(await chromium.launch({ executablePath: process.env.CHROMIUM_PATH }));
 }, 120_000);
 
-afterAll(async () => { await browser?.close(); server?.close(); });
+afterAll(async () => { await browser?.close(); server?.close(); }, 60_000);
 
 describe("build", () => {
   it("emits both pages", () => {
