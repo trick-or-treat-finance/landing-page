@@ -29,7 +29,7 @@ beforeAll(async () => {
   base = `http://127.0.0.1:${(server.address() as { port: number }).port}`;
   browser = stubBeehiiv(await chromium.launch({ executablePath: process.env.CHROMIUM_PATH }));
 }, 120_000);
-afterAll(async () => { await browser?.close(); server?.close(); });
+afterAll(async () => { await browser?.close(); server?.close(); }, 60_000);
 
 // The one allowed third party: the beehiiv sign-up form and what its iframe loads (beehiiv's business, not this page's).
 const inBeehiivForm = (r: import("playwright-core").Request) => r.url().startsWith(`${BEEHIIV}/`) || new URL(r.frame().url() === "about:blank" ? `${BEEHIIV}/` : r.frame().url()).origin === BEEHIIV;
