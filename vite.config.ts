@@ -1,3 +1,4 @@
+/// <reference types="vitest/config" />
 import { resolve } from "node:path";
 import { defineConfig, type Plugin } from "vite";
 import {
@@ -32,6 +33,10 @@ function staticParts(): Plugin {
 export default defineConfig({
   base: "/landing-page/",
   plugins: [staticParts()],
+  test: {
+    // The browser suites ran 5-6 s per test at load average ~500 (the 5 s default failed header-contrast, issue #20 and eggs tests that pass alone); 30 s clears the slowest with margin.
+    testTimeout: 30_000,
+  },
   build: {
     rollupOptions: {
       input: {
