@@ -216,12 +216,15 @@ describe("buffett + lynch section", () => {
   it("sits below the hero and the grow card as a credibility beat, with alt naming both men and a set size", async () => {
     const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
     await page.goto(base, { waitUntil: "networkidle" });
-    const m = await page.evaluate(() => {
+    const m = await page.evaluate(async () => {
       const duo = document.querySelector(".duo")!.getBoundingClientRect();
       const hero = document.querySelector(".hero")!.getBoundingClientRect();
       const grow = document.querySelector("#grow, .grow")!.getBoundingClientRect();
       const img = document.querySelector<HTMLImageElement>(".duo-img")!;
-      return { duo: duo.top, hero: hero.top, growBottom: grow.bottom, alt: img.alt, w: img.getAttribute("width"), h: img.getAttribute("height"), loading: img.loading, src: img.currentSrc };
+      const loading = img.loading;
+      // A lazy image has no currentSrc until it nears the viewport; bring it in and wait, or the read races the load.
+      if (!img.complete) await new Promise((done) => { img.addEventListener("load", done, { once: true }); img.addEventListener("error", done, { once: true }); img.scrollIntoView(); });
+      return { duo: duo.top, hero: hero.top, growBottom: grow.bottom, alt: img.alt, w: img.getAttribute("width"), h: img.getAttribute("height"), loading, src: img.currentSrc };
     });
     await page.close();
     expect(m.duo).toBeGreaterThanOrEqual(m.growBottom - 1);
