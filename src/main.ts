@@ -9,4 +9,4 @@ import "./theme.css";
 import "./theme";
 
 // Only the home page has anything to wake up; the other pages get the day/night switch alone.
-if (document.body.classList.contains("home")) { void import("./landing"); void import("./grow"); }
+if (document.body.classList.contains("home")) { void import("./landing"); void import("./grow"); void import("./signup"); }

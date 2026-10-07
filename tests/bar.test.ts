@@ -60,6 +60,23 @@ describe("requests", () => {
   });
 });
 
+describe("the email sign-up", () => {
+  it("asks beehiiv for nothing on a fresh load, and fetches its loader only when the button is pressed", async () => {
+    const page = await browser.newPage();
+    const foreign: string[] = [];
+    page.on("request", (r) => { if (new URL(r.url()).origin !== new URL(base).origin && !r.url().startsWith("data:")) foreign.push(r.url()); });
+    await page.goto(base, { waitUntil: "networkidle" });
+    await page.waitForTimeout(500);
+    expect(foreign).toEqual([]);
+    expect(await page.locator("#notify-open").isVisible(), "the button is the control: it must exist").toBe(true);
+    await page.click("#notify-open");
+    await page.waitForResponse((r) => r.url().startsWith(`${BEEHIIV}/`));
+    expect(foreign.length).toBeGreaterThan(0);
+    expect(foreign.every((u) => u.startsWith(`${BEEHIIV}/`))).toBe(true);
+    await page.close();
+  });
+});
+
 describe("margin note n1", () => {
   it("points at the Apple line in Trick view and is gone in Treat view", async () => {
     const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
