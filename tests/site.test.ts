@@ -407,3 +407,17 @@ describe("issue #20", () => {
     });
   }
 });
+
+// HAG-341: the hero buttons must stay on the first screen of a 390x844 phone (the art once stacked above the copy pushed them to 858).
+describe("hero fold on phones", () => {
+  for (const theme of ["light", "dark"] as const) {
+    it(`390x844 ${theme}: both hero buttons end above the fold`, async () => {
+      const page = await browser.newPage({ viewport: { width: 390, height: 844 }, colorScheme: theme, reducedMotion: "reduce" });
+      await page.goto(`${base}${BASE}index.html`, { waitUntil: "load" });
+      const bottoms = await page.evaluate(() => [...document.querySelectorAll<HTMLElement>(".hero-cta .btn")].map((b) => b.getBoundingClientRect().bottom));
+      expect(bottoms.length, "the hero buttons were not found").toBe(2);
+      for (const b of bottoms) expect(b, `button bottom ${b} vs viewport 844`).toBeLessThanOrEqual(844);
+      await page.close();
+    });
+  }
+});
