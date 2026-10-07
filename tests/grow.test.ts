@@ -138,6 +138,21 @@ describe("grow section in the browser", () => {
   }
 });
 
+describe("grow mode radios", () => {
+  for (const width of [320, 390, 1280]) {
+    it(`${width}px: each radio's label is a tap target of at least 44x44, and the tap selects it`, async () => {
+      const { ctx, page } = await open({ width });
+      const boxes = await page.locator(".g-opt").evaluateAll((ls) => ls.map((l) => { const b = l.getBoundingClientRect(); return { w: b.width, h: b.height }; }));
+      expect(boxes.length, "the mode radios were not found").toBe(2);
+      for (const b of boxes) { expect(b.w).toBeGreaterThanOrEqual(44); expect(b.h).toBeGreaterThanOrEqual(44); }
+      await page.locator(".g-opt").nth(1).scrollIntoViewIfNeeded();
+      await page.locator(".g-opt").nth(1).click({ position: { x: 4, y: 4 } });
+      expect(await page.locator('input[name="g-mode"][value="once"]').isChecked()).toBe(true);
+      await ctx.close();
+    });
+  }
+});
+
 describe("bundle", () => {
   it("total gzipped JS + CSS stays <= 60 KB", () => {
     const dir = join(out, "assets");
