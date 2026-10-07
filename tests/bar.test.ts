@@ -31,7 +31,7 @@ beforeAll(async () => {
   base = `http://127.0.0.1:${(server.address() as { port: number }).port}${BASE}`;
   browser = stubBeehiiv(await chromium.launch({ executablePath: process.env.CHROMIUM_PATH }));
 }, 120_000);
-afterAll(async () => { await browser?.close(); server?.close(); });
+afterAll(async () => { await browser?.close(); server?.close(); }, 60_000);
 
 describe("bundle", () => {
   it("ships at most 60 KB of gzipped JavaScript", () => {

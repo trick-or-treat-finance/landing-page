@@ -38,7 +38,7 @@ beforeAll(async () => {
   ({ server, base } = await serve(out));
   browser = stubBeehiiv(await chromium.launch({ executablePath: process.env.CHROMIUM_PATH }));
 }, 120_000);
-afterAll(async () => { await browser?.close(); server?.close(); });
+afterAll(async () => { await browser?.close(); server?.close(); }, 60_000);
 
 type Opts = { width?: number; reduced?: boolean; search?: string; at?: Date };
 async function open({ width = 1280, reduced = false, search = "", at }: Opts = {}): Promise<{ page: Page; logs: string[] }> {
