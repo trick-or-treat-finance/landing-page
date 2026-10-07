@@ -30,3 +30,6 @@ docker run --rm -p 8080:80 tot-landing   # http://localhost:8080/landing-page/
 ## Tests
 
 `npm test` needs a Chromium for Playwright: `npx playwright-core install chromium-headless-shell`, or set `CHROMIUM_PATH`.
+
+`npm run test:changed` runs only the tests your branch can reach (vitest `--changed` against `origin/main`, or `BASE=<ref>`); a change to page code, config, scripts or docs runs everything.
+The full `npm test` stays the gate for an epic branch merging to main.
