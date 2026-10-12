@@ -1,0 +1,75 @@
+#!/usr/bin/env bash
+# Fails when the branch changes an existing test outside a commit whose message starts "Test change:".
+# Judged per commit since merge-base(BASE, HEAD), plus uncommitted edits: added lines pass, removed or
+# changed lines in a protected file fail, and an added skip/only marker fails even in an addition.
+# Rule: hive/test-integrity-rule.txt (items 1 and 7). Env: BASE (default origin/main).
+set -euo pipefail
+
+# Shell `case` globs: `*` crosses slashes. The tests and the recordings they compare against are the judge.
+PROTECTED=(
+    'tests/*'
+    'features/*'
+    '*.feature'
+    'scripts/guard_cases/*'
+    '*/fixtures/*'
+    '*__snapshots__/*'
+)
+
+base="${BASE:-origin/main}"
+mb="$(git merge-base "$base" HEAD)" || { echo "check-test-integrity: no merge-base with $base" >&2; exit 2; }
+
+# A test that no longer runs, or makes the others not run. Added lines only; built per language.
+DISABLES='(pytest\.mark\.(skip|skipif|xfail)|pytest\.(skip|xfail)\(|unittest\.skip|XCTSkip|(^|[^A-Za-z0-9_])(it|test|describe|suite|context)\.(skip|only|todo)([^A-Za-z0-9_]|$)|(^|[^A-Za-z0-9_.])(xit|xtest|xdescribe|fit|fdescribe)\(|\.disabled\(|@(skip|wip|ignore)([^A-Za-z0-9_]|$))'
+
+is_protected() {
+  local glob
+  for glob in "${PROTECTED[@]}"; do
+    # shellcheck disable=SC2254
+    case "$1" in $glob) return 0 ;; esac
+  done
+  return 1
+}
+
+violations=()
+
+# Judge one change set: "$@" is the git diff range, $label names it in the message.
+judge() {
+  local label=$1 allowed=$2; shift 2
+  local added removed path
+  while IFS=$'\t' read -r added removed path; do
+    is_protected "$path" || continue
+    [ "$allowed" = yes ] && continue
+    if [ "$added" != 0 ] && [ "$added" != - ]; then
+      local line
+      line="$(git diff --no-renames -U0 "$@" -- "$path" | grep '^+' | grep -v '^+++' | grep -E -m1 "$DISABLES" || true)"
+      [ -z "$line" ] || violations+=("$label $path: adds a skip/only marker: ${line:1:120}")
+    fi
+    # Only a test that exists on the base is locked; the branch may reshape the tests it adds.
+    git cat-file -e "$mb:$path" 2>/dev/null || continue
+    # "-" is a binary file (a snapshot image): any change to one counts.
+    if [ "$removed" = - ]; then
+      violations+=("$label $path: changes an existing binary recording")
+    elif [ "$removed" != 0 ]; then
+      violations+=("$label $path: changes or removes $removed existing line(s)")
+    fi
+  done < <(git diff --no-renames --numstat "$@")
+}
+
+# Per commit, so a "Test change:" commit covers only itself, never the code commits beside it.
+# Merges are skipped: what they bring in was judged on its own branch.
+for commit in $(git rev-list --no-merges --reverse "$mb..HEAD"); do
+  allowed=no
+  case "$(git log -1 --format=%s "$commit")" in "Test change:"*) allowed=yes ;; esac
+  judge "$(git rev-parse --short "$commit")" "$allowed" "$commit^" "$commit"
+done
+# Uncommitted edits have no message, so they are never a test change.
+judge "uncommitted" no HEAD
+
+if [ ${#violations[@]} -eq 0 ]; then
+  echo "check-test-integrity: ok, no existing test changed since $base outside a 'Test change:' commit"
+  exit 0
+fi
+echo "check-test-integrity: FAILED. Existing tests are locked (hive test-integrity rule); only a commit" >&2
+echo "whose message starts 'Test change: <why>' may change one, in its own reviewed PR:" >&2
+printf '  %s\n' "${violations[@]}" >&2
+exit 1
