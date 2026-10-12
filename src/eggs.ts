@@ -12,6 +12,24 @@ export const POKES = [
 export const POKE_EVERY = 3;
 export const AWAY_TITLE = "👻 your receipt misses you";
 export const HALLOWEEN_TITLE = "Trick or Treat: it's literally our day 🎃";
+export const BOO_LINE = "boo. did your net worth just flinch?";
+export const THEME_LINES = { dark: "lights off. the ghost works nights.", light: "lights on. the ghost is squinting." };
+export const WORD_LINES = { treat: "treat side. same month, new sort.", trick: "trick side. back to what it cost." };
+
+/** A word as the keys that spell it, for konamiMatcher. */
+export function wordKeys(word: string): string[] {
+  return [...word];
+}
+
+/** Whole days from the visitor's today to 31 October, on their own calendar; null outside October. */
+export function sleepsToHalloween(now: Date): number | null {
+  if (now.getMonth() !== 9) return null;
+  return 31 - now.getDate();
+}
+
+export function sleepsLine(n: number): string {
+  return n === 0 ? "halloween is today" : `${n} ${n === 1 ? "sleep" : "sleeps"} until halloween`;
+}
 
 /** True on 31 October in the visitor's own time zone, or with ?halloween in the address. */
 export function isHalloween(now: Date, search = ""): boolean {
@@ -66,7 +84,7 @@ function consoleNote(base: string): void {
     "%c👻 you opened devtools. respect.%c\n" +
       "nothing to find in here: every number on this page is a sample month, not real data.\n" +
       `found a real bug anyway? ${location.origin}${base}hello-hacker.html has our email. we say thank you.\n` +
-      "psst: ↑ ↑ ↓ ↓ ← → ← → b a",
+      "psst: ↑ ↑ ↓ ↓ ← → ← → b a. or just type boo, treat, trick.",
     "font: 700 14px system-ui; color: #155646",
     "font: 12px ui-monospace, monospace",
   );
@@ -82,6 +100,61 @@ function konami(): void {
     toast("cheat code accepted. sadly money has no cheat codes. +0 net worth unlocked.");
     wiggle(document.querySelector(".gh-hero"), "egg-spin");
   });
+}
+
+/** Typed words, from the page itself and never from a field: boo scares the ghost, treat and trick flip the receipt. */
+function typedWords(): void {
+  const boo = konamiMatcher(wordKeys("boo"));
+  const treat = konamiMatcher(wordKeys("treat"));
+  const trick = konamiMatcher(wordKeys("trick"));
+  const flipTo = (side: "treat" | "trick"): void => {
+    const sw = document.querySelector<HTMLButtonElement>("#sw");
+    if (sw && (sw.getAttribute("aria-checked") === "true") !== (side === "treat")) sw.click();
+    toast(WORD_LINES[side]);
+  };
+  document.addEventListener("keydown", (e) => {
+    const t = e.target as Element | null;
+    if (e.ctrlKey || e.metaKey || e.altKey || t?.closest("input, textarea, select, [contenteditable], [role=slider]")) return;
+    const hits = [boo(e.key), treat(e.key), trick(e.key)];
+    if (hits[0]) { wiggle(document.querySelector(".gh-hero"), "egg-boop"); toast(BOO_LINE); }
+    if (hits[1]) flipTo("treat");
+    if (hits[2]) flipTo("trick");
+  });
+}
+
+/** October only: the hint under the buttons also counts the sleeps. Added text, nothing moves above it. */
+function countdown(): void {
+  const n = sleepsToHalloween(new Date());
+  const hint = document.querySelector(".hero-hint");
+  if (n === null || !hint) return;
+  const span = document.createElement("span");
+  span.className = "hero-sleeps";
+  span.textContent = ` ${sleepsLine(n)} 🎃`;
+  hint.append(span);
+}
+
+/** The switch answers with a line; the theme script has already flipped by the time this runs. */
+function themeLines(): void {
+  document.querySelector("#theme")?.addEventListener("click", () => {
+    const dark = document.documentElement.dataset.theme === "dark";
+    toast(dark ? THEME_LINES.dark : THEME_LINES.light);
+  });
+}
+
+/** The hero ghost closes its eyes for a moment every few seconds; the CSS animation is the only thing that moves, and it is not started under reduced motion. */
+function blink(): void {
+  const eyes = [...document.querySelectorAll<SVGElement>(".gh-hero .eye")];
+  if (!eyes.length || reduced()) return;
+  const once = (): void => {
+    if (document.visibilityState === "visible") {
+      for (const eye of eyes) {
+        eye.classList.add("egg-blink");
+        eye.addEventListener("animationend", () => eye.classList.remove("egg-blink"), { once: true });
+      }
+    }
+    setTimeout(once, 3000 + Math.random() * 3000);
+  };
+  setTimeout(once, 2500);
 }
 
 function pokeGhost(): void {
@@ -122,6 +195,10 @@ function halloween(): void {
 export function wakeEggs(base: string): void {
   consoleNote(base);
   konami();
+  typedWords();
+  countdown();
+  themeLines();
+  blink();
   pokeGhost();
   tabAway();
   halloween();

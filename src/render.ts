@@ -111,6 +111,18 @@ export function sandboxResult(state: SandboxState) {
   return buildYourMonth(choices, TREAT_BUDGET);
 }
 
+/** One line of reaction to the made-up month, or null when nothing earns one. First match wins. */
+export function sandboxQuip(state: SandboxState): string | null {
+  const on = SANDBOX.filter((k) => state[k.id]?.on);
+  if (on.length === SANDBOX.length) return "every category on. you contain multitudes.";
+  const at = (id: string): number => (state[id]?.on ? state[id].cents : 0);
+  if (at("rideshare") >= 30000) return "your driver knows your commute better than you do.";
+  if (at("coffee") >= 15000) return "the barista spells your name right. you earned that.";
+  if (at("groceries") >= 80000) return "that much in groceries? you're hosting, right?";
+  if (state["gym"]?.on) return "a gym line. we won't ask how often you go.";
+  return null;
+}
+
 export function sandboxTally(state: SandboxState, base: string): string {
   const r = sandboxResult(state);
   const on = SANDBOX.filter((k) => state[k.id].on);
@@ -129,10 +141,12 @@ export function sandboxTally(state: SandboxState, base: string): string {
     .filter((k) => k.kind === "local")
     .map((k) => `<li class="nothing">${esc(k.chip)} maps to nothing you can own.</li>`)
     .join("");
+  const quip = sandboxQuip(state);
   return (
     `<ul class="sb-rows">${rows}</ul>` +
     `<hr /><p class="s">of a $100.00 treat, in the same proportions</p>` +
-    `<ul class="sb-basket">${basket}${nothing}</ul>`
+    `<ul class="sb-basket">${basket}${nothing}</ul>` +
+    (quip ? `<p class="sb-quip">${esc(quip)}</p>` : "")
   );
 }
 
