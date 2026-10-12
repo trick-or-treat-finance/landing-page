@@ -149,7 +149,7 @@ describe("existing tests are locked", () => {
 
 describe("pre-rule commits can be waived, from the base only", () => {
   const WAIVERS = ".test-integrity-waivers";
-  const full = (short: string) => git("rev-parse", short);
+  const full = (short: string | undefined) => git("rev-parse", String(short));
   const waiveOnMain = (line: string) => {
     git("checkout", "-q", "main");
     write(WAIVERS, `# Pre-rule commits.\n${line}\n`);
