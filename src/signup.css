@@ -1,0 +1,8 @@
+/* The email form of the "be the first to know" section, built only when our own list is configured. */
+.lead-form { display: grid; gap: 10px; width: 100%; max-width: 400px; }
+.lead-form input[type="email"] { font: inherit; padding: 12px 14px; min-height: 44px; border: 2px solid var(--line-strong); border-radius: var(--radius-btn); background: var(--panel); color: var(--ink); }
+.lead-form input[type="email"]:focus-visible { outline: 2px solid var(--green-ink); outline-offset: 3px; }
+.lead-form label { font-size: 14px; color: var(--secondary); }
+.lead-form .lead-trap { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
+.lead-status { font-size: 14px; color: var(--secondary); min-height: 1.4em; }
+.lead-status[data-kind="bad"] { color: var(--ink); font-weight: 600; }
