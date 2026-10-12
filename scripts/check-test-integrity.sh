@@ -2,7 +2,7 @@
 # Fails when the branch changes an existing test outside a commit whose message starts "Test change:".
 # Judged per commit since merge-base(BASE, HEAD), plus uncommitted edits: added lines pass, removed or
 # changed lines in a protected file fail, and an added skip/only marker fails even in an addition.
-# Rule: hive/test-integrity-rule.txt (items 1 and 7). Env: BASE (default origin/main).
+# Rule: hive/test-integrity-rule.txt (items 1 and 7). Env: BASE (default origin/main). Waivers: .test-integrity-waivers on BASE.
 set -euo pipefail
 
 # Shell `case` globs: `*` crosses slashes. The tests and the recordings they compare against are the judge.
@@ -55,9 +55,28 @@ judge() {
   done < <(git diff --no-renames --numstat "$@")
 }
 
+# Commits made before the rule, waived one by one: `<full sha> <reason> (approved: god)`. Read from
+# the base, never the branch, so a pull request cannot waive its own commits.
+WAIVERS=.test-integrity-waivers
+waivers="$(git show "$base:$WAIVERS" 2>/dev/null || true)"
+waived=""
+while IFS= read -r entry; do
+  case "$entry" in "" | "#"*) continue ;; esac
+  if ! printf '%s\n' "$entry" | grep -Eq '^[0-9a-f]{40} [^ ].* \(approved: god\)$'; then
+    echo "check-test-integrity: FAILED. Malformed line in $WAIVERS on $base (want '<full sha> <reason> (approved: god)'):" >&2
+    echo "  $entry" >&2
+    exit 1
+  fi
+  waived="$waived ${entry%% *}"
+done <<< "$waivers"
+
 # Per commit, so a "Test change:" commit covers only itself, never the code commits beside it.
 # Merges are skipped: what they bring in was judged on its own branch.
 for commit in $(git rev-list --no-merges --reverse "$mb..HEAD"); do
+  case " $waived " in *" $commit "*)
+    echo "check-test-integrity: waived $(git rev-parse --short "$commit"): $(git show "$base:$WAIVERS" | grep "^$commit " | cut -d' ' -f2-)"
+    continue ;;
+  esac
   allowed=no
   case "$(git log -1 --format=%s "$commit")" in "Test change:"*) allowed=yes ;; esac
   judge "$(git rev-parse --short "$commit")" "$allowed" "$commit^" "$commit"
