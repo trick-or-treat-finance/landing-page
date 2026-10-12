@@ -2,7 +2,7 @@
 # Fails when the branch changes an existing test outside a commit whose message starts "Test change:".
 # Judged per commit since merge-base(BASE, HEAD), plus uncommitted edits: added lines pass, removed or
 # changed lines in a protected file fail, and an added skip/only marker fails even in an addition.
-# Rule: hive/test-integrity-rule.txt (items 1 and 7). Env: BASE (default origin/main).
+# Rule: hive/test-integrity-rule.txt (items 1 and 7). Env: BASE (default origin/main). Waivers: .test-integrity-waivers on BASE.
 set -euo pipefail
 
 # Shell `case` globs: `*` crosses slashes. The tests and the recordings they compare against are the judge.
@@ -50,14 +50,56 @@ judge() {
     if [ "$removed" = - ]; then
       violations+=("$label $path: changes an existing binary recording")
     elif [ "$removed" != 0 ]; then
-      violations+=("$label $path: changes or removes $removed existing line(s)")
+      local gone
+      gone="$(removed_lines "$@" -- "$path" | spend_own "$path")"
+      [ "$gone" = 0 ] || violations+=("$label $path: changes or removes $gone existing line(s)")
     fi
   done < <(git diff --no-renames --numstat "$@")
+  [ "$allowed" = yes ] && return 0
+  # What this commit added becomes the branch's own: a later commit may reshape it.
+  while IFS=$'\t' read -r added removed path; do
+    is_protected "$path" && [ "$added" != 0 ] && [ "$added" != - ] || continue
+    git diff --no-renames -U0 "$@" -- "$path" | grep '^+' | grep -v '^+++' | cut -c2- >> "$(own_file "$path")" || true
+  done < <(git diff --no-renames --numstat "$@")
 }
+
+# Lines the branch added in its own ordinary commits, per protected file, kept as a multiset so a
+# copy of an existing line added on the branch cannot pay for deleting the original.
+own_dir="$(mktemp -d)"
+trap 'rm -rf "$own_dir"' EXIT
+own_file() { local f="$own_dir/$(printf '%s' "$1" | tr '/' '%')"; touch "$f"; printf '%s' "$f"; }
+removed_lines() { git diff --no-renames -U0 "$@" | grep '^-' | grep -v '^---' | cut -c2- || true; }
+# Reads removed lines on stdin; spends matching own lines; prints how many were not the branch's own.
+spend_own() {
+  local own; own="$(own_file "$1")"
+  # FILENAME, not NR == FNR: the own file is often empty, and then every removed line would count as own.
+  awk -v keep="$own.next" -v ownf="$own" 'FILENAME == ownf { n[$0]++; next } { if (n[$0] > 0) n[$0]--; else bad++ }
+    END { for (k in n) for (i = 0; i < n[k]; i++) print k > keep; close(keep); print bad + 0 }' "$own" - 
+  touch "$own.next"; mv "$own.next" "$own"
+}
+
+# Commits made before the rule, waived one by one: `<full sha> <reason> (approved: god)`. Read from
+# the base, never the branch, so a pull request cannot waive its own commits.
+WAIVERS=.test-integrity-waivers
+waivers="$(git show "$base:$WAIVERS" 2>/dev/null || true)"
+waived=""
+while IFS= read -r entry; do
+  case "$entry" in "" | "#"*) continue ;; esac
+  if ! printf '%s\n' "$entry" | grep -Eq '^[0-9a-f]{40} [^ ].* \(approved: god\)$'; then
+    echo "check-test-integrity: FAILED. Malformed line in $WAIVERS on $base (want '<full sha> <reason> (approved: god)'):" >&2
+    echo "  $entry" >&2
+    exit 1
+  fi
+  waived="$waived ${entry%% *}"
+done <<< "$waivers"
 
 # Per commit, so a "Test change:" commit covers only itself, never the code commits beside it.
 # Merges are skipped: what they bring in was judged on its own branch.
 for commit in $(git rev-list --no-merges --reverse "$mb..HEAD"); do
+  case " $waived " in *" $commit "*)
+    echo "check-test-integrity: waived $(git rev-parse --short "$commit"): $(git show "$base:$WAIVERS" | grep "^$commit " | cut -d' ' -f2-)"
+    continue ;;
+  esac
   allowed=no
   case "$(git log -1 --format=%s "$commit")" in "Test change:"*) allowed=yes ;; esac
   judge "$(git rev-parse --short "$commit")" "$allowed" "$commit^" "$commit"

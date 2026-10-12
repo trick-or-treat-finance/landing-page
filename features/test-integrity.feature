@@ -70,3 +70,34 @@ Feature: Existing tests are locked
     Given a commit that edits a file outside the protected set
     When the integrity check runs
     Then the check passes
+
+  Scenario: A commit waived on the base passes, and the check says so
+    Given a commit that edits an existing test
+    And the base waives that commit
+    When the integrity check runs
+    Then the check passes, naming the waived commit
+
+  Scenario: A waiver covers only the commit it names
+    Given a commit that edits an existing test
+    And the base waives that commit
+    And a commit that edits an existing test
+    When the integrity check runs
+    Then the check fails, naming only the second commit
+
+  Scenario: A waiver written on the branch itself does not count
+    Given a commit that edits an existing test
+    And the branch waives that commit
+    When the integrity check runs
+    Then the check fails, naming the first commit and the test
+
+  Scenario: A malformed waiver fails
+    Given a commit that adds a new test
+    And the base holds the waiver line "abc123 fixture (approved: god)"
+    When the integrity check runs
+    Then the check fails, naming the malformed waiver
+
+  Scenario: Reshaping a test this branch appended to an existing file passes
+    Given a commit that appends a test to an existing file
+    And a commit that changes the appended test
+    When the integrity check runs
+    Then the check passes

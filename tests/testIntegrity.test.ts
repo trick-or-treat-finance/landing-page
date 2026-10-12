@@ -146,3 +146,59 @@ describe("existing tests are locked", () => {
     expect(run().code).toBe(0);
   });
 });
+
+describe("pre-rule commits can be waived, from the base only", () => {
+  const WAIVERS = ".test-integrity-waivers";
+  const full = (short: string | undefined) => git("rev-parse", String(short));
+  const waiveOnMain = (line: string) => {
+    git("checkout", "-q", "main");
+    write(WAIVERS, `# Pre-rule commits.\n${line}\n`);
+    git("add", "-A");
+    git("commit", "-q", "-m", "Waive a pre-rule commit");
+    git("checkout", "-q", "feature");
+  };
+
+  it("a commit waived on the base passes, and the check says so", () => {
+    write(EXISTING, "it('adds', () => {});\n");
+    commit();
+    waiveOnMain(`${full(commits[0])} demo fixture; pre-rule (approved: god)`);
+    const result = spawnSync("bash", [SCRIPT], { cwd: repo, env: { ...GIT_ENV, BASE: "main" }, encoding: "utf8" });
+    expect(result.status, result.stderr).toBe(0);
+    expect(result.stdout).toContain(`waived ${commits[0]}: demo fixture; pre-rule (approved: god)`);
+  });
+
+  it("a waiver covers only the commit it names", () => {
+    write(EXISTING, "it('adds', () => {});\n");
+    commit();
+    waiveOnMain(`${full(commits[0])} demo fixture; pre-rule (approved: god)`);
+    write(EXISTING, "it('adds', () => expect(3).toBe(3));\n");
+    commit();
+    const stderr = failsNaming(`${commits[1]} ${EXISTING}:`);
+    expect(stderr).not.toContain(`${commits[0]} ${EXISTING}:`);
+  });
+
+  it("a waiver written on the branch itself does not count", () => {
+    write(EXISTING, "it('adds', () => {});\n");
+    commit();
+    write(WAIVERS, `${full(commits[0])} my own waiver (approved: god)\n`);
+    commit("Waive my own commit");
+    failsNaming(`${commits[0]} ${EXISTING}:`);
+  });
+
+  it("a malformed waiver fails", () => {
+    write(NEW, "it('new', () => {});\n");
+    commit();
+    waiveOnMain("abc123 fixture (approved: god)");
+    failsNaming("Malformed line", "abc123 fixture");
+  });
+});
+
+describe("the branch may reshape what it appended", () => {
+  it("reshaping a test this branch appended to an existing file passes", () => {
+    appendFileSync(join(repo, EXISTING), "it('more', () => expect(2 + 2).toBe(4));\n");
+    commit();
+    write(EXISTING, "it('adds', () => expect(1 + 1).toBe(2));\nit('more', () => expect(3 + 3).toBe(6));\n");
+    commit();
+    expect(run().code).toBe(0);
+  });
+});
