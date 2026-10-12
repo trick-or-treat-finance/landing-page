@@ -98,6 +98,16 @@ describe("the split section on the home page", () => {
     await page.close();
   });
 
+  it("settle up is not offered until the dinner is split, and the hint waits too", async () => {
+    const page = await open();
+    expect(await page.locator("#split-settle").isVisible()).toBe(false);
+    await page.locator("#split-go").click();
+    expect(await page.locator("#split-settle").isVisible()).toBe(true);
+    await page.locator("#split-go").click();
+    expect(await page.locator("#split-settle").isVisible()).toBe(false);
+    await page.close();
+  });
+
   it("one tap splits it four ways: your $78.00, three Pending, the bar back under with $162.00 left", async () => {
     const page = await open();
     expect(await stateOf(page)).toBe("whole");
