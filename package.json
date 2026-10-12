@@ -9,7 +9,8 @@
     "preview": "vite preview",
     "test": "vitest run",
     "test:changed": "node scripts/test-changed.mjs",
-    "shots": "node scripts/screenshots.mjs"
+    "shots": "node scripts/screenshots.mjs",
+    "check": "bash scripts/check-test-integrity.sh"
   },
   "devDependencies": {
     "@types/node": "^26.6.3",

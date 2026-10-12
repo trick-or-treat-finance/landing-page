@@ -33,3 +33,5 @@ docker run --rm -p 8080:80 tot-landing   # http://localhost:8080/landing-page/
 
 `npm run test:changed` runs only the tests your branch can reach (vitest `--changed` against `origin/main`, or `BASE=<ref>`); a change to page code, config, scripts or docs runs everything.
 The full `npm test` stays the gate for an epic branch merging to main.
+
+`npm run check` (test integrity) fails when the branch edited, deleted or renamed an existing test, `.feature` file or fixture; added files are fine. Run it with `PR_TITLE` set to the PR title: a PR that holds only that change and is titled `Test change: <why>` may change them, and an unset title fails closed. It compares against `origin/main`, or `BASE=<ref>`. The protected globs are at the top of `scripts/check-test-integrity.sh`. This repo has no pull-request CI (only the Pages deploy), so the gate is this command plus god's check of the PR file list.
