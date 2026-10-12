@@ -171,6 +171,59 @@
     </div>
   </section>
 
+  <section class="split-sec" id="split" aria-labelledby="split-h">
+    <div class="how-head">
+      <div class="eyebrow">coming soon <span aria-hidden="true">·</span> sample numbers</div>
+      <h2 id="split-h" class="h2">group dinner? your budget said no.</h2>
+      <p class="lede">one tap, it said ok. you paid the whole bill. your budget counts your share, and the rest waits as pending until your friends pay you back. no second app for ious.</p>
+    </div>
+    <div class="split" id="split-stage" data-state="whole">
+      <div class="split-left">
+        <div class="rc split-receipt"><div class="rc-in">
+          <div class="rc-h"><span class="wm">Taco <em>Dinner</em></span><span class="mono s">table for 4 · sample</span></div>
+          <div class="perf"></div>
+          <ul class="sls">
+            <li class="sl"><span>al pastor tacos x16</span><i></i><b>$96.00</b></li>
+            <li class="sl"><span>carne asada x12</span><i></i><b>$72.00</b></li>
+            <li class="sl"><span>guac and chips x3</span><i></i><b>$27.00</b></li>
+            <li class="sl"><span>queso fundido</span><i></i><b>$18.00</b></li>
+            <li class="sl"><span>horchata x4</span><i></i><b>$15.00</b></li>
+            <li class="sl"><span>hot sauce flight</span><i></i><b>$24.00</b></li>
+            <li class="sl sl-sub"><span>tax</span><i></i><b>$20.00</b></li>
+            <li class="sl sl-sub"><span>tip</span><i></i><b>$40.00</b></li>
+          </ul>
+          <div class="perf"></div>
+          <div class="split-total"><span class="split-total-l"><span class="st-whole">THE BILL</span><span class="st-mine">YOUR SHARE</span></span><b>$312.00</b></div>
+          <p class="mono s split-total-sub"><span class="st-whole">you paid it all</span><span class="st-mine">of the $312.00 you paid</span></p>
+          <span class="tear" aria-hidden="true"></span>
+        </div></div>
+        <p class="split-note hand" aria-hidden="true">you paid. you did not eat $312 of tacos.</p>
+      </div>
+      <div class="split-right">
+        <div class="split-budget">
+          <p class="split-budget-h">dining · $240.00 a month</p>
+          <div class="meter" aria-hidden="true"><span class="fill"></span></div>
+          <p class="split-budget-text" id="split-budget-text">$312.00 of $240.00 · over by $72.00</p>
+          <p class="split-note split-note-2 hand" aria-hidden="true">inflation is bad, but not $312-for-tacos bad.</p>
+        </div>
+        <div class="split-ctl js-only">
+          <button class="btn" id="split-go" type="button" aria-pressed="false" aria-describedby="split-hint">split it 4 ways</button>
+          <button class="btn btn-ghost" id="split-settle" type="button" hidden>settle up</button>
+        </div>
+        <p class="split-hint js-only" id="split-hint">tap again to undo.</p>
+        <ul class="stubs" id="split-stubs">
+          <li class="stub" data-who="you"><span class="stub-n">You</span><b>$78.00</b><span class="stub-t">yours</span></li>
+          <li class="stub pending" data-who="maya"><span class="stub-n">Maya</span><b>$78.00</b><span class="stub-t">pending</span></li>
+          <li class="stub pending" data-who="sam"><span class="stub-n">Sam</span><b>$78.00</b><span class="stub-t">pending</span></li>
+          <li class="stub pending" data-who="jo"><span class="stub-n">Jo</span><b>$78.00</b><span class="stub-t">pending</span></li>
+        </ul>
+        <p class="split-pending" id="split-pending"></p>
+        <noscript><p class="nojs">Split four ways, the bill is $312.00 and your share is $78.00. The dining budget of $240.00 goes from over by $72.00 to $78.00 spent with $162.00 left, and the other $234.00 stays pending until your friends pay you back. This is a sample.</p></noscript>
+      </div>
+    </div>
+    <p class="sr" id="split-live" role="status" aria-live="polite"></p>
+  </section>
+
   <section class="slip-sec" id="slip" aria-labelledby="slip-h">
     <div class="how-head">
       <h2 id="slip-h" class="h2">What it won't ask for</h2>
