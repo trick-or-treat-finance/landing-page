@@ -41,9 +41,9 @@ beforeAll(async () => {
 }, 120_000);
 afterAll(async () => { await browser?.close(); server?.close(); }, 60_000);
 
-type Opts = { width?: number; reduced?: boolean; at?: Date };
-async function open({ width = 1280, reduced = false, at }: Opts = {}): Promise<Page> {
-  const page = await browser.newPage({ viewport: { width, height: 900 }, reducedMotion: reduced ? "reduce" : "no-preference" });
+type Opts = { width?: number; reduced?: boolean; at?: Date; touch?: boolean };
+async function open({ width = 1280, reduced = false, at, touch = false }: Opts = {}): Promise<Page> {
+  const page = await browser.newPage({ viewport: { width, height: 900 }, reducedMotion: reduced ? "reduce" : "no-preference", ...(touch ? { hasTouch: true, isMobile: true } : {}) });
   // Counts the classes the delights put on the ghost, so a jump that ends in 260ms is still seen.
   await page.addInitScript(() => {
     const w = window as unknown as { __cls: string[] };
