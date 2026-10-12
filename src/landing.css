@@ -179,6 +179,7 @@ input[type="range"]:disabled { cursor: default; opacity: 0.7; }
 .sb-basket { display: grid; gap: 6px; margin-top: 8px; }
 .tile-sm { transform: none; font-size: 12.5px; padding: 6px 8px; box-shadow: none; border-radius: 4px; }
 .nothing { font-size: 12px; color: var(--paper-mute); }
+.sb-quip { margin: 12px 0 0; font: 600 13.5px var(--mono); color: var(--paper-mute); }
 .sb-empty { margin: 0; color: var(--paper-mute); }
 
 /* permission slip */
@@ -428,4 +429,6 @@ input[type="range"]:disabled { cursor: default; opacity: 0.7; }
 @keyframes egg-boop { 30% { transform: scale(0.94, 1.06); } 60% { transform: scale(1.05, 0.95); } }
 .home .stage .ghost-spot .gh-hero.egg-spin { animation: egg-spin 700ms ease-in-out; transform-origin: 50% 50%; }
 .home .stage .ghost-spot .gh-hero.egg-boop { animation: egg-boop 260ms ease-out; transform-origin: 50% 90%; }
-@media (prefers-reduced-motion: reduce) { .egg-toast, .egg-toast.on { transition: none; } .egg-bat { display: none; } }
+@keyframes egg-blink { 45%, 55% { scale: 1 0.08; } }
+.gh-hero .eye.egg-blink { transform-box: fill-box; transform-origin: center; animation: egg-blink 160ms ease-in-out; }
+@media (prefers-reduced-motion: reduce) { .egg-toast, .egg-toast.on { transition: none; } .egg-bat { display: none; } .gh-hero .eye.egg-blink { animation: none; } }
