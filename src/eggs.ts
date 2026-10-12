@@ -14,6 +14,7 @@ export const AWAY_TITLE = "👻 your receipt misses you";
 export const HALLOWEEN_TITLE = "Trick or Treat: it's literally our day 🎃";
 export const BOO_LINE = "boo. did your net worth just flinch?";
 export const THEME_LINES = { dark: "lights off. the ghost works nights.", light: "lights on. the ghost is squinting." };
+export const FINE_LINE = "kidding. we're not that kind of company.";
 export const WORD_LINES = { treat: "treat side. same month, new sort.", trick: "trick side. back to what it cost." };
 
 /** A word as the keys that spell it, for konamiMatcher. */
@@ -171,6 +172,24 @@ function blink(): void {
   sync();
 }
 
+/** The fine print shrinks as it comes into view, then springs back to full size and says so, once per visit. Transform only, so nothing reflows; reduced motion gets the line and no movement. */
+function finePrint(): void {
+  const heading = document.querySelector(".fine-h");
+  const footer = document.querySelector(".site-footer");
+  if (!heading || !footer || !("IntersectionObserver" in window)) return;
+  const watch = new IntersectionObserver(([en]) => {
+    if (!en?.isIntersecting) return;
+    watch.disconnect();
+    if (reduced()) { toast(FINE_LINE); return; }
+    footer.classList.add("fp-shrunk");
+    setTimeout(() => {
+      footer.classList.remove("fp-shrunk");
+      toast(FINE_LINE);
+    }, 1800);
+  }, { threshold: 1, rootMargin: "0px 0px -15% 0px" });
+  watch.observe(heading);
+}
+
 function pokeGhost(): void {
   const ghost = document.querySelector<SVGElement>(".gh-hero");
   if (!ghost) return;
@@ -213,6 +232,7 @@ export function wakeEggs(base: string): void {
   countdown();
   themeLines();
   blink();
+  finePrint();
   pokeGhost();
   tabAway();
   halloween();

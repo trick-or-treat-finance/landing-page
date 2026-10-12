@@ -58,6 +58,25 @@ Feature: Small delights for people who look closely
     When they turn every category off
     Then there is no joke, only the prompt to tap a category
 
+  Scenario: The fine print shrinks as a joke, then catches itself
+    Given a visitor scrolls down to the fine print
+    When the fine print comes into view
+    Then it shrinks a little, as if embarrassed
+    And it springs back to full size
+    And a line says "kidding. we're not that kind of company."
+    And the fine print reads exactly as before
+
+  Scenario: The fine print joke happens once
+    Given the fine print has already shrunk and sprung back
+    When the visitor scrolls away and returns
+    Then the fine print stays at full size
+
+  Scenario: With reduced motion the fine print never moves, it only says the line
+    Given a visitor has asked for reduced motion
+    When the fine print comes into view
+    Then the fine print does not shrink
+    And a line says "kidding. we're not that kind of company."
+
   Scenario: Every delight leaves the page in one piece
     Given any of the above has fired
     Then nothing scrolls sideways at 320 pixels and the receipt still flips
