@@ -8,7 +8,7 @@ import { extname, join, normalize } from "node:path";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { chromium, type Browser, type Page } from "playwright-core";
 import { stubBeehiiv } from "./beehiiv-stub";
-import { BOO_LINE, THEME_LINES, konamiMatcher, sleepsLine, sleepsToHalloween, wordKeys } from "../src/eggs";
+import { BOO_LINE, FINE_LINE, THEME_LINES, konamiMatcher, sleepsLine, sleepsToHalloween, wordKeys } from "../src/eggs";
 import { SANDBOX, defaultSandbox, sandboxQuip, sandboxTally } from "../src/render";
 
 const BASE = "/landing-page/";
@@ -111,10 +111,18 @@ describe("delights: the rules behind them", () => {
     const none = Object.fromEntries(SANDBOX.map((k) => [k.id, { on: false, cents: 0 }]));
     expect(sandboxTally(none, "/")).not.toContain("sb-quip");
     expect(sandboxTally(none, "/")).toContain("Tap a category");
+    expect(sandboxQuip({ ...base, groceries: { on: true, cents: 90000 } })).toMatch(/ghost army/);
     const everything = Object.fromEntries(SANDBOX.map((k) => [k.id, { on: true, cents: 1000 }]));
     expect(sandboxQuip(everything)).toMatch(/every category/);
   });
 });
+
+const fineScale = (page: Page) => page.evaluate(() => {
+  const m = getComputedStyle(document.querySelector(".fp")!).transform;
+  return m === "none" ? 1 : Number(m.match(/matrix\(([^,]+),/)![1]);
+});
+const fineText = (page: Page) => page.locator(".site-footer").innerText();
+const toFine = async (page: Page) => { await page.locator(".fine-h").scrollIntoViewIfNeeded(); await page.evaluate(() => document.querySelector(".fine-h")!.scrollIntoView({ block: "center" })); };
 
 describe("delights on the home page", () => {
   it("typing boo makes the ghost jump and answer; a slider with focus is left alone", async () => {
@@ -181,6 +189,86 @@ describe("delights on the home page", () => {
     await still.clock.runFor(30_000);
     expect(await seen(still, "egg-blink")).toBe(0);
     await still.close();
+  });
+
+  it("a key held down is one letter: auto-repeat does not spell a word", async () => {
+    const page = await open();
+    await page.keyboard.press("b");
+    await page.keyboard.down("o");
+    await page.keyboard.down("o"); // the held key repeating
+    await page.keyboard.up("o");
+    expect(await seen(page, "egg-boop")).toBe(0);
+    expect(await toastText(page)).toBeNull();
+    await page.keyboard.press("o");
+    await page.waitForFunction(() => document.querySelector(".egg-toast.on"));
+    expect(await seen(page, "egg-boop")).toBeGreaterThanOrEqual(1);
+    await page.close();
+  });
+
+  it("typing treat is announced once: the receipt's own status speaks, the toast is for the eyes", async () => {
+    const page = await open();
+    await page.keyboard.type("treat");
+    await page.waitForFunction(() => document.querySelector("#sw")?.getAttribute("aria-checked") === "true");
+    expect(await page.locator("#live").innerText()).not.toBe("");
+    expect(await page.locator(".egg-toast").getAttribute("aria-hidden")).toBe("true");
+    // Already on the treat side: nothing flips, so nothing else would speak, and the toast does.
+    await page.keyboard.type("treat");
+    await page.waitForFunction(() => document.querySelector(".egg-toast")?.getAttribute("aria-hidden") === "false");
+    await page.close();
+  });
+
+  it("the blink follows the reduced-motion setting while the page is open", async () => {
+    const calm = await open({ at: new Date(2026, 5, 1, 12) });
+    await calm.emulateMedia({ reducedMotion: "reduce" });
+    await new Promise((done) => setTimeout(done, 300));
+    await calm.clock.runFor(30_000);
+    expect(await seen(calm, "egg-blink")).toBe(0);
+    await calm.emulateMedia({ reducedMotion: "no-preference" });
+    await new Promise((done) => setTimeout(done, 300)); // the browser delivers the change event on its own time
+    await calm.clock.runFor(12_000);
+    expect(await seen(calm, "egg-blink")).toBeGreaterThanOrEqual(1);
+    await calm.close();
+  });
+
+  it("the fine print shrinks as a joke, springs back to full size, says its line, and reads as before", async () => {
+    const page = await open({ width: 320 });
+    const before = await fineText(page);
+    await toFine(page);
+    await page.waitForFunction(() => { const m = getComputedStyle(document.querySelector(".fp")!).transform.match(/matrix\(([^,]+),/); return m !== null && Number(m[1]) < 0.8; }, null, { timeout: 5000 });
+    await noSideways(page);
+    await page.waitForFunction((t) => document.querySelector(".egg-toast.on")?.textContent === t, FINE_LINE, { timeout: 8000 });
+    await page.waitForFunction(() => getComputedStyle(document.querySelector(".fp")!).transform === "none", null, { timeout: 5000 });
+    expect(await fineText(page)).toBe(before);
+    const px = await page.evaluate(() => [...document.querySelectorAll<HTMLElement>(".site-footer p, .site-footer h2, .site-footer h3")].map((e) => parseFloat(getComputedStyle(e).fontSize)));
+    expect(px.length).toBeGreaterThan(8);
+    expect(Math.min(...px)).toBeGreaterThanOrEqual(12);
+    await noSideways(page);
+    await page.close();
+  });
+
+  it("the fine print line is a real line, so the waits below cannot pass on nothing", () => {
+    expect(FINE_LINE).toBe("kidding. we're not that kind of company.");
+  });
+
+  it("the fine print joke happens once", async () => {
+    const page = await open();
+    await toFine(page);
+    await page.waitForFunction((t) => document.querySelector(".egg-toast.on")?.textContent === t, FINE_LINE, { timeout: 8000 });
+    await page.waitForFunction(() => getComputedStyle(document.querySelector(".fp")!).transform === "none", null, { timeout: 5000 });
+    await page.evaluate(() => scrollTo(0, 0));
+    await page.waitForTimeout(300);
+    await toFine(page);
+    await page.waitForTimeout(1500);
+    expect(await fineScale(page)).toBe(1);
+    await page.close();
+  });
+
+  it("with reduced motion the fine print never moves and still says the line", async () => {
+    const page = await open({ reduced: true });
+    await toFine(page);
+    await page.waitForFunction((t) => document.querySelector(".egg-toast.on")?.textContent === t, FINE_LINE, { timeout: 8000 });
+    for (let i = 0; i < 6; i++) { expect(await fineScale(page)).toBe(1); await page.waitForTimeout(150); }
+    await page.close();
   });
 
   it("pushing rideshare to the top gets a joke under the tally", async () => {

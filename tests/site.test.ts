@@ -140,7 +140,7 @@ describe("index footer fine print", () => {
   it("fine print is small and not shouting", () => {
     const css = readFileSync(join(import.meta.dirname, "../src/style.css"), "utf8");
     expect(css).toMatch(/\.site-footer p \{[^}]*font-size: 12px/);
-    expect(css).toMatch(/\.fp-h \{[^}]*font-size: 11px/);
+    expect(css).toMatch(/\.fp-h \{[^}]*font-size: 12px/);
     expect(css).not.toMatch(/\.fp-h \{[^}]*uppercase/);
   });
 });

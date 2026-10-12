@@ -118,7 +118,7 @@ export function sandboxQuip(state: SandboxState): string | null {
   const at = (id: string): number => (state[id]?.on ? state[id].cents : 0);
   if (at("rideshare") >= 30000) return "your driver knows your commute better than you do.";
   if (at("coffee") >= 15000) return "the barista spells your name right. you earned that.";
-  if (at("groceries") >= 80000) return "that much in groceries? you're hosting, right?";
+  if (at("groceries") >= 80000) return "that's a lot of groceries. feeding a ghost army?";
   if (state["gym"]?.on) return "a gym line. we won't ask how often you go.";
   return null;
 }

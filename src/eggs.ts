@@ -14,6 +14,7 @@ export const AWAY_TITLE = "👻 your receipt misses you";
 export const HALLOWEEN_TITLE = "Trick or Treat: it's literally our day 🎃";
 export const BOO_LINE = "boo. did your net worth just flinch?";
 export const THEME_LINES = { dark: "lights off. the ghost works nights.", light: "lights on. the ghost is squinting." };
+export const FINE_LINE = "kidding. we're not that kind of company.";
 export const WORD_LINES = { treat: "treat side. same month, new sort.", trick: "trick side. back to what it cost." };
 
 /** A word as the keys that spell it, for konamiMatcher. */
@@ -58,13 +59,15 @@ let toastEl: HTMLElement | null = null;
 let toastTimer = 0;
 
 /** One polite status line at the bottom of the screen, gone after a few seconds. */
-export function toast(text: string): void {
+export function toast(text: string, announce = true): void {
   if (!toastEl) {
     toastEl = document.createElement("p");
     toastEl.className = "egg-toast";
     toastEl.setAttribute("role", "status");
     document.body.append(toastEl);
   }
+  // aria-hidden when something else is already speaking for the same event (the receipt's own status on a flip).
+  toastEl.setAttribute("aria-hidden", String(!announce));
   toastEl.textContent = text;
   toastEl.classList.add("on");
   clearTimeout(toastTimer);
@@ -109,12 +112,13 @@ function typedWords(): void {
   const trick = konamiMatcher(wordKeys("trick"));
   const flipTo = (side: "treat" | "trick"): void => {
     const sw = document.querySelector<HTMLButtonElement>("#sw");
-    if (sw && (sw.getAttribute("aria-checked") === "true") !== (side === "treat")) sw.click();
-    toast(WORD_LINES[side]);
+    const flips = sw !== null && (sw.getAttribute("aria-checked") === "true") !== (side === "treat");
+    if (flips) sw.click();
+    toast(WORD_LINES[side], !flips);
   };
   document.addEventListener("keydown", (e) => {
     const t = e.target as Element | null;
-    if (e.ctrlKey || e.metaKey || e.altKey || t?.closest("input, textarea, select, [contenteditable], [role=slider]")) return;
+    if (e.repeat || e.ctrlKey || e.metaKey || e.altKey || t?.closest("input, textarea, select, [contenteditable], [role=slider]")) return;
     const hits = [boo(e.key), treat(e.key), trick(e.key)];
     if (hits[0]) { wiggle(document.querySelector(".gh-hero"), "egg-boop"); toast(BOO_LINE); }
     if (hits[1]) flipTo("treat");
@@ -144,17 +148,46 @@ function themeLines(): void {
 /** The hero ghost closes its eyes for a moment every few seconds; the CSS animation is the only thing that moves, and it is not started under reduced motion. */
 function blink(): void {
   const eyes = [...document.querySelectorAll<SVGElement>(".gh-hero .eye")];
-  if (!eyes.length || reduced()) return;
+  if (!eyes.length) return;
+  const motion = matchMedia("(prefers-reduced-motion: reduce)");
+  let timer = 0;
   const once = (): void => {
+    timer = 0;
+    if (motion.matches) return;
     if (document.visibilityState === "visible") {
       for (const eye of eyes) {
         eye.classList.add("egg-blink");
         eye.addEventListener("animationend", () => eye.classList.remove("egg-blink"), { once: true });
       }
     }
-    setTimeout(once, 3000 + Math.random() * 3000);
+    timer = window.setTimeout(once, 3000 + Math.random() * 3000);
   };
-  setTimeout(once, 2500);
+  const sync = (): void => {
+    clearTimeout(timer);
+    timer = 0;
+    for (const eye of eyes) eye.classList.remove("egg-blink");
+    if (!motion.matches) timer = window.setTimeout(once, 2500);
+  };
+  motion.addEventListener("change", sync);
+  sync();
+}
+
+/** The fine print shrinks as it comes into view, then springs back to full size and says so, once per visit. Transform only, so nothing reflows; reduced motion gets the line and no movement. */
+function finePrint(): void {
+  const heading = document.querySelector(".fine-h");
+  const footer = document.querySelector(".site-footer");
+  if (!heading || !footer || !("IntersectionObserver" in window)) return;
+  const watch = new IntersectionObserver(([en]) => {
+    if (!en?.isIntersecting) return;
+    watch.disconnect();
+    if (reduced()) { toast(FINE_LINE); return; }
+    footer.classList.add("fp-shrunk");
+    setTimeout(() => {
+      footer.classList.remove("fp-shrunk");
+      toast(FINE_LINE);
+    }, 1800);
+  }, { threshold: 1, rootMargin: "0px 0px -15% 0px" });
+  watch.observe(heading);
 }
 
 function pokeGhost(): void {
@@ -199,6 +232,7 @@ export function wakeEggs(base: string): void {
   countdown();
   themeLines();
   blink();
+  finePrint();
   pokeGhost();
   tabAway();
   halloween();
