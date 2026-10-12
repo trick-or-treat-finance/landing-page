@@ -175,6 +175,28 @@ describe("the split section on the home page", () => {
     await page.close();
   });
 
+  it("settle up works again after undoing mid-flip and splitting again", async () => {
+    const page = await open();
+    await page.locator("#split-go").click();
+    await page.locator("#split-settle").click();
+    await page.locator("#split-go").click(); // undo while the stubs are still flipping
+    await page.locator("#split-go").click(); // split again
+    expect(await page.locator("#split-settle").isDisabled()).toBe(false);
+    await page.locator("#split-settle").click();
+    await page.waitForFunction(() => document.querySelector("#split-stage")?.getAttribute("data-state") === "settled", null, { timeout: 8000 });
+    await page.close();
+  });
+
+  it("the undo hint is only described to a screen reader once there is something to undo", async () => {
+    const page = await open();
+    expect(await page.locator("#split-go").getAttribute("aria-describedby")).toBeNull();
+    await page.locator("#split-go").click();
+    expect(await page.locator("#split-go").getAttribute("aria-describedby")).toBe("split-hint");
+    await page.locator("#split-go").click();
+    expect(await page.locator("#split-go").getAttribute("aria-describedby")).toBeNull();
+    await page.close();
+  });
+
   it("with reduced motion the states jump at once and nothing is animating", async () => {
     const page = await open({ reduced: true });
     await page.locator("#split-go").click();

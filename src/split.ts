@@ -45,6 +45,11 @@ function wake(): void {
     stage!.dataset.state = next;
     go!.setAttribute("aria-pressed", String(next !== "whole"));
     settle!.hidden = next !== "split";
+    // An undo can land mid-flip, after settle up disabled itself; every state starts with it usable.
+    settle!.disabled = false;
+    // The hint is hidden before the split, so it is described to a screen reader only once it shows.
+    if (next === "whole") go!.removeAttribute("aria-describedby");
+    else go!.setAttribute("aria-describedby", "split-hint");
     totalEl!.textContent = dollars(next === "whole" ? TOTAL : mine);
     const shown = next === "whole" ? TOTAL : mine;
     fill!.style.setProperty("--p", String(Math.min(100, (shown / BUDGET) * 100)));
