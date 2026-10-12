@@ -95,3 +95,9 @@ Feature: Existing tests are locked
     And the base holds the waiver line "abc123 fixture (approved: god)"
     When the integrity check runs
     Then the check fails, naming the malformed waiver
+
+  Scenario: Reshaping a test this branch appended to an existing file passes
+    Given a commit that appends a test to an existing file
+    And a commit that changes the appended test
+    When the integrity check runs
+    Then the check passes

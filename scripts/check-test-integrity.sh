@@ -50,9 +50,32 @@ judge() {
     if [ "$removed" = - ]; then
       violations+=("$label $path: changes an existing binary recording")
     elif [ "$removed" != 0 ]; then
-      violations+=("$label $path: changes or removes $removed existing line(s)")
+      local gone
+      gone="$(removed_lines "$@" -- "$path" | spend_own "$path")"
+      [ "$gone" = 0 ] || violations+=("$label $path: changes or removes $gone existing line(s)")
     fi
   done < <(git diff --no-renames --numstat "$@")
+  [ "$allowed" = yes ] && return 0
+  # What this commit added becomes the branch's own: a later commit may reshape it.
+  while IFS=$'\t' read -r added removed path; do
+    is_protected "$path" && [ "$added" != 0 ] && [ "$added" != - ] || continue
+    git diff --no-renames -U0 "$@" -- "$path" | grep '^+' | grep -v '^+++' | cut -c2- >> "$(own_file "$path")" || true
+  done < <(git diff --no-renames --numstat "$@")
+}
+
+# Lines the branch added in its own ordinary commits, per protected file, kept as a multiset so a
+# copy of an existing line added on the branch cannot pay for deleting the original.
+own_dir="$(mktemp -d)"
+trap 'rm -rf "$own_dir"' EXIT
+own_file() { local f="$own_dir/$(printf '%s' "$1" | tr '/' '%')"; touch "$f"; printf '%s' "$f"; }
+removed_lines() { git diff --no-renames -U0 "$@" | grep '^-' | grep -v '^---' | cut -c2- || true; }
+# Reads removed lines on stdin; spends matching own lines; prints how many were not the branch's own.
+spend_own() {
+  local own; own="$(own_file "$1")"
+  # FILENAME, not NR == FNR: the own file is often empty, and then every removed line would count as own.
+  awk -v keep="$own.next" -v ownf="$own" 'FILENAME == ownf { n[$0]++; next } { if (n[$0] > 0) n[$0]--; else bad++ }
+    END { for (k in n) for (i = 0; i < n[k]; i++) print k > keep; close(keep); print bad + 0 }' "$own" - 
+  touch "$own.next"; mv "$own.next" "$own"
 }
 
 # Commits made before the rule, waived one by one: `<full sha> <reason> (approved: god)`. Read from

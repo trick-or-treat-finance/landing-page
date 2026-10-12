@@ -192,3 +192,13 @@ describe("pre-rule commits can be waived, from the base only", () => {
     failsNaming("Malformed line", "abc123 fixture");
   });
 });
+
+describe("the branch may reshape what it appended", () => {
+  it("reshaping a test this branch appended to an existing file passes", () => {
+    appendFileSync(join(repo, EXISTING), "it('more', () => expect(2 + 2).toBe(4));\n");
+    commit();
+    write(EXISTING, "it('adds', () => expect(1 + 1).toBe(2));\nit('more', () => expect(3 + 3).toBe(6));\n");
+    commit();
+    expect(run().code).toBe(0);
+  });
+});
