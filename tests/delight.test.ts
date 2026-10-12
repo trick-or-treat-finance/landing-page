@@ -246,6 +246,19 @@ describe("delights on the home page", () => {
     await page.close();
   });
 
+  it.each([320, 390])("on a phone (%ipx, touch) the fine print stays at full size and no popup appears", async (width) => {
+    const page = await open({ width, touch: true });
+    expect(await page.evaluate(() => matchMedia("(hover: none) and (pointer: coarse)").matches)).toBe(true);
+    await toFine(page);
+    for (let i = 0; i < 12; i++) { expect(await fineScale(page)).toBe(1); await page.waitForTimeout(250); }
+    expect(await toastText(page)).toBeNull();
+    const px = await page.evaluate(() => [...document.querySelectorAll<HTMLElement>(".site-footer p")].map((e) => parseFloat(getComputedStyle(e).fontSize)));
+    expect(px.length).toBeGreaterThan(3);
+    expect(Math.min(...px)).toBeGreaterThanOrEqual(12);
+    await noSideways(page);
+    await page.close();
+  });
+
   it("the fine print line is a real line, so the waits below cannot pass on nothing", () => {
     expect(FINE_LINE).toBe("kidding. we're not that kind of company.");
   });
