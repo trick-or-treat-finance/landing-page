@@ -193,13 +193,15 @@ describe("what you get today", () => {
   const sec = () => readFileSync(join(out, "index.html"), "utf8").split('id="today"')[1]!.split("</section>")[0]!;
   it("lists the live items under 'Available right away', soon items under a soon tag, investing under Later", () => {
     const [now, soon, later] = sec().split('class="today-col"').slice(1) as [string, string, string];
-    for (const t of ["every purchase", "transactions behind it", "merchant names and logos", "month by month"]) expect(now).toContain(t);
+    for (const t of ["every purchase", "transactions behind it", "merchant names and logos", "month by month", "budget for each category", "which accounts count"]) expect(now).toContain(t);
     expect(now).not.toContain("soon-tag");
     expect(soon).toContain('class="soon-tag">soon<');
-    for (const t of ["budget", "rewards"]) expect(soon).toContain(t);
+    for (const t of ["Split a dinner with friends. Only your share counts.", "Settle up in one tap with Venmo.", "rewards"]) expect(soon).toContain(t);
+    expect(soon).not.toContain("budget");
     expect(soon).toContain("Not live yet");
     expect(later).toContain("investing");
-    for (const t of ["budget", "rewards"]) expect(now + later).not.toContain(t);
+    for (const t of ["rewards", "split", "Settle"]) expect(now + later).not.toContain(t);
+    expect(now.split("<li>").length - 1).toBeLessThanOrEqual(6);
   });
 });
 
