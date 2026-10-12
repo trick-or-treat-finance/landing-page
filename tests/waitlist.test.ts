@@ -133,8 +133,9 @@ describe("built for our own list", () => {
 describe("built without the address of our own list", () => {
   it("loads the old sign-up and posts nothing to our list", async () => {
     const { page, posts } = await open(plain);
+    const loader = page.waitForResponse((r) => r.url().startsWith("https://subscribe-forms.beehiiv.com/"));
     await page.click("#notify-open");
-    await page.waitForResponse((r) => r.url().startsWith("https://subscribe-forms.beehiiv.com/"));
+    await loader;
     expect(posts).toEqual([]);
     expect(await page.locator("#lead-email").count()).toBe(0);
     expect(await page.locator("#fp-email + p").innerText()).toContain("beehiiv");
