@@ -64,3 +64,11 @@ Feature: The landing page shows what splitting a group dinner will do to your bu
     Given a visitor on a 320 pixel wide screen
     When they split the dinner and settle up
     Then nothing scrolls sideways
+
+  Scenario: "What you get today" lists only what is live, and splits as coming soon
+    Given a visitor is reading the landing page
+    When they read "What you get today"
+    Then budgets, with a suggestion, are under "Available right away"
+    And no more than six things are under "Available right away"
+    And splitting a dinner and settling up are under "Coming soon"
+    And rewards are still under "Coming soon" and the investing preview is still under "Later"
