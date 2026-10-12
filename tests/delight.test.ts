@@ -111,6 +111,7 @@ describe("delights: the rules behind them", () => {
     const none = Object.fromEntries(SANDBOX.map((k) => [k.id, { on: false, cents: 0 }]));
     expect(sandboxTally(none, "/")).not.toContain("sb-quip");
     expect(sandboxTally(none, "/")).toContain("Tap a category");
+    expect(sandboxQuip({ ...base, groceries: { on: true, cents: 90000 } })).toMatch(/ghost army/);
     const everything = Object.fromEntries(SANDBOX.map((k) => [k.id, { on: true, cents: 1000 }]));
     expect(sandboxQuip(everything)).toMatch(/every category/);
   });
@@ -181,6 +182,45 @@ describe("delights on the home page", () => {
     await still.clock.runFor(30_000);
     expect(await seen(still, "egg-blink")).toBe(0);
     await still.close();
+  });
+
+  it("a key held down is one letter: auto-repeat does not spell a word", async () => {
+    const page = await open();
+    await page.keyboard.press("b");
+    await page.keyboard.down("o");
+    await page.keyboard.down("o"); // the held key repeating
+    await page.keyboard.up("o");
+    expect(await seen(page, "egg-boop")).toBe(0);
+    expect(await toastText(page)).toBeNull();
+    await page.keyboard.press("o");
+    await page.waitForFunction(() => document.querySelector(".egg-toast.on"));
+    expect(await seen(page, "egg-boop")).toBeGreaterThanOrEqual(1);
+    await page.close();
+  });
+
+  it("typing treat is announced once: the receipt's own status speaks, the toast is for the eyes", async () => {
+    const page = await open();
+    await page.keyboard.type("treat");
+    await page.waitForFunction(() => document.querySelector("#sw")?.getAttribute("aria-checked") === "true");
+    expect(await page.locator("#live").innerText()).not.toBe("");
+    expect(await page.locator(".egg-toast").getAttribute("aria-hidden")).toBe("true");
+    // Already on the treat side: nothing flips, so nothing else would speak, and the toast does.
+    await page.keyboard.type("treat");
+    await page.waitForFunction(() => document.querySelector(".egg-toast")?.getAttribute("aria-hidden") === "false");
+    await page.close();
+  });
+
+  it("the blink follows the reduced-motion setting while the page is open", async () => {
+    const calm = await open({ at: new Date(2026, 5, 1, 12) });
+    await calm.emulateMedia({ reducedMotion: "reduce" });
+    await new Promise((done) => setTimeout(done, 300));
+    await calm.clock.runFor(30_000);
+    expect(await seen(calm, "egg-blink")).toBe(0);
+    await calm.emulateMedia({ reducedMotion: "no-preference" });
+    await new Promise((done) => setTimeout(done, 300)); // the browser delivers the change event on its own time
+    await calm.clock.runFor(12_000);
+    expect(await seen(calm, "egg-blink")).toBeGreaterThanOrEqual(1);
+    await calm.close();
   });
 
   it("pushing rideshare to the top gets a joke under the tally", async () => {
