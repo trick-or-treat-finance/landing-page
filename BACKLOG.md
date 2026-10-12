@@ -38,3 +38,4 @@
 - [signup] beehiiv form placeholder reads "Enter your ssn, oh sorry email" and the button "Request access"; owner may want plainer copy in the form settings (worker-beehiiv-signup, 2026-10-02)
 - [design] The receipt, slip and duo drawing still use fixed cream paper and dark ink in dark mode (by design: paper stays paper); if the owner wants them dark too, add paper tokens to src/theme.css, src/landing.css:.rc-in (worker-landing-theme, 2026-10-06)
 - [tooling] no `typecheck` npm script, though the local-checks rule calls `npm run typecheck`; add `"typecheck": "tsc --noEmit"`, package.json:6 (worker-landing-issue-20, 2026-10-06)
+- [signup] once LEADS_URL is set live and checked, delete the beehiiv path (openBeehiiv in src/signup.ts, tests/beehiiv-stub.ts and its uses, the data-beehiiv-form attribute and the beehiiv fine print in index.html) and the two beehiiv BACKLOG lines above (toby, 2026-10-12)
