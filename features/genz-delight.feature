@@ -71,6 +71,12 @@ Feature: Small delights for people who look closely
     When the visitor scrolls away and returns
     Then the fine print stays at full size
 
+  Scenario: On a phone the fine print is just the fine print
+    Given a visitor on a touch screen with no hover
+    When the fine print comes into view
+    Then it stays at full, readable size
+    And no popup appears
+
   Scenario: With reduced motion the fine print never moves, it only says the line
     Given a visitor has asked for reduced motion
     When the fine print comes into view

@@ -54,6 +54,8 @@ export function pokeLine(n: number): string | null {
   return POKES[(n / POKE_EVERY - 1) % POKES.length]!;
 }
 
+/** A phone-like device: touch input and no hover. Decided by input, never by user agent or width, so a narrow desktop window keeps the joke. */
+const touchOnly = (): boolean => matchMedia("(hover: none) and (pointer: coarse)").matches;
 const reduced = (): boolean => matchMedia("(prefers-reduced-motion: reduce)").matches;
 let toastEl: HTMLElement | null = null;
 let toastTimer = 0;
@@ -172,8 +174,9 @@ function blink(): void {
   sync();
 }
 
-/** The fine print shrinks as it comes into view, then springs back to full size and says so, once per visit. Transform only, so nothing reflows; reduced motion gets the line and no movement. */
+/** The fine print shrinks as it comes into view, then springs back to full size and says so, once per visit. Transform only, so nothing reflows; reduced motion gets the line and no movement; phones get neither (the gag does not land there). */
 function finePrint(): void {
+  if (touchOnly()) return;
   const heading = document.querySelector(".fine-h");
   const footer = document.querySelector(".site-footer");
   if (!heading || !footer || !("IntersectionObserver" in window)) return;

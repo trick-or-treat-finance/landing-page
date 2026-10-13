@@ -41,9 +41,9 @@ beforeAll(async () => {
 }, 120_000);
 afterAll(async () => { await browser?.close(); server?.close(); }, 60_000);
 
-type Opts = { width?: number; reduced?: boolean; at?: Date };
-async function open({ width = 1280, reduced = false, at }: Opts = {}): Promise<Page> {
-  const page = await browser.newPage({ viewport: { width, height: 900 }, reducedMotion: reduced ? "reduce" : "no-preference" });
+type Opts = { width?: number; reduced?: boolean; at?: Date; touch?: boolean };
+async function open({ width = 1280, reduced = false, at, touch = false }: Opts = {}): Promise<Page> {
+  const page = await browser.newPage({ viewport: { width, height: 900 }, reducedMotion: reduced ? "reduce" : "no-preference", ...(touch ? { hasTouch: true, isMobile: true } : {}) });
   // Counts the classes the delights put on the ghost, so a jump that ends in 260ms is still seen.
   await page.addInitScript(() => {
     const w = window as unknown as { __cls: string[] };
@@ -241,6 +241,19 @@ describe("delights on the home page", () => {
     expect(await fineText(page)).toBe(before);
     const px = await page.evaluate(() => [...document.querySelectorAll<HTMLElement>(".site-footer p, .site-footer h2, .site-footer h3")].map((e) => parseFloat(getComputedStyle(e).fontSize)));
     expect(px.length).toBeGreaterThan(8);
+    expect(Math.min(...px)).toBeGreaterThanOrEqual(12);
+    await noSideways(page);
+    await page.close();
+  });
+
+  it.each([320, 390])("on a phone (%ipx, touch) the fine print stays at full size and no popup appears", async (width) => {
+    const page = await open({ width, touch: true });
+    expect(await page.evaluate(() => matchMedia("(hover: none) and (pointer: coarse)").matches)).toBe(true);
+    await toFine(page);
+    for (let i = 0; i < 12; i++) { expect(await fineScale(page)).toBe(1); await page.waitForTimeout(250); }
+    expect(await toastText(page)).toBeNull();
+    const px = await page.evaluate(() => [...document.querySelectorAll<HTMLElement>(".site-footer p")].map((e) => parseFloat(getComputedStyle(e).fontSize)));
+    expect(px.length).toBeGreaterThan(3);
     expect(Math.min(...px)).toBeGreaterThanOrEqual(12);
     await noSideways(page);
     await page.close();
