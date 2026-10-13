@@ -69,8 +69,9 @@ describe("the email sign-up", () => {
     await page.waitForTimeout(500);
     expect(foreign).toEqual([]);
     expect(await page.locator("#notify-open").isVisible(), "the button is the control: it must exist").toBe(true);
+    const loader = page.waitForResponse((r) => r.url().startsWith(`${BEEHIIV}/`));
     await page.click("#notify-open");
-    await page.waitForResponse((r) => r.url().startsWith(`${BEEHIIV}/`));
+    await loader;
     expect(foreign.length).toBeGreaterThan(0);
     expect(foreign.every((u) => u.startsWith(`${BEEHIIV}/`))).toBe(true);
     await page.close();
