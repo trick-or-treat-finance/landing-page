@@ -30,6 +30,12 @@ const pixel = (png: Buffer): string => {
   const raw = inflateSync(Buffer.concat(data));
   return `rgb(${raw[1]}, ${raw[2]}, ${raw[3]})`;
 };
+// Owner rule: every landing image is transparent. Judged from the file header, per format.
+const hasAlpha = (name: string, b: Buffer): boolean =>
+  name.endsWith(".png") ? b[25] === 6 || (b[25] === 3 && b.includes("tRNS"))
+  : name.endsWith(".webp") ? b.toString("ascii", 12, 16) === "VP8X" && (b[20]! & 0x10) === 0x10
+  : name.endsWith(".avif") ? b.includes("auxiliary:alpha")
+  : false;
 const underBudget = (bytes: number): boolean => bytes <= 150 * KB;
 
 let server: Server, base: string, browser: Browser;
@@ -167,6 +173,21 @@ describe("Feature: the hero says personal finance app first and shows the ghost 
     expect([alpha.w, alpha.h]).toEqual([1536, 1024]);
     expect(alpha.a).toEqual([0, 0, 0, 0]);
     await page.close();
+  });
+
+  it("Scenario: Every served landing image is transparent", () => {
+    const served = ["hero", "stage"].filter((d) => existsSync(join(out, d))).flatMap((d) => readdirSync(join(out, d)).map((f) => ({ f: `${d}/${f}`, b: readFileSync(join(out, d, f)) })));
+    expect(served.length, "the walk found no landing images").toBeGreaterThanOrEqual(7);
+    expect(served.filter(({ f }) => f.startsWith("hero/")).length).toBeGreaterThanOrEqual(7);
+    expect(served.filter(({ f, b }) => !hasAlpha(f, b)).map(({ f }) => f)).toEqual([]);
+  });
+
+  it("the control: the alpha check rejects an opaque PNG, WebP, AVIF and JPEG", () => {
+    const opaquePng = Buffer.alloc(40); opaquePng[25] = 2;
+    const opaqueWebp = Buffer.alloc(40); opaqueWebp.write("VP8 ", 12, "ascii");
+    expect([hasAlpha("a.png", opaquePng), hasAlpha("a.webp", opaqueWebp), hasAlpha("a.avif", Buffer.from("ftypavif")), hasAlpha("a.jpg", Buffer.alloc(40))]).toEqual([false, false, false, false]);
+    const rgba = Buffer.alloc(40); rgba[25] = 6;
+    expect(hasAlpha("a.png", rgba)).toBe(true);
   });
 
   for (const scheme of ["light", "dark"] as const) {
