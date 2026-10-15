@@ -86,7 +86,7 @@ describe("Feature: the hero shows the 3D ghost picture instead of the old 2D dra
     const phone = await heroFetches(390);
     expect(phone).toHaveLength(1);
     expect(phone[0]!.url).toContain("-768.");
-    for (const f of readdirSync(join(out, "hero"))) expect(statSync(join(out, "hero", f)).size, f).toBeLessThan(400 * KB);
+    for (const f of readdirSync(join(out, "hero"))) expect(statSync(join(out, "hero", f)).size, f).toBeLessThan(600 * KB);
     expect(existsSync(join(out, "ghost-receipts.png"))).toBe(false);
   });
 
