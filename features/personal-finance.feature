@@ -12,7 +12,7 @@ Feature: The landing page says plainly that Trick or Treat is a personal finance
   Scenario: Title and description say it
     When the home page's head is read
     Then the title is "Trick or Treat: the personal finance app that shows who you pay"
-    And the meta description is "A personal finance app that sorts your spending by the companies behind it. Try a sample month in your browser. Not investment advice."
+    And the meta description is "A personal finance app that shows which companies get your money. Try a sample month in your browser. Not investment advice."
     And the html element has lang "en"
 
   Scenario: A shared link says it
