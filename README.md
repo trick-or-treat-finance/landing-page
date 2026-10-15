@@ -14,7 +14,7 @@ npm run shots      # after build: full-page screenshots into ./shots
 
 ## Config
 
-No config. The Vite `base` is `/landing-page/` (GitHub Pages project URL), so use `http://localhost:5173/landing-page/` in dev. "Sign in" and "See your month" read "Coming soon" until the app is public; there is no link to the app.
+No config. The Vite `base` is `/` (the site is served at https://trickortreat.fi), so use `http://localhost:5173/` in dev. "Sign in" and "See your month" read "Coming soon" until the app is public; there is no link to the app.
 
 ## Deploy
 
@@ -24,7 +24,7 @@ No config. The Vite `base` is `/landing-page/` (GitHub Pages project URL), so us
 
 ```sh
 docker build -t tot-landing .
-docker run --rm -p 8080:80 tot-landing   # http://localhost:8080/landing-page/
+docker run --rm -p 8080:80 tot-landing   # http://localhost:8080/
 ```
 
 ## Tests

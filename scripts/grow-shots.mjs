@@ -10,7 +10,7 @@ const outDir = resolve(process.argv[2] ?? "shots/grow");
 mkdirSync(outDir, { recursive: true });
 const T = { ".html": "text/html", ".css": "text/css", ".js": "text/javascript", ".png": "image/png", ".jpg": "image/jpeg", ".woff2": "font/woff2", ".woff": "font/woff", ".svg": "image/svg+xml", ".webp": "image/webp", ".avif": "image/avif" };
 const server = createServer((req, res) => {
-  const f = join(dist, req.url.split(/[?#]/)[0].replace("/landing-page", "").replace(/\/$/, "/index.html"));
+  const f = join(dist, req.url.split(/[?#]/)[0].replace(/\/$/, "/index.html"));
   if (!f.startsWith(dist) || !existsSync(f)) return res.writeHead(404).end();
   res.writeHead(200, { "content-type": T[extname(f)] ?? "application/octet-stream" }).end(readFileSync(f));
 });
@@ -20,7 +20,7 @@ const browser = await chromium.launch({ executablePath: process.env.CHROMIUM_PAT
 for (const scheme of ["light", "dark"]) for (const w of [375, 1280]) {
   const ctx = await browser.newContext({ viewport: { width: w, height: 900 }, colorScheme: scheme, reducedMotion: "reduce" });
   const page = await ctx.newPage();
-  await page.goto(`${base}/landing-page/index.html`, { waitUntil: "networkidle" });
+  await page.goto(`${base}/index.html`, { waitUntil: "networkidle" });
   await page.evaluate((s) => { document.documentElement.dataset.theme = s; }, scheme);
   await page.locator("#grow").screenshot({ path: join(outDir, `grow-${scheme}-${w}.png`) });
   await ctx.close();

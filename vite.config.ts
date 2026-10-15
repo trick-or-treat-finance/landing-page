@@ -28,10 +28,10 @@ function staticParts(): Plugin {
   };
 }
 
-// Served from https://trick-or-treat-finance.github.io/landing-page/ (GitHub Pages).
+// Served from https://trickortreat.fi (GitHub Pages custom domain), at the root.
 // Page links are relative; this base prefixes assets and public files.
 export default defineConfig({
-  base: "/landing-page/",
+  base: "/",
   plugins: [staticParts()],
   test: {
     // The browser suites ran 5-6 s per test at load average ~500 (the 5 s default failed header-contrast, issue #20 and eggs tests that pass alone); 30 s clears the slowest with margin.

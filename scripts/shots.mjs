@@ -10,12 +10,12 @@ const outDir = resolve(process.argv[2] ?? "shots");
 mkdirSync(outDir, { recursive: true });
 const T = { ".html": "text/html", ".css": "text/css", ".js": "text/javascript", ".png": "image/png", ".jpg": "image/jpeg", ".svg": "image/svg+xml", ".woff2": "font/woff2", ".woff": "font/woff" };
 const server = createServer((req, res) => {
-  const f = join(dist, req.url.split(/[?#]/)[0].replace("/landing-page", "").replace(/\/$/, "/index.html"));
+  const f = join(dist, req.url.split(/[?#]/)[0].replace(/\/$/, "/index.html"));
   if (!f.startsWith(dist) || !existsSync(f)) return res.writeHead(404).end();
   res.writeHead(200, { "content-type": T[extname(f)] ?? "application/octet-stream" }).end(readFileSync(f));
 });
 await new Promise((ok) => server.listen(0, "127.0.0.1", ok));
-const base = `http://127.0.0.1:${server.address().port}/landing-page/`;
+const base = `http://127.0.0.1:${server.address().port}/`;
 const browser = await chromium.launch({ executablePath: process.env.CHROMIUM_PATH });
 const open = async (w, h = 900, opts = {}) => {
   const page = await browser.newPage({ viewport: { width: w, height: h }, ...opts });
