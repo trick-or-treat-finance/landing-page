@@ -34,7 +34,9 @@ afterAll(async () => { await browser?.close(); server?.close(); }, 60_000);
 const open = async (width: number, scheme: "light" | "dark", js = true): Promise<Page> => {
   const ctx = await browser.newContext({ viewport: { width, height: 900 }, colorScheme: scheme, reducedMotion: "reduce", javaScriptEnabled: js });
   const page = await ctx.newPage();
-  await page.goto(`${base}/index.html`, { waitUntil: "networkidle" });
+  // A deferred module script has run by "load", so that is the page being ready. "networkidle" restarts its quiet timer on every late request (fonts, the lazy picture) and drifts under load; a stalled action now fails in 15 s naming itself instead of the whole scenario timing out at 30 s.
+  page.setDefaultTimeout(15_000);
+  await page.goto(`${base}/index.html`, { waitUntil: "load" });
   return page;
 };
 const box = (page: Page, sel: string) => page.locator(sel).first().boundingBox();
@@ -43,7 +45,7 @@ describe("Feature: the 3D ghost stands beside the receipt on the Trick view", ()
   for (const [width, scheme] of CASES) {
     it(`Scenario: A transparent picture with a real description sits by the receipt (${width}px ${scheme})`, async () => {
       const page = await open(width, scheme);
-      const pic = page.locator(".right > picture.stage-ghost");
+      const pic = page.locator(".right-stack > picture.stage-ghost");
       expect(await pic.count()).toBe(1);
       const img = pic.locator("img");
       expect(await img.getAttribute("alt")).toBe(ALT);
@@ -78,19 +80,18 @@ describe("Feature: the 3D ghost stands beside the receipt on the Trick view", ()
       await page.context().close();
     });
 
-    it(`Scenario: The switch works, the ghost stays in both views and overlaps nothing (${width}px ${scheme})`, async () => {
+    it(`Scenario: The switch works; Trick shows the ghost, Treat gives its column to the tiles (${width}px ${scheme})`, async () => {
       const page = await open(width, scheme);
       const ghost = page.locator(".stage-ghost");
       const check = async (view: string) => {
         expect(await page.locator(".desk").getAttribute("data-view")).toBe(view);
-        await expect(ghost.isVisible()).resolves.toBe(true);
+        await expect(ghost.isVisible()).resolves.toBe(view === "trick");
+        if (view === "treat") return;
         await ghost.scrollIntoViewIfNeeded();
         const g = (await box(page, ".stage-ghost img"))!;
-        const others = view === "treat" ? [".switch-wrap", ".receipt-area", ".tiles-wrap"] : [".switch-wrap", ".receipt-area"];
-        for (const sel of others) {
+        for (const sel of [".switch-wrap", ".receipt-area"]) {
           const o = (await box(page, sel))!;
-          const apart = g.x + g.width <= o.x + 1 || o.x + o.width <= g.x + 1 || g.y + g.height <= o.y + 1 || o.y + o.height <= g.y + 1;
-          expect(apart, `${sel} in ${view}`).toBe(true);
+          expect(g.x + g.width <= o.x + 1 || o.x + o.width <= g.x + 1 || g.y + g.height <= o.y + 1 || o.y + o.height <= g.y + 1, sel).toBe(true);
         }
         expect(g.x).toBeGreaterThanOrEqual(0); expect(g.x + g.width).toBeLessThanOrEqual(width);
         expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(width);
@@ -108,11 +109,9 @@ describe("Feature: the 3D ghost stands beside the receipt on the Trick view", ()
     });
   }
 
-  it("Scenario: With scripts off the picture is still there and clear of the tiles", async () => {
+  it("Scenario: With scripts off the picture does not sit on top of the tiles", async () => {
     const page = await open(1280, "light", false);
-    await expect(page.locator(".stage-ghost").isVisible()).resolves.toBe(true);
-    const g = (await box(page, ".stage-ghost img"))!, t = (await box(page, ".tiles-wrap"))!;
-    expect(g.y >= t.y + t.height - 1 || t.y >= g.y + g.height - 1).toBe(true);
+    await expect(page.locator(".stage-ghost").isVisible()).resolves.toBe(false);
     await page.context().close();
   });
 

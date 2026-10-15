@@ -10,7 +10,7 @@ Feature: The stage shows a 3D ghost picture where the 2D drawing was
   Scenario: A 3D ghost picture is on the stage next to the receipt, in light and in dark
     Given the built home page at 390 and at 1280 pixels wide, in light and in dark mode
     Then exactly one picture element with a ghost image is inside the stage, beside or above the receipt where the 2D ghost used to be
-    And it is visible and fully shown, not cropped, in both views, Trick and Treat
+    And in Trick it is visible and fully shown, not cropped; in Treat the tiles fill that column and the picture is not shown (amended after #46: the column cannot hold both)
     And it is the stage's only ghost picture, and the hero picture above is unchanged
 
   Scenario: The picture has no card behind it
@@ -36,7 +36,7 @@ Feature: The stage shows a 3D ghost picture where the 2D drawing was
     Then the img has width and height attributes that match the file's aspect ratio
     And the layout shift of the home page is 0 for the stage
     And it is lazy-loaded (loading="lazy" and decoding="async"), because it is below the first screen, and it has no fetchpriority high
-    And with scripts off the picture is still there
+    And with scripts off the picture does not sit on top of the tiles (amended after #46: it is hidden there)
 
   Scenario: The picture is decoration with an honest alt
     Then the img has alt="" and the picture is not read out, or a short alt that names the ghost and nothing the page already says
@@ -51,7 +51,7 @@ Feature: The stage shows a 3D ghost picture where the 2D drawing was
     Given the built home page with scripts on
     When the visitor presses the switch (click, Space and Enter)
     Then aria-checked flips, the receipt and the company tiles swap as before, and the numbers are unchanged
-    And the 3D ghost stays in place with the same transparent background in both views
+    And the 3D ghost is shown in Trick with a transparent background and comes back when the switch returns to Trick
     And the gap checks of stage-ghost-removed.feature still pass with the picture in place: no empty block, gap under the switch at most 40 px, tiles level with the switch on desktop, no sideways scroll
     And the picture does not make the section taller than the room it is given: nothing is clipped or overlaps the receipt, the tiles or the switch at 390 and at 1280
 

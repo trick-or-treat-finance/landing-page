@@ -32,7 +32,9 @@ afterAll(async () => { await browser?.close(); server?.close(); }, 60_000);
 const open = async (width: number, scheme: "light" | "dark", js = true): Promise<Page> => {
   const ctx = await browser.newContext({ viewport: { width, height: 900 }, colorScheme: scheme, reducedMotion: "reduce", javaScriptEnabled: js });
   const page = await ctx.newPage();
-  await page.goto(`${base}/index.html`, { waitUntil: "networkidle" });
+  // A deferred module script has run by "load", so that is the page being ready. "networkidle" restarts its quiet timer on every late request (fonts, the lazy picture) and drifts under load; a stalled action now fails in 15 s naming itself instead of the whole scenario timing out at 30 s.
+  page.setDefaultTimeout(15_000);
+  await page.goto(`${base}/index.html`, { waitUntil: "load" });
   return page;
 };
 const gaps = (page: Page) => page.evaluate(() => {
