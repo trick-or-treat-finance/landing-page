@@ -8,7 +8,7 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { chromium, type Browser, type Page, type Route } from "playwright-core";
 import { stubBeehiiv } from "./beehiiv-stub";
 
-const BASE = "/landing-page/";
+const BASE = "/";
 const LEADS = "https://leads.invalid/leads";
 const TYPES: Record<string, string> = {
   ".html": "text/html", ".css": "text/css", ".js": "text/javascript", ".png": "image/png", ".avif": "image/avif",

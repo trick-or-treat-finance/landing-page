@@ -18,3 +18,5 @@ Disallow: /
 # Everyone else, search engines included, may read the front door.
 User-agent: *
 Allow: /
+
+Sitemap: https://trickortreat.fi/sitemap.xml

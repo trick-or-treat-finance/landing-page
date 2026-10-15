@@ -10,7 +10,7 @@ import { chromium, type Browser, type Page } from "playwright-core";
 import { stubBeehiiv } from "./beehiiv-stub";
 import { AWAY_TITLE, HALLOWEEN_TITLE, KONAMI, POKES, isHalloween, konamiMatcher, pokeLine } from "../src/eggs";
 
-const BASE = "/landing-page/";
+const BASE = "/";
 const out = mkdtempSync(join(tmpdir(), "tot-eggs-"));
 const TYPES: Record<string, string> = {
   ".html": "text/html", ".css": "text/css", ".js": "text/javascript",
