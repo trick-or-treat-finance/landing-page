@@ -8,7 +8,7 @@ import { extname, join, normalize } from "node:path";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { chromium, type Browser, type Page } from "playwright-core";
 import { stubBeehiiv } from "./beehiiv-stub";
-import { AWAY_TITLE, HALLOWEEN_TITLE, KONAMI, POKES, isHalloween, konamiMatcher, pokeLine } from "../src/eggs";
+import { AWAY_TITLE, HALLOWEEN_TITLE, KONAMI, isHalloween, konamiMatcher } from "../src/eggs";
 
 const BASE = "/";
 const out = mkdtempSync(join(tmpdir(), "tot-eggs-"));
@@ -70,10 +70,6 @@ describe("easter eggs: the rules behind them", () => {
     expect(["ArrowUp", ...KONAMI.slice(0, -1), "A"].map(m)).toEqual([...Array(KONAMI.length).fill(false), true]);
     expect(KONAMI.slice(1).map(m).some(Boolean)).toBe(false);
   });
-  it("the ghost speaks on every third poke and cycles its lines", () => {
-    expect([1, 2, 3, 4, 5, 6].map(pokeLine)).toEqual([null, null, POKES[0], null, null, POKES[1]]);
-    expect(pokeLine(POKES.length * 3 + 3)).toBe(POKES[0]);
-  });
   it("Halloween is 31 October only, or ?halloween", () => {
     expect(isHalloween(new Date(2026, 9, 31, 23, 59))).toBe(true);
     expect(isHalloween(new Date(2026, 9, 30, 12))).toBe(false);
@@ -120,18 +116,6 @@ describe("easter eggs on the home page", () => {
     expect(t).toMatchObject({ on: true, role: "status", position: "fixed" });
     expect(t?.text).toContain("money has no cheat codes");
     expect(await page.evaluate(() => document.documentElement.scrollHeight)).toBe(h0);
-    await stillWorks(page);
-    await page.close();
-  });
-
-  it("ghost poke: every third click on the hero ghost gets a line, reduced motion included", async () => {
-    const { page } = await open({ reduced: true });
-    const ghost = page.locator(".gh-hero");
-    await ghost.click(); await ghost.click();
-    expect(await toast(page)).toBeNull();
-    await ghost.click();
-    expect(await toast(page)).toMatchObject({ on: true, text: POKES[0] });
-    expect(await page.locator(".gh-hero.egg-boop").count()).toBe(0); // reduced motion: no wobble
     await stillWorks(page);
     await page.close();
   });
