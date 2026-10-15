@@ -129,6 +129,15 @@ describe("Feature: the hero shows the 3D ghost picture instead of the old 2D dra
     expect(readFileSync(join(out, "og.jpg")).equals(readFileSync(join(process.cwd(), "public/og.jpg")))).toBe(true);
   });
 
+  it('Scenario: The note "same purchases, new sort." is gone from every page', () => {
+    const pages = readdirSync(out).filter((f) => f.endsWith(".html"));
+    expect(pages.sort()).toEqual(["404.html", "about.html", "hello-hacker.html", "index.html"]);
+    for (const p of pages) expect(readFileSync(join(out, p), "utf8"), p).not.toMatch(/same purchases, new sort/i);
+    expect(readFileSync(join(process.cwd(), "src/landing.css"), "utf8")).not.toMatch(/\.n3\b/);
+    const new_copy = [html().match(/<meta name="description" content="([^"]*)"/)![1], html().match(/<picture class="hero-art">.*?alt="([^"]*)"/s)![1]].join(" ");
+    expect(new_copy).not.toMatch(/sort/i);
+  });
+
   it("Scenario: The rest of the page still works", () => {
     const h = html();
     expect((h.match(/<h1[ >]/g) ?? []).length).toBe(1);
