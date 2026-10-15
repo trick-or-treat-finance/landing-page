@@ -53,7 +53,6 @@ button.btn { font-family: inherit; cursor: pointer; }
 .note path { stroke-dasharray: 1; stroke-dashoffset: 0; }
 .notes-pre .note path { stroke-dashoffset: 1; }
 .notes-in .note path { transition: stroke-dashoffset 500ms ease-out; stroke-dashoffset: 0; }
-.n3 { position: relative; display: inline-block; margin-left: 10px; max-width: 200px; }
 .n4 { right: 28px; top: 22px; }
 
 /* receipt paper */

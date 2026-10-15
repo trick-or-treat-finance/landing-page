@@ -6,7 +6,7 @@
 <!-- the saved day/night choice, before first paint; no choice saved: the system setting via CSS -->
 <script>try{var t=localStorage.getItem("tot-theme");if(t==="dark"||t==="light")document.documentElement.dataset.theme=t}catch(e){}</script>
 <title>Trick or Treat: the personal finance app that shows who you pay</title>
-<meta name="description" content="A personal finance app that sorts your spending by the companies behind it. Try a sample month in your browser. Not investment advice." />
+<meta name="description" content="A personal finance app that shows which companies get your money. Try a sample month in your browser. Not investment advice." />
 <link rel="icon" type="image/png" href="/favicon.png" />
 <link rel="apple-touch-icon" href="/favicon.png" />
 <link rel="canonical" href="https://trickortreat.fi/" />
@@ -14,14 +14,14 @@
 <meta property="og:type" content="website" />
 <meta property="og:title" content="Trick or Treat: the personal finance app that shows who you pay" />
 <meta property="og:site_name" content="Trick or Treat" />
-<meta property="og:description" content="A personal finance app that sorts your spending by the companies behind it. Try a sample month in your browser. Not investment advice." />
+<meta property="og:description" content="A personal finance app that shows which companies get your money. Try a sample month in your browser. Not investment advice." />
 <meta property="og:image" content="https://trickortreat.fi/og.jpg" />
 <meta property="og:image:alt" content="Trick or Treat, a personal finance app. The ghost app icon hugging a green bar chart." />
 <meta property="og:image:width" content="1200" />
 <meta property="og:image:height" content="630" />
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content="Trick or Treat: the personal finance app that shows who you pay" />
-<meta name="twitter:description" content="A personal finance app that sorts your spending by the companies behind it. Try a sample month in your browser. Not investment advice." />
+<meta name="twitter:description" content="A personal finance app that shows which companies get your money. Try a sample month in your browser. Not investment advice." />
 <meta name="color-scheme" content="light dark" />
 <noscript><style>
   .stage .tiles-wrap { display: block !important; }
@@ -63,7 +63,7 @@
     <picture class="hero-art">
       <source type="image/avif" srcset="/hero/ghost-receipts-768.avif 768w, /hero/ghost-receipts-1152.avif 1152w, /hero/ghost-receipts-1536.avif 1536w" sizes="(max-width: 960px) 100vw, 46vw" />
       <source type="image/webp" srcset="/hero/ghost-receipts-768.webp 768w, /hero/ghost-receipts-1152.webp 1152w, /hero/ghost-receipts-1536.webp 1536w" sizes="(max-width: 960px) 100vw, 46vw" />
-      <img src="/hero/ghost-receipts-1152.jpg" width="1536" height="1024" alt="A friendly white 3D ghost feeds a long receipt into a sorting machine. A pile of receipts waits on the left, and the sorted receipts stack in trays marked Amazon, Starbucks, Apple, Netflix and Spotify." fetchpriority="high" decoding="async" />
+      <img src="/hero/ghost-receipts-1152.jpg" width="1536" height="1024" alt="A friendly white 3D ghost feeds a long receipt into a machine. A pile of receipts waits on the left, and neat stacks of receipts sit in trays marked Amazon, Starbucks, Apple, Netflix and Spotify." fetchpriority="high" decoding="async" />
     </picture>
   </section>
 
@@ -94,7 +94,6 @@
           <span class="lab lab-trick on">Trick<small>what it cost</small></span>
           <button class="sw" id="sw" type="button" role="switch" aria-checked="false" aria-label="Switch between Trick, what the month cost, and Treat, what it could buy"><span class="knob"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><ellipse cx="8.5" cy="11" rx="2" ry="3" fill="#0B211C"/><ellipse cx="15.5" cy="11" rx="2" ry="3" fill="#0B211C"/><path d="M9 16.5q3 2 6 0" stroke="#0B211C" stroke-width="1.6" fill="none" stroke-linecap="round"/></svg></span></button>
           <span class="lab lab-treat">Treat<small>what it could buy</small></span>
-          <p class="note n3" aria-hidden="true" style="--r:3deg">same purchases, new sort.<svg width="90" height="14" viewBox="0 0 90 14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path pathLength="1" d="M2 8c20-6 40-4 86-2"/></svg></p>
         </div>
         <p class="sr" id="live" role="status" aria-live="polite"></p>
         <div class="right-stack">

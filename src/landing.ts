@@ -295,7 +295,7 @@ function wakeDraw(): void {
       ob.disconnect();
     }, { threshold: 0.2 }).observe(el);
   }
-  for (const n of $$(".n3, .n4")) {
+  for (const n of $$(".n4")) {
     const host = n.closest(".stage, .slip-sec");
     if (host) host.classList.add("notes-pre");
   }
