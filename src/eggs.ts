@@ -3,13 +3,6 @@
 // with reduced motion they still say their line, they just do not move.
 
 export const KONAMI = ["ArrowUp", "ArrowUp", "ArrowDown", "ArrowDown", "ArrowLeft", "ArrowRight", "ArrowLeft", "ArrowRight", "b", "a"];
-export const POKES = [
-  "ok that tickles.",
-  "i'm sample data, not a piñata.",
-  "every tap is a vote. you keep voting for me.",
-  "fine. here's your treat: nothing. it's a sample month.",
-];
-export const POKE_EVERY = 3;
 export const AWAY_TITLE = "👻 your receipt misses you";
 export const HALLOWEEN_TITLE = "Trick or Treat: it's literally our day 🎃";
 export const BOO_LINE = "boo. did your net worth just flinch?";
@@ -48,12 +41,6 @@ export function konamiMatcher(code: readonly string[] = KONAMI): (key: string) =
   };
 }
 
-/** The line for the nth poke (1-based), or null when this poke says nothing. */
-export function pokeLine(n: number): string | null {
-  if (n < POKE_EVERY || n % POKE_EVERY) return null;
-  return POKES[(n / POKE_EVERY - 1) % POKES.length]!;
-}
-
 /** A phone-like device: touch input and no hover. Decided by input, never by user agent or width, so a narrow desktop window keeps the joke. */
 const touchOnly = (): boolean => matchMedia("(hover: none) and (pointer: coarse)").matches;
 const reduced = (): boolean => matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -76,14 +63,6 @@ export function toast(text: string, announce = true): void {
   toastTimer = window.setTimeout(() => toastEl?.classList.remove("on"), 4200);
 }
 
-function wiggle(el: Element | null, cls: string): void {
-  if (!el || reduced()) return;
-  el.classList.remove(cls);
-  void (el as HTMLElement).getBoundingClientRect();
-  el.classList.add(cls);
-  el.addEventListener("animationend", () => el.classList.remove(cls), { once: true });
-}
-
 function consoleNote(base: string): void {
   console.log(
     "%c👻 you opened devtools. respect.%c\n" +
@@ -103,7 +82,6 @@ function konami(): void {
     if (e.ctrlKey || e.metaKey || e.altKey || t?.closest("input, textarea, select, [contenteditable], [role=slider]")) return;
     if (!match(e.key)) return;
     toast("cheat code accepted. sadly money has no cheat codes. +0 net worth unlocked.");
-    wiggle(document.querySelector(".gh-hero"), "egg-spin");
   });
 }
 
@@ -122,7 +100,7 @@ function typedWords(): void {
     const t = e.target as Element | null;
     if (e.repeat || e.ctrlKey || e.metaKey || e.altKey || t?.closest("input, textarea, select, [contenteditable], [role=slider]")) return;
     const hits = [boo(e.key), treat(e.key), trick(e.key)];
-    if (hits[0]) { wiggle(document.querySelector(".gh-hero"), "egg-boop"); toast(BOO_LINE); }
+    if (hits[0]) toast(BOO_LINE);
     if (hits[1]) flipTo("treat");
     if (hits[2]) flipTo("trick");
   });
@@ -147,33 +125,6 @@ function themeLines(): void {
   });
 }
 
-/** The hero ghost closes its eyes for a moment every few seconds; the CSS animation is the only thing that moves, and it is not started under reduced motion. */
-function blink(): void {
-  const eyes = [...document.querySelectorAll<SVGElement>(".gh-hero .eye")];
-  if (!eyes.length) return;
-  const motion = matchMedia("(prefers-reduced-motion: reduce)");
-  let timer = 0;
-  const once = (): void => {
-    timer = 0;
-    if (motion.matches) return;
-    if (document.visibilityState === "visible") {
-      for (const eye of eyes) {
-        eye.classList.add("egg-blink");
-        eye.addEventListener("animationend", () => eye.classList.remove("egg-blink"), { once: true });
-      }
-    }
-    timer = window.setTimeout(once, 3000 + Math.random() * 3000);
-  };
-  const sync = (): void => {
-    clearTimeout(timer);
-    timer = 0;
-    for (const eye of eyes) eye.classList.remove("egg-blink");
-    if (!motion.matches) timer = window.setTimeout(once, 2500);
-  };
-  motion.addEventListener("change", sync);
-  sync();
-}
-
 /** The fine print shrinks as it comes into view, then springs back to full size and says so, once per visit. Transform only, so nothing reflows; reduced motion gets the line and no movement; phones get neither (the gag does not land there). */
 function finePrint(): void {
   if (touchOnly()) return;
@@ -191,18 +142,6 @@ function finePrint(): void {
     }, 1800);
   }, { threshold: 1, rootMargin: "0px 0px -15% 0px" });
   watch.observe(heading);
-}
-
-function pokeGhost(): void {
-  const ghost = document.querySelector<SVGElement>(".gh-hero");
-  if (!ghost) return;
-  let n = 0;
-  ghost.addEventListener("click", () => {
-    n += 1;
-    wiggle(ghost, "egg-boop");
-    const line = pokeLine(n);
-    if (line) toast(line);
-  });
 }
 
 function tabAway(): void {
@@ -234,9 +173,7 @@ export function wakeEggs(base: string): void {
   typedWords();
   countdown();
   themeLines();
-  blink();
   finePrint();
-  pokeGhost();
   tabAway();
   halloween();
 }
