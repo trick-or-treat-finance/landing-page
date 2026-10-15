@@ -40,3 +40,10 @@ Feature: The hero shows the 3D ghost picture instead of the old 2D drawing
   Scenario: The rest of the page still works
     Then the playful headline, the plain line, "What it won't ask for", "Not investment advice", the theme button and the email signup are unchanged
     And the page still has one h1, and the existing site tests pass
+
+  Scenario: The note "same purchases, new sort." is gone from every page
+    Given the built site
+    When every html page is read (index, about, 404, hello-hacker) with tags and attributes included
+    Then the text "same purchases, new sort" does not appear, in any letter case and with or without the final full stop, in visible text, alt text, aria-labels, titles or meta tags
+    And no test, stylesheet or script still expects it
+    And the scenario fails if the text is put back on any one page
