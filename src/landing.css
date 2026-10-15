@@ -107,6 +107,10 @@ button.btn { font-family: inherit; cursor: pointer; }
 .sw:focus-visible { outline-offset: 5px; border-radius: 18px; }
 
 .right-stack { grid-area: stack; display: grid; min-width: 0; }
+/* Trick only: the owner's 3D ghost fills the right column beside the receipt, with no card behind it. */
+.stage-ghost { grid-area: 1 / 1; display: block; align-self: start; justify-self: center; width: min(100%, 420px); }
+.stage-ghost img { display: block; width: 100%; height: auto; }
+[data-view="treat"] .stage-ghost { display: none; }
 .tiles-wrap { grid-area: 1 / 1; min-width: 0; }
 .t-h { display: flex; flex-direction: column; margin: 0 0 8px; font: 600 11.5px var(--mono); letter-spacing: 0.12em; color: var(--muted); text-transform: uppercase; }
 .t-h small { font: 500 11.5px var(--mono); letter-spacing: 0.04em; text-transform: none; }
@@ -231,11 +235,6 @@ input[type="range"]:disabled { cursor: default; opacity: 0.7; }
 
 /* no-JS: the tiles stay shown, the switch is gone */
 .tiles-wrap { display: block; }
-
-/* Trick has nothing for the right column, so the switch, the receipt and the margin notes sit together in the middle of the section; Treat fills the right column with the tiles. */
-@media (min-width: 1101px) {
-  .desk[data-view="trick"] { width: fit-content; margin-inline: auto; grid-template-columns: minmax(0, 330px); grid-template-areas: "sw" "receipt"; }
-}
 
 /* tablet */
 @media (max-width: 1100px) {
