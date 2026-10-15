@@ -15,7 +15,7 @@ export const HALLOWEEN_TITLE = "Trick or Treat: it's literally our day 🎃";
 export const BOO_LINE = "boo. did your net worth just flinch?";
 export const THEME_LINES = { dark: "lights off. the ghost works nights.", light: "lights on. the ghost is squinting." };
 export const FINE_LINE = "kidding. we're not that kind of company.";
-export const WORD_LINES = { treat: "treat side. same month, new sort.", trick: "trick side. back to what it cost." };
+export const WORD_LINES = { treat: "treat side. same month, new view.", trick: "trick side. back to what it cost." };
 
 /** A word as the keys that spell it, for konamiMatcher. */
 export function wordKeys(word: string): string[] {
