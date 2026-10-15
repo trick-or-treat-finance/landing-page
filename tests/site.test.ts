@@ -305,10 +305,10 @@ describe("one theme on every page (issue #18)", () => {
     for (const f of ["style.css", "landing.css", "grow.css", "notfound.css"]) expect(src(f), f).not.toMatch(/--(ground|ink|primary):/);
     expect(src("landing.css") + src("notfound.css")).not.toMatch(/#0d0912|#ff8a2b|#ffa04d|140 80 230/i);
   });
-  it("every page loads the shared theme and has the same day/night switch", () => {
+  it("every page loads the shared theme and has the same day/night button", () => {
     expect(src("main.ts")).toContain('import "./theme.css"');
     expect(src("notfound.ts")).toContain('import "./theme.css"');
-    for (const p of ALL) expect(readFileSync(join(out, p), "utf8"), p).toMatch(/<button class="theme js-only" id="theme"[^>]*role="switch"/);
+    for (const p of ALL) expect(readFileSync(join(out, p), "utf8"), p).toMatch(/<button class="theme js-only" id="theme" type="button" aria-label="Switch to (dark|light) mode"/);
   });
   it("the switch is remembered from one page to the next", async () => {
     const page = await browser.newPage({ colorScheme: "light" });
