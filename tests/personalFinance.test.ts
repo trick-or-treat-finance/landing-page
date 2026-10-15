@@ -10,7 +10,7 @@ import { stubBeehiiv } from "./beehiiv-stub";
 // Scenarios: features/personal-finance.feature
 const ORIGIN = "https://trickortreat.fi";
 const TITLE = "Trick or Treat: the personal finance app that shows who you pay";
-const DESCRIPTION = "A personal finance app that sorts your spending by the companies behind it. Try a sample month in your browser. Not investment advice.";
+const DESCRIPTION = "A personal finance app that shows which companies get your money. Try a sample month in your browser. Not investment advice.";
 const PLAIN = "Trick or Treat is a personal finance app. See which companies get your money.";
 const TYPES: Record<string, string> = { ".html": "text/html", ".js": "text/javascript", ".css": "text/css", ".svg": "image/svg+xml" };
 const out = mkdtempSync(join(tmpdir(), "tot-pf-"));
