@@ -43,6 +43,19 @@ const gaps = (page: Page) => page.evaluate(() => {
   return { view, below: next.top - sw.bottom, level: Math.abs(next.top - sw.top), wide: innerWidth >= 1101, scroll: document.documentElement.scrollWidth, width: innerWidth };
 });
 
+// Empty space inside a column: the largest gap before, between and after the visible children of the stack and of the tiles block, and the height of any child that holds no content at all.
+const columnGaps = (page: Page) => page.evaluate(() => {
+  const worst: number[] = [];
+  for (const sel of [".right-stack", ".tiles-wrap"]) {
+    const box = document.querySelector(sel)!;
+    const r = box.getBoundingClientRect();
+    for (const c of box.children) if (!c.textContent!.trim() && !c.querySelector("img, svg, li, button, input")) worst.push(c.getBoundingClientRect().height);
+    const kids = [...box.children].map((c) => c.getBoundingClientRect()).filter((k) => k.height > 0).sort((a, b) => a.top - b.top);
+    worst.push(kids[0]!.top - r.top, r.bottom - kids[kids.length - 1]!.bottom, ...kids.slice(1).map((k, i) => k.top - kids[i]!.bottom));
+  }
+  return Math.max(...worst);
+});
+
 describe("Feature: the 2D ghost on the stage is gone, and nothing is left where it stood", () => {
   for (const [width, scheme] of CASES) {
     it(`Scenario: The 2D stage ghost and its floor shadow are not on the page (${width}px ${scheme})`, async () => {
@@ -62,6 +75,7 @@ describe("Feature: the 2D ghost on the stage is gone, and nothing is left where 
         await page.waitForFunction((v) => document.querySelector(".desk")?.getAttribute("data-view") === v, view);
         const g = await gaps(page);
         expect(g.scroll, "scrolls sideways").toBeLessThanOrEqual(g.width);
+        if (view === "treat") expect(await columnGaps(page), "empty space inside the tiles column").toBeLessThanOrEqual(MAX_GAP);
         if (g.wide && view === "treat") expect(g.level, "the right column starts level with the left").toBeLessThanOrEqual(8);
         else expect(g.below, `${view}: gap under the switch`).toBeLessThanOrEqual(MAX_GAP);
         expect(g.below).toBeGreaterThanOrEqual(g.wide && view === "treat" ? -400 : 0);
@@ -71,6 +85,15 @@ describe("Feature: the 2D ghost on the stage is gone, and nothing is left where 
       await page.waitForFunction(() => document.querySelector(".desk")?.getAttribute("data-view") === "trick");
       await page.evaluate(() => { (document.querySelector(".receipt-area") as HTMLElement).style.marginTop = "200px"; });
       expect((await gaps(page)).below, "the control did not leave a gap").toBeGreaterThan(MAX_GAP);
+      // The control for the tiles column: a 200 px empty block before or between its content is caught.
+      await page.click("#sw");
+      await page.waitForFunction(() => document.querySelector(".desk")?.getAttribute("data-view") === "treat");
+      const before = await columnGaps(page);
+      await page.evaluate(() => { const d = document.createElement("div"); d.style.height = "200px"; document.querySelector(".tiles-wrap")!.before(d); });
+      expect(await columnGaps(page), "a block before the tiles was not caught").toBeGreaterThan(MAX_GAP);
+      await page.evaluate(() => { document.querySelector(".tiles-wrap")!.previousElementSibling!.remove(); const d = document.createElement("div"); d.style.height = "200px"; document.querySelector(".tiles-wrap .tiles")!.after(d); });
+      expect(await columnGaps(page), "a block between the tiles and their note was not caught").toBeGreaterThan(MAX_GAP);
+      expect(before).toBeLessThanOrEqual(MAX_GAP);
       await page.context().close();
     });
   }
