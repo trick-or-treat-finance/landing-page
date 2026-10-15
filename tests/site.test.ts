@@ -7,7 +7,7 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { stubBeehiiv } from "./beehiiv-stub";
 import { chromium, type Browser } from "playwright-core";
 
-const BASE = "/landing-page/";
+const BASE = "/";
 const PAGES = ["index.html", "about.html"];
 const WIDTHS = [320, 375, 768, 1280, 1920];
 const out = mkdtempSync(join(tmpdir(), "tot-landing-"));
@@ -62,7 +62,7 @@ describe("links", () => {
   for (const p of PAGES) {
     it(`${p}: internal links, anchors and assets resolve under ${BASE}; no app or external links`, () => {
       const html = readFileSync(join(out, p), "utf8");
-      const hrefs = [...html.matchAll(/(?:href|src)="([^"]+)"/g)].map((m) => m[1]).filter((h) => !h.startsWith("https://subscribe-forms.beehiiv.com/"));
+      const hrefs = [...html.replace(/<link rel="canonical"[^>]*>/, "").matchAll(/(?:href|src)="([^"]+)"/g)].map((m) => m[1]).filter((h) => !h.startsWith("https://subscribe-forms.beehiiv.com/"));
       expect(html).not.toContain("localhost");
       for (const h of hrefs) {
         expect(h.startsWith("http"), h).toBe(false);
@@ -81,7 +81,7 @@ describe("links", () => {
     it(`${p}: favicon and og:image are set`, () => {
       const html = readFileSync(join(out, p), "utf8");
       expect(html).toContain(`href="${BASE}favicon.png"`);
-      expect(html).toContain('property="og:image" content="https://trick-or-treat-finance.github.io/landing-page/og.jpg"');
+      expect(html).toContain('property="og:image" content="https://trickortreat.fi/og.jpg"');
       expect(existsSync(join(out, "og.jpg"))).toBe(true);
     });
     it(`${p}: no false claims, disclaimers present`, () => {

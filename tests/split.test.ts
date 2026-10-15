@@ -9,7 +9,7 @@ import { chromium, type Browser, type Page } from "playwright-core";
 import { stubBeehiiv } from "./beehiiv-stub";
 import { dollars, evenShares } from "../src/split";
 
-const BASE = "/landing-page/";
+const BASE = "/";
 const out = mkdtempSync(join(tmpdir(), "tot-split-"));
 const TYPES: Record<string, string> = {
   ".html": "text/html", ".css": "text/css", ".js": "text/javascript",

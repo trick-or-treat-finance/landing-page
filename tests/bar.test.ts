@@ -10,7 +10,7 @@ import { chromium, type Browser } from "playwright-core";
 
 // The bar from the brief: JS <= 60 KB gzipped, 0 third-party requests, no-JS render,
 // reduced-motion stills, keyboard operation, no sideways scroll at four widths.
-const BASE = "/landing-page/";
+const BASE = "/";
 const out = mkdtempSync(join(tmpdir(), "tot-bar-"));
 const TYPES: Record<string, string> = {
   ".html": "text/html", ".css": "text/css", ".js": "text/javascript", ".png": "image/png", ".avif": "image/avif", ".webp": "image/webp",

@@ -11,7 +11,7 @@ import { stubBeehiiv } from "./beehiiv-stub";
 import { BOO_LINE, FINE_LINE, THEME_LINES, konamiMatcher, sleepsLine, sleepsToHalloween, wordKeys } from "../src/eggs";
 import { SANDBOX, defaultSandbox, sandboxQuip, sandboxTally } from "../src/render";
 
-const BASE = "/landing-page/";
+const BASE = "/";
 const out = mkdtempSync(join(tmpdir(), "tot-delight-"));
 const TYPES: Record<string, string> = {
   ".html": "text/html", ".css": "text/css", ".js": "text/javascript",

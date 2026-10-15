@@ -7,7 +7,7 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { BEEHIIV, stubBeehiiv } from "./beehiiv-stub";
 import { chromium, type Browser } from "playwright-core";
 
-const BASE = "/landing-page/";
+const BASE = "/";
 const PAGES = ["index.html", "about.html"];
 const WIDTHS = [375, 768, 1280, 1920];
 const out = mkdtempSync(join(tmpdir(), "tot-landing-"));
