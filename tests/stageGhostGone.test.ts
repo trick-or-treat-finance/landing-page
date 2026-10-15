@@ -7,7 +7,7 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { chromium, type Browser, type Page } from "playwright-core";
 import { stubBeehiiv } from "./beehiiv-stub";
 
-// Scenarios: features/stage-ghost-removed.feature
+// Scenarios: features/stage-ghost-removed.feature (the 3D picture that replaced it is tested in stageGhost3d.test.ts)
 const TYPES: Record<string, string> = { ".html": "text/html", ".js": "text/javascript", ".css": "text/css", ".svg": "image/svg+xml", ".avif": "image/avif", ".webp": "image/webp", ".png": "image/png", ".jpg": "image/jpeg" };
 const out = mkdtempSync(join(tmpdir(), "tot-stage-"));
 const read = (p: string) => readFileSync(join(out, p), "utf8");
@@ -62,7 +62,7 @@ describe("Feature: the 2D ghost on the stage is gone, and nothing is left where 
       const page = await open(width, scheme);
       expect(await page.locator(".ghost-spot, .lamp, .gh, .gh-hero").count()).toBe(0);
       expect(await page.locator('[aria-label*="bank bag"]').count()).toBe(0);
-      expect(await page.locator(".stage picture, .stage-sec picture, .stage svg.gh-hero").count()).toBe(0);
+      expect(await page.locator(".stage picture:not(.stage-ghost), .stage-sec picture:not(.stage-ghost), .stage svg.gh-hero").count()).toBe(0);
       expect(await page.locator(".hero picture.hero-art img").count()).toBe(1);
       expect(await page.locator("#stage").count()).toBe(1);
       await page.context().close();
