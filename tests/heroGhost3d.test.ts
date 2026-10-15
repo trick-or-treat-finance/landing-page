@@ -138,6 +138,14 @@ describe("Feature: the hero shows the 3D ghost picture instead of the old 2D dra
     expect(new_copy).not.toMatch(/sort/i);
   });
 
+  it("Scenario: No user-facing copy says sort", () => {
+    for (const p of readdirSync(out).filter((f) => f.endsWith(".html"))) {
+      const text = readFileSync(join(out, p), "utf8").replace(/<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>/g, "");
+      expect(text.match(/\bsort(s|ed|ing)?\b/gi) ?? [], p).toEqual([]);
+    }
+    expect(readFileSync(join(process.cwd(), "src/eggs.ts"), "utf8")).not.toMatch(/\bsort(s|ed|ing)?\b/i);
+  });
+
   it("Scenario: The rest of the page still works", () => {
     const h = html();
     expect((h.match(/<h1[ >]/g) ?? []).length).toBe(1);
