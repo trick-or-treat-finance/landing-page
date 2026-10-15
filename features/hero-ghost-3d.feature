@@ -47,3 +47,11 @@ Feature: The hero shows the 3D ghost picture instead of the old 2D drawing
     Then the text "same purchases, new sort" does not appear, in any letter case and with or without the final full stop, in visible text, alt text, aria-labels, titles or meta tags
     And no test, stylesheet or script still expects it
     And the scenario fails if the text is put back on any one page
+
+  Scenario: No user-facing "sort" word on any page or toast
+    Given the built site and the shipped scripts
+    When all four html pages are read, and every string the scripts can show (toasts, easter eggs, live-region text, labels)
+    Then the whole words "sort", "sorts", "sorted" and "sorting" do not appear in visible text, alt text, aria-labels, titles, meta tags or script-built messages, in any letter case
+    And the check is on whole words, so "sorry" and "assorted" are not flagged
+    And the check examines something: it finds the known words "treat" and "receipt" in the same text, so an empty read cannot pass
+    And the scenario fails if "sorted" is put back in any one place
