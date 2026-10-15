@@ -114,7 +114,7 @@ describe("index footer fine print", () => {
     for (const l of labels) expect(l.length).toBeLessThanOrEqual(32);
     expect((footer().match(/<p>/g) ?? []).length).toBe(labels.length);
   });
-  it("quick maths: no sample-month eyebrow or September label, meme receipt header, hero art is the receipt drawing", () => {
+  it("quick maths: no sample-month eyebrow or September label, meme receipt header, hero art is the 3D ghost picture", () => {
     const html = readFileSync(join(out, "index.html"), "utf8");
     expect(html).not.toContain("Sample month · September");
     expect(html).not.toContain('class="eyebrow">Sample');
@@ -122,8 +122,8 @@ describe("index footer fine print", () => {
     const lede = html.match(/<p class="hero-lede">([^<]+)<\/p>/)![1]!;
     expect(lede).not.toMatch(/sample month|receipt|flip the switch/i);
     expect(lede.split(/\s+/).length).toBeLessThanOrEqual(15);
-    expect(html).toMatch(/<svg class="hero-art"[^>]*aria-label="[^"]*receipt/);
-    expect(html).not.toMatch(/<img class="hero-art"/);
+    expect(html).toMatch(/<picture class="hero-art">/);
+    expect(html).not.toMatch(/<svg class="hero-art"/);
   });
   it("says each fact once: example numbers, no storage, not built yet, risk, advice, trademarks", () => {
     const t = text();
