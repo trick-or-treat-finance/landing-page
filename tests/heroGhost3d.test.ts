@@ -49,12 +49,10 @@ describe("Feature: the hero shows the 3D ghost picture instead of the old 2D dra
       expect(img.x + img.width).toBeLessThanOrEqual(art.x + art.width + 1);
       expect(art.x + art.width).toBeLessThanOrEqual(width);
       expect(Math.abs(img.width / img.height - 1.5)).toBeLessThan(0.02);
-      // Framed on purpose: a dark rounded card in both modes, so the dark edges of the art never sit raw on a pale page.
-      const frame = await page.locator(".hero-art").evaluate((n) => ({ radius: getComputedStyle(n).borderTopLeftRadius, bg: getComputedStyle(n).backgroundColor }));
-      expect(parseFloat(frame.radius)).toBeGreaterThan(8);
-      expect(frame.bg).toMatch(/^rgb\(\s*(\d+),\s*(\d+),\s*(\d+)\)$/);
-      expect(Math.max(...(frame.bg.match(/\d+/g) ?? []).map(Number))).toBeLessThan(40);
-      for (const sel of [".hero-title", ".hero-plain", "#see-treat", ".hero-hint"]) {
+      // No card: the art is a transparent cut-out and floats on the page.
+      const frame = await page.locator(".hero-art").evaluate((n) => { const c = getComputedStyle(n); return { bg: c.backgroundColor, img: c.backgroundImage, border: c.borderTopWidth, shadow: c.boxShadow, radius: c.borderTopLeftRadius }; });
+      expect(frame).toEqual({ bg: "rgba(0, 0, 0, 0)", img: "none", border: "0px", shadow: "none", radius: "0px" });
+      for (const sel of [".hero-title", ".hero-lede", "#see-treat", ".hero-hint"]) {
         const b = (await page.locator(sel).boundingBox())!;
         const clash = b.x < art.x + art.width && b.x + b.width > art.x && b.y < art.y + art.height && b.y + b.height > art.y;
         expect(clash, `${sel} overlaps the picture`).toBe(false);
@@ -79,7 +77,7 @@ describe("Feature: the hero shows the 3D ghost picture instead of the old 2D dra
     const picture = h.match(/<picture class="hero-art">(.*?)<\/picture>/s)![1]!;
     expect(picture).toMatch(/<source type="image\/avif" srcset="[^"]+" sizes="[^"]+"/);
     expect(picture).toMatch(/<source type="image\/webp" srcset="[^"]+" sizes="[^"]+"/);
-    expect(picture).toMatch(/<img src="\/hero\/[^"]+\.jpg"/);
+    expect(picture).toMatch(/<img src="\/hero\/[^"]+\.png"/);
     const widths = [...picture.matchAll(/\/hero\/ghost-receipts-(\d+)\.avif (\d+)w/g)].map((m) => Number(m[2]));
     expect(widths).toEqual([768, 1152, 1536]);
     const desktop = await heroFetches(1280);
@@ -88,7 +86,7 @@ describe("Feature: the hero shows the 3D ghost picture instead of the old 2D dra
     const phone = await heroFetches(390);
     expect(phone).toHaveLength(1);
     expect(phone[0]!.url).toContain("-768.");
-    for (const f of readdirSync(join(out, "hero"))) expect(statSync(join(out, "hero", f)).size, f).toBeLessThan(400 * KB);
+    for (const f of readdirSync(join(out, "hero"))) expect(statSync(join(out, "hero", f)).size, f).toBeLessThan(600 * KB);
     expect(existsSync(join(out, "ghost-receipts.png"))).toBe(false);
   });
 
@@ -142,7 +140,7 @@ describe("Feature: the hero shows the 3D ghost picture instead of the old 2D dra
     const h = html();
     expect((h.match(/<h1[ >]/g) ?? []).length).toBe(1);
     expect(h).toContain("your receipts already say who you back.");
-    expect(h).toContain("Trick or Treat is a personal finance app. See which companies get your money.");
+    expect(h).toContain("Budget, track your spending, and see exactly which companies get your money.");
     expect(h).toContain('id="theme"');
   });
 });

@@ -11,7 +11,7 @@ import { stubBeehiiv } from "./beehiiv-stub";
 const ORIGIN = "https://trickortreat.fi";
 const TITLE = "Trick or Treat: the personal finance app that shows who you pay";
 const DESCRIPTION = "A personal finance app that shows which companies get your money. Try a sample month in your browser. Not investment advice.";
-const PLAIN = "Trick or Treat is a personal finance app. See which companies get your money.";
+const PLAIN = "Budget, track your spending, and see exactly which companies get your money.";
 const TYPES: Record<string, string> = { ".html": "text/html", ".js": "text/javascript", ".css": "text/css", ".svg": "image/svg+xml" };
 const out = mkdtempSync(join(tmpdir(), "tot-pf-"));
 const read = (p: string) => readFileSync(join(out, p), "utf8");
@@ -51,11 +51,11 @@ describe("Feature: the landing page says plainly that Trick or Treat is a person
   it("Scenario: The plain line is above the fold", async () => {
     const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
     await page.goto(`${base}/index.html`, { waitUntil: "load" });
-    const line = page.locator(".hero .hero-plain");
+    const line = page.locator(".hero .hero-lede");
     expect(await line.innerText()).toBe(PLAIN);
     const box = (await line.boundingBox())!;
     expect(box.y + box.height).toBeLessThanOrEqual(844);
-    expect(await page.locator("main .hero-copy h1 ~ .hero-plain").count()).toBe(1);
+    expect(await page.locator("main .hero-copy h1 ~ .hero-lede").count()).toBe(1);
     await page.close();
   });
 
@@ -100,11 +100,11 @@ describe("Feature: the landing page says plainly that Trick or Treat is a person
       // The existing how-it-works step is the only place the phrase appears, unchanged.
       expect(html.match(/connect (your|a) bank/gi) ?? [], p).toHaveLength(1);
       expect(html).toContain(step);
-      const added = [html.match(/<title>(.*?)<\/title>/)![1], ...["description", "og:title", "og:description", "og:image:alt", "twitter:title", "twitter:description"].map((k) => meta(html, k)), html.match(/<p class="hero-plain">(.*?)<\/p>/)?.[1] ?? "", html.match(/<p class="fp-domain">(.*?)<\/p>/)?.[1] ?? ""].join(" ");
+      const added = [html.match(/<title>(.*?)<\/title>/)![1], ...["description", "og:title", "og:description", "og:image:alt", "twitter:title", "twitter:description"].map((k) => meta(html, k)), html.match(/<p class="hero-lede">(.*?)<\/p>/)?.[1] ?? "", html.match(/<p class="fp-domain">(.*?)<\/p>/)?.[1] ?? ""].join(" ");
       expect(added).not.toMatch(/bank|log ?in|account number/i);
       expect(html).not.toMatch(/type="password"|routing number/i);
     }
-    expect(read("index.html").match(/class="(?:hero-plain|fp-domain)"/g)).toHaveLength(2);
+    expect(read("index.html").match(/class="(?:hero-badge|hero-lede|fp-domain)"/g)).toHaveLength(3);
   });
 
   it("Scenario: No claim the page cannot back", () => {
