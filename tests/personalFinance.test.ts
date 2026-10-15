@@ -172,14 +172,13 @@ describe("Feature: the landing page says plainly that Trick or Treat is a person
   it("Scenario: The theme change respects reduced motion", async () => {
     const still = await browser.newPage({ reducedMotion: "reduce" });
     await still.goto(`${base}/index.html`, { waitUntil: "load" });
-    await still.click("#theme");
-    expect(await still.locator("#theme .ti").first().evaluate((n) => getComputedStyle(n).animationName)).toBe("none");
+    // Clicked and read in one page task: the swap class is cleared 240 ms after the click, so a read after a round trip races it under load.
+    expect(await still.evaluate(() => { (document.querySelector("#theme") as HTMLElement).click(); return getComputedStyle(document.querySelector("#theme .ti")!).animationName; })).toBe("none");
     expect(await still.locator("#theme").evaluate((n) => getComputedStyle(n).transitionDuration)).toBe("0s");
     await still.close();
     const moving = await browser.newPage({ reducedMotion: "no-preference" });
     await moving.goto(`${base}/index.html`, { waitUntil: "load" });
-    await moving.click("#theme");
-    const t = await moving.locator("#theme .ti").first().evaluate((n) => { const c = getComputedStyle(n); return [c.animationName, parseFloat(c.animationDuration) * 1000]; });
+    const t = await moving.evaluate(() => { (document.querySelector("#theme") as HTMLElement).click(); const c = getComputedStyle(document.querySelector("#theme .ti")!); return [c.animationName, parseFloat(c.animationDuration) * 1000]; });
     expect(t[0]).toBe("theme-swap");
     expect(t[1] as number).toBeLessThan(300);
     await moving.close();
