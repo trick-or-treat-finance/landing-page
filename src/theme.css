@@ -25,6 +25,7 @@
   --tile-fg: #faf8f0;
   --pill-hover: #e3e8e0;
   --glow: 61 220 132;
+  --art-ground: #0b1511;    /* the dark the 3D hero art was drawn on, in both modes */
   --shadow: rgba(18, 38, 31, 0.14);
   --bar-cost: #3a5a8c;
   --bar-buy: #3ddc84;
