@@ -238,7 +238,7 @@ wakeSlip();
 
 /* ---------- Ghost ---------- */
 function wakeGhost(): void {
-  const svgs = $$<SVGElement>(".gh-hero, .gh-peek");
+  const svgs = $$<SVGElement>(".gh-peek");
   if (reduced.matches) return;
   addEventListener("pointermove", (e) => {
     for (const svg of svgs) {
@@ -251,11 +251,6 @@ function wakeGhost(): void {
       for (const eye of $$<SVGElement>(".eye", svg)) eye.style.transform = `translate(${(dx / d) * m}px, ${(dy / d) * m}px)`;
     }
   }, { passive: true });
-
-  const hero = $<SVGElement>(".gh-hero");
-  if (hero && "IntersectionObserver" in window) {
-    new IntersectionObserver(([en]) => hero.classList.toggle("paused", !en.isIntersecting)).observe(hero);
-  }
 }
 wakeGhost();
 

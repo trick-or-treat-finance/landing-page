@@ -35,8 +35,9 @@ button.btn { font-family: inherit; cursor: pointer; }
   padding: 24px 0 24px 190px;
   display: grid;
   grid-template-columns: minmax(0, 330px) minmax(0, 1fr);
-  grid-template-areas: "receipt right";
-  gap: 72px;
+  grid-template-areas: "sw stack" "receipt stack";
+  grid-template-rows: auto 1fr;
+  gap: 22px 72px;
   align-items: start;
 }
 .margin { position: absolute; left: 0; top: 0; width: 180px; height: 100%; pointer-events: none; }
@@ -93,9 +94,9 @@ button.btn { font-family: inherit; cursor: pointer; }
 .slot.oct .ln { flex-wrap: wrap; height: auto; }
 .oct-note { font-family: var(--hand); font-weight: 700; font-size: 13px; color: #1e7a4c; position: absolute; right: 6px; top: 20px; transform: rotate(-2deg); }
 
-/* right column: switch, ghost, tiles */
-.right { min-width: 0; display: flex; flex-direction: column; gap: 22px; }
-.switch-wrap { display: flex; align-items: center; justify-content: flex-start; flex-wrap: wrap; gap: 14px; font: 700 15px var(--body, inherit); position: relative; }
+/* the switch sits above the receipt; the tiles take the right column */
+.right { display: contents; }
+.switch-wrap { grid-area: sw; display: flex; align-items: center; justify-content: flex-start; flex-wrap: wrap; gap: 14px; font: 700 15px var(--body, inherit); position: relative; }
 .lab { display: flex; flex-direction: column; color: var(--muted); letter-spacing: -0.01em; line-height: 1.15; }
 .lab small { font: 500 11.5px var(--mono); letter-spacing: 0; }
 .lab.on { color: var(--ink); }
@@ -105,18 +106,15 @@ button.btn { font-family: inherit; cursor: pointer; }
 .sw[aria-checked="true"] { background: var(--bright); }
 .sw:focus-visible { outline-offset: 5px; border-radius: 18px; }
 
-.right-stack { display: grid; }
-.ghost-spot { grid-area: 1 / 1; position: relative; display: grid; place-items: center; padding: 8px 0 0; }
-.gh { overflow: visible; }
-.gh-hero { width: min(260px, 70%); height: auto; animation: float 4s ease-in-out infinite; }
-.lamp { position: absolute; left: 12%; right: 12%; bottom: 0; height: 34px; border-radius: 50%; background: var(--track); display: none; }
-:root[data-theme="dark"] .lamp { display: block; }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .lamp { display: block; } }
+.right-stack { grid-area: stack; display: grid; min-width: 0; }
+/* Trick only: the owner's 3D ghost fills the right column beside the receipt, with no card behind it. */
+.stage-ghost { grid-area: 1 / 1; display: block; align-self: start; justify-self: center; width: min(100%, 420px); }
+.stage-ghost img { display: block; width: 100%; height: auto; }
+[data-view="treat"] .stage-ghost { display: none; }
 .tiles-wrap { grid-area: 1 / 1; min-width: 0; }
 .t-h { display: flex; flex-direction: column; margin: 0 0 8px; font: 600 11.5px var(--mono); letter-spacing: 0.12em; color: var(--muted); text-transform: uppercase; }
 .t-h small { font: 500 11.5px var(--mono); letter-spacing: 0.04em; text-transform: none; }
 [data-view="trick"] .tiles-wrap { display: none; }
-[data-view="treat"] .ghost-spot { display: none; }
 .tiles { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 10px; }
 .tile { background: var(--tile); color: var(--tile-fg); border-radius: 10px; padding: 9px 12px; display: grid; grid-template-columns: 28px minmax(0, 1fr) auto; gap: 10px; align-items: center; font-size: 13.5px; border: 1.5px solid var(--line-strong); border-radius: var(--radius-card); box-shadow: 3px 3px 0 var(--hard); }
 .tile .tn { min-width: 0; display: flex; flex-direction: column; line-height: 1.2; overflow-wrap: anywhere; }
@@ -186,7 +184,7 @@ input[type="range"]:disabled { cursor: default; opacity: 0.7; }
 /* permission slip */
 .slip-wrap { position: relative; max-width: 700px; padding-top: 74px; }
 .peeker { position: absolute; left: 60px; top: 0; width: 150px; height: 80px; overflow: hidden; pointer-events: none; z-index: 0; }
-.gh-peek { position: absolute; left: 0; top: 0; width: 150px; height: auto; transform: translateY(46px); transition: transform 400ms ease-out; }
+.gh-peek { overflow: visible; position: absolute; left: 0; top: 0; width: 150px; height: auto; transform: translateY(46px); transition: transform 400ms ease-out; }
 .peeker.up .gh-peek { transform: translateY(0); }
 .peeker.down .gh-peek { transition-duration: 300ms; }
 .slip { position: relative; z-index: 1; background: var(--slip); color: #0b211c; border: 1.5px solid var(--line-strong); border-radius: var(--radius-card); padding: 24px 26px 20px; box-shadow: 4px 4px 0 var(--hard); }
@@ -218,12 +216,10 @@ input[type="range"]:disabled { cursor: default; opacity: 0.7; }
 .site-footer { margin-top: 72px; }
 
 /* motion (only transform and opacity; every one has a still state below) */
-@keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
 @keyframes wave { 0%, 100% { transform: rotate(0); } 40% { transform: rotate(-10deg); } 70% { transform: rotate(6deg); } }
 @keyframes print { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
 @keyframes settle { 0% { opacity: 0; transform: translateY(6px); } 100% { opacity: 1; transform: none; } }
 @keyframes appear { from { opacity: 0; } to { opacity: 1; } }
-.gh-hero.paused, .gh-hero.paused ~ * { animation-play-state: paused; }
 .eye { transition: transform 80ms linear; }
 @media (prefers-reduced-motion: no-preference) {
   .slot .ln { animation: print 220ms cubic-bezier(0.2, 0.7, 0.2, 1) both; animation-delay: calc(var(--n) * 60ms); }
@@ -231,20 +227,18 @@ input[type="range"]:disabled { cursor: default; opacity: 0.7; }
   [data-view="treat"] .tiles-wrap { animation: appear 120ms ease-out; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .gh-hero { animation: none; }
   .knob { transition: none; }
   .gh-peek { transition: none; transform: translateY(0); }
   .stage.xfade .receipt-area, .stage.xfade .tiles-wrap { animation: appear 120ms linear; }
   html { scroll-behavior: auto; }
 }
-.home .stage[data-view="treat"] .ghost-spot { display: none; }
 
 /* no-JS: the tiles stay shown, the switch is gone */
 .tiles-wrap { display: block; }
 
 /* tablet */
 @media (max-width: 1100px) {
-  .desk { padding-left: 0; grid-template-areas: "receipt right" "rnote right"; grid-template-rows: auto 1fr; }
+  .desk { padding-left: 0; grid-template-areas: "sw stack" "receipt stack" "rnote stack"; grid-template-rows: auto auto 1fr; }
   /* the phone joke stays: only n5, right under the receipt */
   .margin { position: static; width: auto; height: auto; grid-area: rnote; pointer-events: auto; }
   .margin .n1, .margin .n2 { display: none; }
@@ -289,23 +283,18 @@ input[type="range"]:disabled { cursor: default; opacity: 0.7; }
 .slot.stay .nm { white-space: normal; }
 .slot.stay .ln i { min-width: 10px; }
 
-/* ---------- Dark: the app's dark green. The ghost still shivers on Trick; no coloured glows. ---------- */
-.hands { display: none; fill: #FCFCF6; stroke: #0B211C; stroke-width: 1.8; }
-:root[data-theme="dark"] .stage[data-view="trick"] .hands { display: block; }
-:root[data-theme="dark"] .gh-hero .eyes { transform: translateX(-4px); }
+/* ---------- Dark: the app's dark green. no coloured glows. ---------- */
 .stage { isolation: isolate; }
 @media (prefers-reduced-motion: no-preference) {
   :root[data-theme="dark"] .rc { animation: rc-rise 900ms cubic-bezier(.2,.8,.2,1) both; }
   :root[data-theme="dark"] .rc-in { animation: rc-unroll 1200ms cubic-bezier(.4,0,.2,1) 250ms both; }
   :root[data-theme="dark"] .stage[data-view="trick"] .tot b { animation: jump-flicker 7s linear 1.5s infinite both; }
-  :root[data-theme="dark"] .stage[data-view="trick"] .gh-hero { animation: float 4s ease-in-out infinite, shiver 1.4s ease-in-out infinite; }
   :root[data-theme="dark"] .stage[data-view="treat"] .rc-in { animation: none; }
   :root[data-theme="dark"] .stage[data-view="treat"] .rc { animation: none; }
 }
 @keyframes rc-rise { from { opacity: 0; transform: translateY(80px) rotate(-1.2deg); } to { opacity: 1; transform: rotate(-1.2deg); } }
 @keyframes rc-unroll { from { clip-path: inset(0 0 100% 0); } to { clip-path: inset(0 0 -12px 0); } }
 @keyframes jump-flicker { 0%, 12% { opacity: 1; } 2% { opacity: 0.25; transform: scale(1.06); } 4% { opacity: 1; } 6% { opacity: 0.15; } 8% { opacity: 1; transform: scale(1.04); } 10% { opacity: 0.4; } 60% { opacity: 1; transform: none; } 62% { opacity: 0.3; } 64%, 100% { opacity: 1; } }
-@keyframes shiver { 0%, 100% { margin-left: 0; } 25% { margin-left: -2px; } 75% { margin-left: 2px; } }
 
 /* ---------- Buffett + Lynch (top of page) ---------- */
 .duo { max-width: 1280px; margin: 0 auto; padding: 28px var(--gutter) 8px; }
@@ -424,13 +413,7 @@ input[type="range"]:disabled { cursor: default; opacity: 0.7; }
 :root[data-theme="dark"] .egg-bat { color: #f3f0e6; }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .egg-bat { color: #f3f0e6; } }
 @keyframes egg-fly { 0% { transform: translate(0, 0); opacity: 0; } 8% { opacity: 1; } 30% { transform: translate(28vw, 30px); } 55% { transform: translate(52vw, -10px); } 80% { transform: translate(76vw, 24px); } 92% { opacity: 1; } 100% { transform: translate(calc(100vw - 88px), 0); opacity: 0; } }
-@keyframes egg-spin { to { transform: rotate(360deg); } }
-@keyframes egg-boop { 30% { transform: scale(0.94, 1.06); } 60% { transform: scale(1.05, 0.95); } }
-.home .stage .ghost-spot .gh-hero.egg-spin { animation: egg-spin 700ms ease-in-out; transform-origin: 50% 50%; }
-.home .stage .ghost-spot .gh-hero.egg-boop { animation: egg-boop 260ms ease-out; transform-origin: 50% 90%; }
-@keyframes egg-blink { 45%, 55% { scale: 1 0.08; } }
-.gh-hero .eye.egg-blink { transform-box: fill-box; transform-origin: center; animation: egg-blink 160ms ease-in-out; }
-@media (prefers-reduced-motion: reduce) { .egg-toast, .egg-toast.on { transition: none; } .egg-bat { display: none; } .gh-hero .eye.egg-blink { animation: none; } }
+@media (prefers-reduced-motion: reduce) { .egg-toast, .egg-toast.on { transition: none; } .egg-bat { display: none; } }
 
 /* The fine print's one joke (src/eggs.ts finePrint): shrinks theatrically, then springs back. Transform only; the text itself is never resized. */
 @media (prefers-reduced-motion: no-preference) {

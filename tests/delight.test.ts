@@ -44,24 +44,12 @@ afterAll(async () => { await browser?.close(); server?.close(); }, 60_000);
 type Opts = { width?: number; reduced?: boolean; at?: Date; touch?: boolean };
 async function open({ width = 1280, reduced = false, at, touch = false }: Opts = {}): Promise<Page> {
   const page = await browser.newPage({ viewport: { width, height: 900 }, reducedMotion: reduced ? "reduce" : "no-preference", ...(touch ? { hasTouch: true, isMobile: true } : {}) });
-  // Counts the classes the delights put on the ghost, so a jump that ends in 260ms is still seen.
-  await page.addInitScript(() => {
-    const w = window as unknown as { __cls: string[] };
-    w.__cls = [];
-    new MutationObserver((list) => {
-      for (const m of list) {
-        const el = m.target as Element;
-        if (el.classList.contains("egg-boop") || el.classList.contains("egg-blink")) w.__cls.push([...el.classList].find((c) => c.startsWith("egg-"))!);
-      }
-    }).observe(document, { subtree: true, attributes: true, attributeFilter: ["class"] });
-  });
   if (at) await page.clock.install({ time: at });
   await page.goto(`${base}${BASE}index.html`, { waitUntil: "load" });
   await page.waitForFunction(() => document.querySelector("#sw") && document.documentElement.classList.contains("js"));
   return page;
 }
 
-const seen = (page: Page, cls: string) => page.evaluate((c) => (window as unknown as { __cls: string[] }).__cls.filter((x) => x === c).length, cls);
 const toastText = (page: Page) => page.evaluate(() => {
   const t = document.querySelector<HTMLElement>(".egg-toast");
   return t && t.classList.contains("on") ? t.textContent : null;
@@ -125,18 +113,16 @@ const fineText = (page: Page) => page.locator(".site-footer").innerText();
 const toFine = async (page: Page) => { await page.locator(".fine-h").scrollIntoViewIfNeeded(); await page.evaluate(() => document.querySelector(".fine-h")!.scrollIntoView({ block: "center" })); };
 
 describe("delights on the home page", () => {
-  it("typing boo makes the ghost jump and answer; a slider with focus is left alone", async () => {
+  it("typing boo answers with a line; a slider with focus is left alone", async () => {
     const page = await open();
     await page.keyboard.type("boo");
     await page.waitForFunction(() => document.querySelector(".egg-toast.on"));
     expect(await toastText(page)).toBe(BOO_LINE);
-    expect(await seen(page, "egg-boop")).toBeGreaterThanOrEqual(1);
     await page.close();
 
     const quiet = await open();
     await quiet.locator("#sl-coffee").focus();
     await quiet.keyboard.type("boo");
-    expect(await seen(quiet, "egg-boop")).toBe(0);
     expect(await toastText(quiet)).toBeNull();
     await quiet.close();
   });
@@ -180,28 +166,15 @@ describe("delights on the home page", () => {
     await page.close();
   });
 
-  it("the ghost blinks with motion on, and never with reduced motion", async () => {
-    const page = await open({ at: new Date(2026, 5, 1, 12) });
-    await page.clock.runFor(12_000);
-    expect(await seen(page, "egg-blink")).toBeGreaterThanOrEqual(1);
-    await page.close();
-    const still = await open({ reduced: true, at: new Date(2026, 5, 1, 12) });
-    await still.clock.runFor(30_000);
-    expect(await seen(still, "egg-blink")).toBe(0);
-    await still.close();
-  });
-
   it("a key held down is one letter: auto-repeat does not spell a word", async () => {
     const page = await open();
     await page.keyboard.press("b");
     await page.keyboard.down("o");
     await page.keyboard.down("o"); // the held key repeating
     await page.keyboard.up("o");
-    expect(await seen(page, "egg-boop")).toBe(0);
     expect(await toastText(page)).toBeNull();
     await page.keyboard.press("o");
     await page.waitForFunction(() => document.querySelector(".egg-toast.on"));
-    expect(await seen(page, "egg-boop")).toBeGreaterThanOrEqual(1);
     await page.close();
   });
 
@@ -215,19 +188,6 @@ describe("delights on the home page", () => {
     await page.keyboard.type("treat");
     await page.waitForFunction(() => document.querySelector(".egg-toast")?.getAttribute("aria-hidden") === "false");
     await page.close();
-  });
-
-  it("the blink follows the reduced-motion setting while the page is open", async () => {
-    const calm = await open({ at: new Date(2026, 5, 1, 12) });
-    await calm.emulateMedia({ reducedMotion: "reduce" });
-    await new Promise((done) => setTimeout(done, 300));
-    await calm.clock.runFor(30_000);
-    expect(await seen(calm, "egg-blink")).toBe(0);
-    await calm.emulateMedia({ reducedMotion: "no-preference" });
-    await new Promise((done) => setTimeout(done, 300)); // the browser delivers the change event on its own time
-    await calm.clock.runFor(12_000);
-    expect(await seen(calm, "egg-blink")).toBeGreaterThanOrEqual(1);
-    await calm.close();
   });
 
   it("the fine print shrinks as a joke, springs back to full size, says its line, and reads as before", async () => {
