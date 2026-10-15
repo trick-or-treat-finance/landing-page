@@ -5,20 +5,23 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <!-- the saved day/night choice, before first paint; no choice saved: the system setting via CSS -->
 <script>try{var t=localStorage.getItem("tot-theme");if(t==="dark"||t==="light")document.documentElement.dataset.theme=t}catch(e){}</script>
-<title>Trick or Treat: one month of spending, read twice</title>
-<meta name="description" content="Play with a sample month. See what it cost, then the companies behind it. Runs in your browser. Sample data, not investment advice." />
+<title>Trick or Treat: the personal finance app that shows who you pay</title>
+<meta name="description" content="A personal finance app that sorts your spending by the companies behind it. Try a sample month in your browser. Not investment advice." />
 <link rel="icon" type="image/png" href="/favicon.png" />
 <link rel="apple-touch-icon" href="/favicon.png" />
 <link rel="canonical" href="https://trickortreat.fi/" />
 <meta property="og:url" content="https://trickortreat.fi/" />
 <meta property="og:type" content="website" />
-<meta property="og:title" content="One month of spending, read twice" />
-<meta property="og:description" content="A receipt for a sample month, then the same receipt sorted into the companies behind it. Sample data. Not investment advice." />
+<meta property="og:title" content="Trick or Treat: the personal finance app that shows who you pay" />
+<meta property="og:site_name" content="Trick or Treat" />
+<meta property="og:description" content="A personal finance app that sorts your spending by the companies behind it. Try a sample month in your browser. Not investment advice." />
 <meta property="og:image" content="https://trickortreat.fi/og.jpg" />
-<meta property="og:image:alt" content="The Trick or Treat app icon, a ghost hugging a green bar chart." />
+<meta property="og:image:alt" content="Trick or Treat, a personal finance app. The ghost app icon hugging a green bar chart." />
 <meta property="og:image:width" content="1200" />
 <meta property="og:image:height" content="630" />
 <meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Trick or Treat: the personal finance app that shows who you pay" />
+<meta name="twitter:description" content="A personal finance app that sorts your spending by the companies behind it. Try a sample month in your browser. Not investment advice." />
 <meta name="color-scheme" content="light dark" />
 <noscript><style>
   .stage .tiles-wrap { display: block !important; }
@@ -40,7 +43,7 @@
     <nav class="site-nav" aria-label="Main">
       <a class="nav-link" href="about.html#how">how it works</a>
       <a class="nav-link" href="#slip">what we won't ask</a>
-      <button class="theme js-only" id="theme" type="button" role="switch" aria-checked="false" aria-label="Dark mode"><span class="theme-track" aria-hidden="true"><svg class="ti ti-day" viewBox="0 0 24 24" width="17" height="17"><path d="M9 3h6M8 6h8l1 3v8l-2 3H9l-2-3V9Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="12" cy="13" r="2.6" fill="currentColor"/></svg><svg class="ti ti-night" viewBox="0 0 24 24" width="17" height="17"><path d="M12 5.5c-6 0-9 4-9 8s3 6.5 9 6.5 9-2.500 9-6.500-3-8-9-8Z" fill="currentColor"/><path d="M12 5.500c.2-1.500.8-2.500 2.200-3" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg><span class="theme-knob"></span></span></button>
+      <button class="theme js-only" id="theme" type="button" aria-label="Switch to dark mode"><svg class="ti ti-moon" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 0 1 9.500 4a8.500 8.500 0 1 0 10.500 10.500Z" fill="currentColor"/></svg><svg class="ti ti-sun" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><circle cx="12" cy="12" r="4.200" fill="currentColor"/><path d="M12 2.500v2.500M12 19v2.500M2.500 12H5M19 12h2.500M5.300 5.300l1.800 1.800M16.900 16.900l1.800 1.800M5.300 18.700l1.800-1.800M16.900 7.100l1.800-1.800" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg></button>
       <a class="nav-signin" href="#notify">Coming soon</a>
     </nav>
   </div>
@@ -50,6 +53,7 @@
     <div class="hero-copy">
       <h1 id="h1" class="hero-title">your receipts already say who you back.</h1>
       <p class="hero-lede">every swipe is a vote. see who&rsquo;s been winning yours.</p>
+      <p class="hero-plain">Trick or Treat is a personal finance app. See which companies get your money.</p>
       <div class="hero-cta">
         <a class="btn" id="see-treat" href="#stage">show me who got paid</a>
         <a class="btn btn-ghost" href="#sandbox">build your own month</a>
@@ -314,6 +318,7 @@
     <h3 id="fp-email" class="fp-h">the email sign-up</h3>
     <p>The &ldquo;Be the first to know&rdquo; form is run by beehiiv, a newsletter service. It loads a script and a form from beehiiv only when you press &ldquo;Leave your email&rdquo;, and beehiiv handles your email address and sends the confirmation and launch emails. One email when we launch. Unsubscribe any time.</p>
   </section>
+  <p class="fp-domain">Trick or Treat is a personal finance app. .fi is for finance.</p>
 </footer>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
   <filter id="wob"><feTurbulence type="fractalNoise" baseFrequency=".035" numOctaves="2" seed="4"/><feDisplacementMap in="SourceGraphic" scale="3.2"/></filter>

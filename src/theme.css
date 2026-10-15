@@ -75,17 +75,18 @@ body { background: var(--ground); color: var(--ink); }
 .nav-signin:hover { transform: translate(1px, 1px); box-shadow: 1px 1px 0 var(--hard); }
 .wordmark .or, .wm em { color: var(--green); }
 
-/* Day / night switch, in every header. */
-.theme { position: relative; border: 0; background: none; padding: 6px 0; cursor: pointer; min-height: 44px; min-width: 64px; display: inline-flex; align-items: center; color: var(--ink); }
-.theme-track { position: relative; display: block; width: 64px; height: 32px; border-radius: 999px; background: var(--track); border: 1.5px solid var(--line-strong); box-shadow: 2px 2px 0 var(--hard); }
-.theme-knob { position: absolute; left: 2px; top: 2px; width: 25px; height: 25px; border-radius: 50%; background: var(--bright); border: 1.5px solid var(--line-strong); transition: transform 220ms cubic-bezier(.3, 1.4, .5, 1); }
-.ti { position: absolute; top: 6px; z-index: 1; display: block; color: var(--secondary); }
-.ti-day { left: 6px; color: var(--on-bright); }
-.ti-night { right: 6px; }
-.theme[aria-checked="true"] .theme-knob { transform: translateX(32px); }
-.theme[aria-checked="true"] .ti-day { color: var(--secondary); }
-.theme[aria-checked="true"] .ti-night { color: var(--on-bright); }
-.theme:focus-visible { outline: 3px solid var(--primary); outline-offset: 2px; border-radius: 999px; }
-@media (prefers-reduced-motion: reduce) { .theme-knob, .btn { transition: none; } }
+/* Day / night: one round button in every header. It shows the mode a press switches to: a moon in light, a sun in dark. */
+.theme { position: relative; width: 44px; height: 44px; padding: 0; display: inline-grid; place-items: center; cursor: pointer; color: var(--on-bright); background: var(--bright); border: 1.5px solid var(--line-strong); border-radius: 50%; box-shadow: 2px 2px 0 var(--hard), 0 0 0 4px rgb(var(--glow, 61 220 132) / 0.22); transition: transform 120ms, box-shadow 120ms; }
+.theme:hover { transform: translateY(-2px); box-shadow: 2px 4px 0 var(--hard), 0 0 0 5px rgb(var(--glow, 61 220 132) / 0.35); }
+.theme:active { transform: translateY(0); box-shadow: 1px 1px 0 var(--hard), 0 0 0 4px rgb(var(--glow, 61 220 132) / 0.22); }
+.theme:focus-visible { outline: 3px solid var(--primary); outline-offset: 3px; }
+.ti { display: block; }
+.ti-sun { display: none; }
+:root[data-theme="dark"] .ti-moon { display: none; }
+:root[data-theme="dark"] .ti-sun { display: block; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .ti-moon { display: none; } :root:not([data-theme="light"]) .ti-sun { display: block; } }
+.theme.swap .ti { animation: theme-swap 240ms ease-out; }
+@keyframes theme-swap { from { transform: rotate(-70deg) scale(0.4); opacity: 0; } to { transform: none; opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .theme, .btn { transition: none; } .theme:hover, .theme:active { transform: none; } .theme.swap .ti { animation: none; } }
 
 :focus-visible { outline: 3px solid var(--primary); outline-offset: 3px; border-radius: 4px; }
