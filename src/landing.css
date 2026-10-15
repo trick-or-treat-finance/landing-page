@@ -107,10 +107,11 @@ button.btn { font-family: inherit; cursor: pointer; }
 .sw:focus-visible { outline-offset: 5px; border-radius: 18px; }
 
 .right-stack { grid-area: stack; display: grid; min-width: 0; }
-/* Trick only: the owner's 3D ghost fills the right column beside the receipt, with no card behind it. */
-.stage-ghost { grid-area: 1 / 1; display: block; align-self: start; justify-self: center; width: min(100%, 420px); }
+/* The owner's 3D ghost, no card behind it: in the right column on Trick, under the receipt on Treat (where the tiles take the right column). */
+.stage-ghost { grid-area: stack; display: block; align-self: start; justify-self: center; width: min(100%, 420px); min-width: 0; }
 .stage-ghost img { display: block; width: 100%; height: auto; }
-[data-view="treat"] .stage-ghost { display: none; }
+.desk[data-view="treat"] { grid-template-areas: "sw stack" "receipt stack" "ghost stack"; grid-template-rows: auto auto 1fr; }
+.desk[data-view="treat"] .stage-ghost { grid-area: ghost; }
 .tiles-wrap { grid-area: 1 / 1; min-width: 0; }
 .t-h { display: flex; flex-direction: column; margin: 0 0 8px; font: 600 11.5px var(--mono); letter-spacing: 0.12em; color: var(--muted); text-transform: uppercase; }
 .t-h small { font: 500 11.5px var(--mono); letter-spacing: 0.04em; text-transform: none; }
@@ -239,6 +240,7 @@ input[type="range"]:disabled { cursor: default; opacity: 0.7; }
 /* tablet */
 @media (max-width: 1100px) {
   .desk { padding-left: 0; grid-template-areas: "sw stack" "receipt stack" "rnote stack"; grid-template-rows: auto auto 1fr; }
+  .desk[data-view="treat"] { grid-template-areas: "sw stack" "receipt stack" "rnote stack" "ghost stack"; grid-template-rows: auto auto auto 1fr; }
   /* the phone joke stays: only n5, right under the receipt */
   .margin { position: static; width: auto; height: auto; grid-area: rnote; pointer-events: auto; }
   .margin .n1, .margin .n2 { display: none; }
@@ -350,7 +352,7 @@ input[type="range"]:disabled { cursor: default; opacity: 0.7; }
 
 /* Small screens, Treat: the companies come first, the paper with its nothing-to-own lines tucked below. */
 @media (max-width: 820px) {
-  .desk[data-view="treat"] { grid-template-areas: "sw" "stack" "receipt" "rnote"; }
+  .desk[data-view="treat"] { grid-template-areas: "sw" "stack" "receipt" "rnote" "ghost"; grid-template-rows: none; }
 }
 /* Tablet: two tile columns, hero on two columns like desktop. */
 @media (min-width: 561px) and (max-width: 820px) {
