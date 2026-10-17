@@ -40,3 +40,4 @@
 - [signup] once LEADS_URL is set live and checked, delete the beehiiv path (openBeehiiv in src/signup.ts, tests/beehiiv-stub.ts and its uses, the data-beehiiv-form attribute and the beehiiv fine print in index.html) and the two beehiiv BACKLOG lines above (toby, 2026-10-12)
 - [a11y] `.home .btn` keeps its 120ms transform/box-shadow transition under prefers-reduced-motion: the reduce rule (theme.css:89, `.btn`) is outweighed by `.home .btn` (theme.css:61); add `.home .btn` to the reduce rule (toby, 2026-10-12)
 - [a11y] test the toast aria-hidden flip on treat/trick with real VoiceOver, src/eggs.ts toast (Kelly note from #33, toby, 2026-10-12)
+- [tooling] tests/waitlist-consent.test.ts copies the build/serve helpers from tests/waitlist.test.ts; extract to one tests/serve.ts with the other copies (kelly10, 2026-10-16)
