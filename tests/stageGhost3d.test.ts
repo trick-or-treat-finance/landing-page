@@ -6,7 +6,6 @@ import { extname, join } from "node:path";
 import { inflateSync } from "node:zlib";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { chromium, type Browser, type Page } from "playwright-core";
-import { stubBeehiiv } from "./beehiiv-stub";
 
 // Scenarios: features/stage-ghost-3d.feature
 const TYPES: Record<string, string> = { ".html": "text/html", ".js": "text/javascript", ".css": "text/css", ".svg": "image/svg+xml", ".avif": "image/avif", ".webp": "image/webp", ".png": "image/png", ".jpg": "image/jpeg" };
@@ -27,7 +26,7 @@ beforeAll(async () => {
   });
   await new Promise<void>((ok) => server.listen(0, "127.0.0.1", ok));
   base = `http://127.0.0.1:${(server.address() as { port: number }).port}`;
-  browser = stubBeehiiv(await chromium.launch({ executablePath: process.env.CHROMIUM_PATH }));
+  browser = await chromium.launch({ executablePath: process.env.CHROMIUM_PATH });
 }, 120_000);
 afterAll(async () => { await browser?.close(); server?.close(); }, 60_000);
 

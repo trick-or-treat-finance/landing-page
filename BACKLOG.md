@@ -29,14 +29,10 @@
 - [header] 404.html and hello-hacker.html have no 'Coming soon' pill or theme switch, so they are not covered by the pill fix; 404.html:16 (landing-copy, 2026-10-02)
 - [tests] tests/bar.test.ts "buffett + lynch section" fails on 60e076b already (duo <img> src is empty string, expects .avif); also suites hit 10s hook timeouts when run in parallel with browsers (worker-landing-copy2, 2026-10-02)
 
-- Hero hint "nothing leaves your tab" is true for the sample month but the email sign-up does leave; reword now the beehiiv sign-up is live (it loads beehiiv's script and form). (gate13-security, minor)
 - index.html fine print drops the word "recommendation" that about.html still uses; align the two. (gate13-security, minor)
 
-- [tests] tests lean on `networkidle` and the embedded beehiiv iframe never settles live; they stub the beehiiv origin (tests/beehiiv-stub.ts). A real-iframe smoke test would catch a loader change, tests/beehiiv-stub.ts:1 (worker-beehiiv-signup, 2026-10-02)
-- [signup] beehiiv form at 375px truncates the email placeholder ("Enter y") and in dark mode sits as a white panel; fix in the beehiiv form's own design settings, not in this repo (worker-beehiiv-signup, 2026-10-02)
-- [signup] beehiiv form placeholder reads "Enter your ssn, oh sorry email" and the button "Request access"; owner may want plainer copy in the form settings (worker-beehiiv-signup, 2026-10-02)
 - [design] The receipt, slip and duo drawing still use fixed cream paper and dark ink in dark mode (by design: paper stays paper); if the owner wants them dark too, add paper tokens to src/theme.css, src/landing.css:.rc-in (worker-landing-theme, 2026-10-06)
 - [tooling] no `typecheck` npm script, though the local-checks rule calls `npm run typecheck`; add `"typecheck": "tsc --noEmit"`, package.json:6 (worker-landing-issue-20, 2026-10-06)
-- [signup] once LEADS_URL is set live and checked, delete the beehiiv path (openBeehiiv in src/signup.ts, tests/beehiiv-stub.ts and its uses, the data-beehiiv-form attribute and the beehiiv fine print in index.html) and the two beehiiv BACKLOG lines above (toby, 2026-10-12)
 - [a11y] `.home .btn` keeps its 120ms transform/box-shadow transition under prefers-reduced-motion: the reduce rule (theme.css:89, `.btn`) is outweighed by `.home .btn` (theme.css:61); add `.home .btn` to the reduce rule (toby, 2026-10-12)
 - [a11y] test the toast aria-hidden flip on treat/trick with real VoiceOver, src/eggs.ts toast (Kelly note from #33, toby, 2026-10-12)
+- [tooling] tests/waitlist-consent.test.ts copies the build/serve helpers from tests/waitlist.test.ts; extract to one tests/serve.ts with the other copies (kelly10, 2026-10-16)

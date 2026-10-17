@@ -4,7 +4,6 @@ import { createServer, type Server } from "node:http";
 import { tmpdir } from "node:os";
 import { extname, join, normalize } from "node:path";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import { stubBeehiiv } from "./beehiiv-stub";
 import { chromium, type Browser } from "playwright-core";
 
 const BASE = "/";
@@ -39,7 +38,7 @@ beforeAll(async () => {
     stdio: "pipe",
   });
   ({ server, base } = await serve(out));
-  browser = stubBeehiiv(await chromium.launch({ executablePath: process.env.CHROMIUM_PATH }));
+  browser = await chromium.launch({ executablePath: process.env.CHROMIUM_PATH });
 }, 120_000);
 
 afterAll(async () => { await browser?.close(); server?.close(); }, 60_000);
@@ -52,7 +51,7 @@ describe("build", () => {
     for (const p of PAGES) {
       const html = readFileSync(join(out, p), "utf8");
       expect(html).not.toMatch(/fonts\.googleapis|fonts\.gstatic/);
-      expect([...html.matchAll(/<script[^>]+src="(https?:[^"]+)"/g)].map((m) => m[1]).filter((u) => !u.startsWith("https://subscribe-forms.beehiiv.com/"))).toEqual([]);
+      expect([...html.matchAll(/<script[^>]+src="(https?:[^"]+)"/g)].map((m) => m[1])).toEqual([]);
     }
     expect(readdirSync(join(out, "assets")).some((f) => f.endsWith(".woff2"))).toBe(true);
   });
@@ -62,7 +61,7 @@ describe("links", () => {
   for (const p of PAGES) {
     it(`${p}: internal links, anchors and assets resolve under ${BASE}; no app or external links`, () => {
       const html = readFileSync(join(out, p), "utf8");
-      const hrefs = [...html.replace(/<link rel="canonical"[^>]*>/, "").matchAll(/(?:href|src)="([^"]+)"/g)].map((m) => m[1]).filter((h) => !h.startsWith("https://subscribe-forms.beehiiv.com/"));
+      const hrefs = [...html.replace(/<link rel="canonical"[^>]*>/, "").matchAll(/(?:href|src)="([^"]+)"/g)].map((m) => m[1]);
       expect(html).not.toContain("localhost");
       for (const h of hrefs) {
         expect(h.startsWith("http"), h).toBe(false);
@@ -161,12 +160,12 @@ describe("how it works", () => {
 
 describe("email sign-up", () => {
   const html = () => readFileSync(join(out, "index.html"), "utf8");
-  const BEEHIIV = "https://subscribe-forms.beehiiv.com";
-  it("offers the owner's beehiiv form in #notify as a button, with no beehiiv script in the page", () => {
+  it("offers our own sign-up in #notify as a button, with no third-party form or script in the page", () => {
     const sec = html().split('id="notify"')[1]!.split("</section>")[0]!;
     expect(sec).toContain("Be the first to know.");
-    expect(sec).toMatch(/<p class="lede">[\s\S]*<button[^>]*id="notify-open"[^>]*data-beehiiv-form="0815b6bf-3f5b-42a1-8bbf-97dbe3917f4f"/);
-    expect(html()).not.toMatch(/<script[^>]*beehiiv/i);
+    expect(sec).toMatch(/<p class="lede">[\s\S]*<button[^>]*id="notify-open"[^>]*>/);
+    expect(sec).not.toContain("data-beehiiv-form");
+    expect(html()).not.toMatch(/beehiiv/i);
   });
   it("wraps the embed in a 400px-capped container and adds the reassurance line under it", () => {
     const sec = html().split('id="notify"')[1]!.split("</section>")[0]!;
@@ -180,11 +179,11 @@ describe("email sign-up", () => {
     expect(html()).not.toMatch(/buttondown/i);
     expect(html()).not.toContain('id="notify-form"');
   });
-  it("the fine print says beehiiv handles the sign-up", () => {
+  it("the fine print says the address goes to us and to no third party", () => {
     const fp = html().split('id="fp-email"')[1]!.split("</section>")[0]!;
-    expect(fp).toMatch(/beehiiv handles your email address/);
+    expect(fp).toMatch(/sends your email address to Trick or Treat, and nothing else: no tracker, no third party/);
   });
-  it("sets no Content-Security-Policy, so the one allowed origin is the loader's", () => {
+  it("sets no Content-Security-Policy, and no origin is allowed", () => {
     expect(html()).not.toMatch(/Content-Security-Policy/i);
   });
 });

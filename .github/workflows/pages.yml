@@ -25,8 +25,8 @@ jobs:
           cache: npm
       - uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0
       - run: npm ci
-      # Empty keeps the beehiiv form. Set the repository variable LEADS_URL to the API's /leads address to
-      # switch the form to our own list (src/signup.ts).
+      # Set the repository variable LEADS_URL to the API's /leads address. Without it the sign-up form is
+      # not offered (src/signup.ts).
       - run: npm run build
         env:
           VITE_LEADS_URL: ${{ vars.LEADS_URL }}

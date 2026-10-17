@@ -5,7 +5,6 @@ import { tmpdir } from "node:os";
 import { extname, join, normalize } from "node:path";
 import { gzipSync } from "node:zlib";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import { BEEHIIV, stubBeehiiv } from "./beehiiv-stub";
 import { chromium, type Browser } from "playwright-core";
 
 // The bar from the brief: JS <= 60 KB gzipped, 0 third-party requests, no-JS render,
@@ -19,7 +18,7 @@ const TYPES: Record<string, string> = {
 let server: Server, base: string, browser: Browser;
 
 beforeAll(async () => {
-  execFileSync("npx", ["vite", "build", "--outDir", out, "--emptyOutDir"], { stdio: "pipe" });
+  execFileSync("npx", ["vite", "build", "--outDir", out, "--emptyOutDir"], { stdio: "pipe", env: { ...process.env, VITE_LEADS_URL: "https://leads.invalid/leads" } });
   server = createServer((req, res) => {
     const path = normalize(decodeURIComponent((req.url ?? "/").split(/[?#]/)[0]));
     const rel = path.startsWith(BASE) ? path.slice(BASE.length - 1) : null;
@@ -29,7 +28,7 @@ beforeAll(async () => {
   });
   await new Promise<void>((ok) => server.listen(0, "127.0.0.1", ok));
   base = `http://127.0.0.1:${(server.address() as { port: number }).port}${BASE}`;
-  browser = stubBeehiiv(await chromium.launch({ executablePath: process.env.CHROMIUM_PATH }));
+  browser = await chromium.launch({ executablePath: process.env.CHROMIUM_PATH });
 }, 120_000);
 afterAll(async () => { await browser?.close(); server?.close(); }, 60_000);
 
@@ -42,15 +41,12 @@ describe("bundle", () => {
   });
 });
 
-// The one allowed third party: the beehiiv sign-up form (its loader script and the iframe it opens). What the
-// iframe itself then loads is beehiiv's business, not this page's, so it is not counted here.
-const inBeehiivForm = (r: import("playwright-core").Request) => r.url().startsWith(`${BEEHIIV}/`) || new URL(r.frame().url() === "about:blank" ? `${BEEHIIV}/` : r.frame().url()).origin === BEEHIIV;
 
 describe("requests", () => {
-  it("makes no request to any other origin than the beehiiv sign-up, and none after load", async () => {
+  it("makes no request to any other origin, and none after load", async () => {
     const page = await browser.newPage();
     const urls: string[] = [];
-    page.on("request", (r) => { if (!inBeehiivForm(r)) urls.push(r.url()); });
+    page.on("request", (r) => { urls.push(r.url()); });
     await page.goto(base, { waitUntil: "networkidle" });
     await page.click("#sw");
     await page.waitForTimeout(1500);
@@ -61,7 +57,7 @@ describe("requests", () => {
 });
 
 describe("the email sign-up", () => {
-  it("asks beehiiv for nothing on a fresh load, and fetches its loader only when the button is pressed", async () => {
+  it("asks no third party for anything on a fresh load or when the button is pressed, and posts only on submit", async () => {
     const page = await browser.newPage();
     const foreign: string[] = [];
     page.on("request", (r) => { if (new URL(r.url()).origin !== new URL(base).origin && !r.url().startsWith("data:")) foreign.push(r.url()); });
@@ -69,11 +65,9 @@ describe("the email sign-up", () => {
     await page.waitForTimeout(500);
     expect(foreign).toEqual([]);
     expect(await page.locator("#notify-open").isVisible(), "the button is the control: it must exist").toBe(true);
-    const loader = page.waitForResponse((r) => r.url().startsWith(`${BEEHIIV}/`));
     await page.click("#notify-open");
-    await loader;
-    expect(foreign.length).toBeGreaterThan(0);
-    expect(foreign.every((u) => u.startsWith(`${BEEHIIV}/`))).toBe(true);
+    expect(await page.locator("#lead-email").isVisible()).toBe(true);
+    expect(foreign, "opening the form must not call out").toEqual([]);
     await page.close();
   });
 });

@@ -6,7 +6,6 @@ import { tmpdir } from "node:os";
 import { extname, join, normalize } from "node:path";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { chromium, type Browser, type Page, type Route } from "playwright-core";
-import { stubBeehiiv } from "./beehiiv-stub";
 
 const BASE = "/";
 const LEADS = "https://leads.invalid/leads";
@@ -39,7 +38,7 @@ beforeAll(async () => {
   const [sa, sb] = [await serve(a), await serve(b)];
   servers.push(sa.server, sb.server);
   ours = sa.base; plain = sb.base;
-  browser = stubBeehiiv(await chromium.launch({ executablePath: process.env.CHROMIUM_PATH }));
+  browser = await chromium.launch({ executablePath: process.env.CHROMIUM_PATH });
 }, 180_000);
 afterAll(async () => { await browser?.close(); servers.forEach((s) => s.close()); }, 60_000);
 
@@ -59,6 +58,7 @@ async function open(base: string, answer: Answer = 202) {
 }
 async function submit(page: Page, text: string) {
   await page.fill("#lead-email", text);
+  await page.check("#lead-consent");
   await page.click(".lead-form button[type=submit]");
 }
 const status = (page: Page) => page.locator("#lead-status").innerText();
@@ -80,7 +80,7 @@ describe("built for our own list", () => {
     await page.waitForFunction(() => document.querySelector("#lead-status")?.textContent?.includes("once"));
     expect(posts).toHaveLength(1);
     expect(posts[0]!.method).toBe("POST");
-    expect(JSON.parse(posts[0]!.body!)).toEqual({ email: "Maya@Example.com", source: "landing", website: "" });
+    expect(JSON.parse(posts[0]!.body!)).toEqual({ email: "Maya@Example.com", source: "landing", consent: true, website: "" });
     expect(await status(page)).toContain("email you once");
     expect(await page.locator("#lead-email").count()).toBe(0);
     await page.close();
@@ -121,24 +121,23 @@ describe("built for our own list", () => {
     await page.close();
   });
 
-  it("the fine print says we email once and no longer names a newsletter service", async () => {
+  it("the fine print says we email once and that no third party gets the address", async () => {
     const { page } = await open(ours);
     const fp = (await page.locator("#fp-email + p").innerText()).toLowerCase();
     expect(fp).toContain("email you once when we launch");
-    expect(fp).not.toContain("beehiiv");
+    expect(fp).toContain("no third party");
     await page.close();
   });
 });
 
 describe("built without the address of our own list", () => {
-  it("loads the old sign-up and posts nothing to our list", async () => {
-    const { page, posts } = await open(plain);
-    const loader = page.waitForResponse((r) => r.url().startsWith("https://subscribe-forms.beehiiv.com/"));
+  it("opens no form, loads no third party and posts nothing", async () => {
+    const { page, posts, foreign } = await open(plain);
     await page.click("#notify-open");
-    await loader;
-    expect(posts).toEqual([]);
+    await page.waitForTimeout(300);
     expect(await page.locator("#lead-email").count()).toBe(0);
-    expect(await page.locator("#fp-email + p").innerText()).toContain("beehiiv");
+    expect(posts).toEqual([]);
+    expect(foreign).toEqual([]);
     await page.close();
   });
 });

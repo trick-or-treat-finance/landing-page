@@ -6,7 +6,6 @@ import { tmpdir } from "node:os";
 import { extname, join, normalize } from "node:path";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { chromium, type Browser, type Page } from "playwright-core";
-import { stubBeehiiv } from "./beehiiv-stub";
 import { dollars, evenShares } from "../src/split";
 
 const BASE = "/";
@@ -35,7 +34,7 @@ let server: Server, base: string, browser: Browser;
 beforeAll(async () => {
   execFileSync("npx", ["vite", "build", "--outDir", out, "--emptyOutDir"], { stdio: "pipe" });
   ({ server, base } = await serve(out));
-  browser = stubBeehiiv(await chromium.launch({ executablePath: process.env.CHROMIUM_PATH }));
+  browser = await chromium.launch({ executablePath: process.env.CHROMIUM_PATH });
 }, 120_000);
 afterAll(async () => { await browser?.close(); server?.close(); }, 60_000);
 

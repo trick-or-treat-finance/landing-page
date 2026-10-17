@@ -5,7 +5,6 @@ import { tmpdir } from "node:os";
 import { extname, join } from "node:path";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { chromium, type Browser } from "playwright-core";
-import { stubBeehiiv } from "./beehiiv-stub";
 
 // Scenarios: features/hero-ghost-3d.feature
 const TYPES: Record<string, string> = { ".html": "text/html", ".js": "text/javascript", ".css": "text/css", ".svg": "image/svg+xml", ".avif": "image/avif", ".webp": "image/webp", ".jpg": "image/jpeg", ".png": "image/png", ".woff2": "font/woff2" };
@@ -23,7 +22,7 @@ beforeAll(async () => {
   });
   await new Promise<void>((ok) => server.listen(0, "127.0.0.1", ok));
   base = `http://127.0.0.1:${(server.address() as { port: number }).port}`;
-  browser = stubBeehiiv(await chromium.launch({ executablePath: process.env.CHROMIUM_PATH }));
+  browser = await chromium.launch({ executablePath: process.env.CHROMIUM_PATH });
 }, 120_000);
 afterAll(async () => { await browser?.close(); server?.close(); }, 60_000);
 
@@ -122,7 +121,7 @@ describe("Feature: the hero shows the 3D ghost picture instead of the old 2D dra
 
   it("Scenario: Nothing new is loaded or sent", () => {
     const hosts = new Set([...html().matchAll(/(?:href|src|srcset)="https?:\/\/([^/"]+)/g)].map((m) => m[1]));
-    expect([...hosts].filter((h) => h !== "trickortreat.fi" && h !== "subscribe-forms.beehiiv.com")).toEqual([]);
+    expect([...hosts].filter((h) => h !== "trickortreat.fi")).toEqual([]);
     expect(html()).toContain('<meta property="og:image" content="https://trickortreat.fi/og.jpg" />');
     expect(readFileSync(join(out, "og.jpg")).equals(readFileSync(join(process.cwd(), "public/og.jpg")))).toBe(true);
   });
