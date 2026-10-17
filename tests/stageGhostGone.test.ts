@@ -5,7 +5,6 @@ import { tmpdir } from "node:os";
 import { extname, join } from "node:path";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { chromium, type Browser, type Page } from "playwright-core";
-import { stubBeehiiv } from "./beehiiv-stub";
 
 // Scenarios: features/stage-ghost-removed.feature (the 3D picture that replaced it is tested in stageGhost3d.test.ts)
 const TYPES: Record<string, string> = { ".html": "text/html", ".js": "text/javascript", ".css": "text/css", ".svg": "image/svg+xml", ".avif": "image/avif", ".webp": "image/webp", ".png": "image/png", ".jpg": "image/jpeg" };
@@ -25,7 +24,7 @@ beforeAll(async () => {
   });
   await new Promise<void>((ok) => server.listen(0, "127.0.0.1", ok));
   base = `http://127.0.0.1:${(server.address() as { port: number }).port}`;
-  browser = stubBeehiiv(await chromium.launch({ executablePath: process.env.CHROMIUM_PATH }));
+  browser = await chromium.launch({ executablePath: process.env.CHROMIUM_PATH });
 }, 120_000);
 afterAll(async () => { await browser?.close(); server?.close(); }, 60_000);
 
@@ -147,7 +146,7 @@ describe("Feature: the 2D ghost on the stage is gone, and nothing is left where 
     expect(html).toContain("Personal finance app");
     expect(html).toContain("Budget, track your spending, and see exactly which companies get your money.");
     const hosts = new Set([...html.matchAll(/(?:href|src|srcset)="https?:\/\/([^/"]+)/g)].map((m) => m[1]));
-    expect([...hosts].filter((h) => h !== "trickortreat.fi" && h !== "subscribe-forms.beehiiv.com")).toEqual([]);
+    expect([...hosts].filter((h) => h !== "trickortreat.fi")).toEqual([]);
     expect(html).not.toMatch(/\bsort(s|ed|ing)?\b/i);
   });
 });

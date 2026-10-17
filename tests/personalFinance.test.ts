@@ -5,7 +5,6 @@ import { tmpdir } from "node:os";
 import { extname, join } from "node:path";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { chromium, type Browser } from "playwright-core";
-import { stubBeehiiv } from "./beehiiv-stub";
 
 // Scenarios: features/personal-finance.feature
 const ORIGIN = "https://trickortreat.fi";
@@ -42,7 +41,7 @@ beforeAll(async () => {
   });
   await new Promise<void>((ok) => server.listen(0, "127.0.0.1", ok));
   base = `http://127.0.0.1:${(server.address() as { port: number }).port}`;
-  browser = stubBeehiiv(await chromium.launch({ executablePath: process.env.CHROMIUM_PATH }));
+  browser = await chromium.launch({ executablePath: process.env.CHROMIUM_PATH });
 }, 120_000);
 
 afterAll(async () => { await browser?.close(); server?.close(); }, 60_000);
@@ -116,7 +115,7 @@ describe("Feature: the landing page says plainly that Trick or Treat is a person
     for (const p of ["index.html", "about.html"]) {
       const html = read(p);
       const hosts = new Set([...html.matchAll(/(?:href|src)="https?:\/\/([^/"]+)/g)].map((m) => m[1]));
-      expect([...hosts].filter((h) => h !== "trickortreat.fi" && h !== "subscribe-forms.beehiiv.com")).toEqual([]);
+      expect([...hosts].filter((h) => h !== "trickortreat.fi")).toEqual([]);
       expect(html).not.toMatch(/googletagmanager|analytics|fonts\.googleapis/i);
     }
   });

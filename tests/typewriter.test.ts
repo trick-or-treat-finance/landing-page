@@ -4,7 +4,6 @@ import { createServer, type Server } from "node:http";
 import { tmpdir } from "node:os";
 import { extname, join, normalize } from "node:path";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import { BEEHIIV, stubBeehiiv } from "./beehiiv-stub";
 import { chromium, type Browser } from "playwright-core";
 
 const BASE = "/";
@@ -41,7 +40,7 @@ const url = () => `${base}${BASE}index.html`;
 beforeAll(async () => {
   execFileSync("npx", ["vite", "build", "--outDir", out, "--emptyOutDir"], { stdio: "pipe" });
   ({ server, base } = await serve(out));
-  browser = stubBeehiiv(await chromium.launch({ executablePath: process.env.CHROMIUM_PATH }));
+  browser = await chromium.launch({ executablePath: process.env.CHROMIUM_PATH });
 }, 120_000);
 afterAll(async () => { await browser?.close(); server?.close(); }, 60_000);
 
@@ -56,8 +55,6 @@ const WORDS = [
 const flat = (t: string) => t.replace(/\s+/g, " ");
 
 /** Opens the page with an AudioContext spy; the counter survives in window.__audio. */
-// The one allowed third party: the beehiiv sign-up form and what its iframe loads (beehiiv's business, not this page's).
-const inBeehiivForm = (r: import("playwright-core").Request) => r.url().startsWith(`${BEEHIIV}/`) || new URL(r.frame().url() === "about:blank" ? `${BEEHIIV}/` : r.frame().url()).origin === BEEHIIV;
 async function open(opts: { js?: boolean; reduced?: boolean; scheme?: "light" | "dark"; width?: number } = {}) {
   const ctx = await browser.newContext({
     viewport: { width: opts.width ?? 1280, height: 900 },
@@ -67,7 +64,7 @@ async function open(opts: { js?: boolean; reduced?: boolean; scheme?: "light" | 
   });
   const hosts = new Set<string>();
   const page = await ctx.newPage();
-  page.on("request", (r) => { if (!r.url().startsWith("data:") && !inBeehiivForm(r)) hosts.add(new URL(r.url()).host); });
+  page.on("request", (r) => { if (!r.url().startsWith("data:")) hosts.add(new URL(r.url()).host); });
   await page.addInitScript(() => {
     (window as unknown as { __audio: number }).__audio = 0;
     const Real = window.AudioContext;

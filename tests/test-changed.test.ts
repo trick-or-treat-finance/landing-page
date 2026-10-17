@@ -28,7 +28,7 @@ describe("test:changed plan", () => {
     ["src/theme.ts", "page code"],
     ["src/style.css", "page code"],
     ["src/engine/notes.md", "not a module"],
-    ["tests/beehiiv-stub.ts", "test helper"],
+    ["tests/helpers.ts", "test helper"],
     ["index.html", "outside src/"],
     ["vite.config.ts", "outside src/"],
     ["package.json", "outside src/"],
