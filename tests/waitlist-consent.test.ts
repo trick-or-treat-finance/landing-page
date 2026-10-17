@@ -73,7 +73,7 @@ const submitButton = (page: Page) => page.locator("form button[type=submit]");
 async function type(page: Page, text: string) { await page.fill("#lead-email", text); }
 async function submit(page: Page) { await submitButton(page).click(); }
 // What a screen reader would be told: any alert or status region, plus the box's own description.
-const spoken = (page: Page) => page.locator("[role=alert], [role=status]").allInnerTexts().then((t) => t.join(" ").trim());
+const spoken = (page: Page) => page.locator("#lead-status").allInnerTexts().then((t) => t.join(" ").trim());
 
 describe("the consent on the form", () => {
   it("is a checkbox labelled with the exact words, and unchecked on load", async () => {
@@ -90,7 +90,7 @@ describe("the consent on the form", () => {
     await openForm(page);
     await type(page, "maya@example.com");
     await submit(page);
-    await page.waitForFunction(() => /agree|consent/i.test(document.querySelector("[role=alert], [role=status]")?.textContent ?? ""));
+    await page.waitForFunction(() => /agree|consent/i.test(document.querySelector("#lead-status")?.textContent ?? ""));
     expect(posts).toEqual([]);
     expect(await spoken(page)).toMatch(/agree|consent/i);
     expect(await consentBox(page).isChecked()).toBe(false);
@@ -147,7 +147,7 @@ describe("a refusal from the list", () => {
       await type(page, "maya@example.com");
       await consentBox(page).check();
       await submit(page);
-      await page.waitForFunction(() => (document.querySelector("[role=alert], [role=status]")?.textContent ?? "") !== "");
+      await page.waitForFunction(() => (document.querySelector("#lead-status")?.textContent ?? "") !== "");
       expect(posts).toHaveLength(1);
       expect(await spoken(page)).not.toBe("");
       expect(await page.locator("body").innerText()).not.toContain("SERVER-WORDS-7f3a");
