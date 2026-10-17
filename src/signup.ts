@@ -30,6 +30,7 @@ function openOurForm(opener: HTMLButtonElement): void {
   const wrap = field<HTMLDivElement>("div", { className: "lead-trap" });
   wrap.append(trap);
   const agree = field<HTMLInputElement>("input", { id: "lead-consent", type: "checkbox", name: "consent", checked: false });
+  agree.setAttribute("aria-describedby", "lead-status");
   const agreeLabel = field<HTMLLabelElement>("label", { htmlFor: "lead-consent", textContent: CONSENT });
   const consent = field<HTMLDivElement>("div", { className: "lead-consent" });
   consent.append(agree, agreeLabel);
@@ -37,10 +38,11 @@ function openOurForm(opener: HTMLButtonElement): void {
   const status = field<HTMLParagraphElement>("p", { className: "lead-status", id: "lead-status" });
   status.setAttribute("role", "alert");
   const form = field<HTMLFormElement>("form", { className: "lead-form", noValidate: true });
-  form.append(label, email, consent, wrap, send, status);
+  form.append(label, email, consent, status, wrap, send);
   opener.replaceWith(form);
   email.focus();
 
+  agree.addEventListener("change", () => { if (agree.checked) agree.removeAttribute("aria-invalid"); });
   const say = (words: string, kind: "good" | "bad") => { status.textContent = words; status.dataset.kind = kind; };
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
