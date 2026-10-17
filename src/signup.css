@@ -6,3 +6,8 @@
 .lead-form .lead-trap { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
 .lead-status { font-size: 14px; color: var(--secondary); min-height: 1.4em; }
 .lead-status[data-kind="bad"] { color: var(--ink); font-weight: 600; }
+.lead-consent { display: grid; grid-template-columns: auto 1fr; gap: 10px; align-items: start; }
+.lead-consent input[type="checkbox"] { width: 22px; height: 22px; margin: 1px 0 0; accent-color: var(--green-ink); }
+.lead-consent input[type="checkbox"]:focus-visible { outline: 2px solid var(--green-ink); outline-offset: 3px; }
+.lead-consent input[type="checkbox"][aria-invalid="true"] { outline: 2px solid var(--ink); outline-offset: 3px; }
+.lead-consent label { line-height: 1.4; cursor: pointer; }
